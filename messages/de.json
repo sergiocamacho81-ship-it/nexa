@@ -379,7 +379,23 @@
     "errorOnlyManagersManage": "Nur OWNER/ADMIN können Mitglieder verwalten.",
     "errorNeedsOneOwner": "Die Organisation benötigt mindestens einen OWNER.",
     "emailUnavailable": "(E-Mail nicht verfügbar)",
-    "errorUnknown": "Unbekannter Fehler."
+    "errorUnknown": "Unbekannter Fehler.",
+    "smtpHeading": "Ausgehende E-Mail (SMTP)",
+    "smtpHint": "Erforderlich, bevor diese Organisation über E-Mail oder Kampagnen versenden kann — kein plattformweiter Fallback.",
+    "smtpConfigured": "Konfiguriert — Versand von {from}",
+    "smtpNotConfigured": "Noch nicht konfiguriert",
+    "smtpHost": "SMTP-Server",
+    "smtpPort": "Port",
+    "smtpSecure": "TLS verwenden",
+    "smtpUser": "Benutzername",
+    "smtpPassword": "Passwort",
+    "smtpPasswordHint": "Leer lassen, um das aktuelle Passwort zu behalten",
+    "smtpFrom": "Absenderadresse",
+    "smtpFromPlaceholder": "no-reply@deinedomain.com",
+    "smtpSave": "SMTP-Einstellungen speichern",
+    "smtpSaving": "Wird gespeichert...",
+    "errorSmtpRequiredFields": "Server, Port, Benutzername und Passwort sind erforderlich.",
+    "errorSmtpInvalidPort": "Der Port muss eine positive Zahl sein."
   },
   "LocaleSwitcher": {
     "label": "Sprache"

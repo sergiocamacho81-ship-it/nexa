@@ -379,7 +379,23 @@
     "errorOnlyManagersManage": "Só OWNER/ADMIN podem gerir membros.",
     "errorNeedsOneOwner": "A organização precisa de pelo menos um OWNER.",
     "emailUnavailable": "(email indisponível)",
-    "errorUnknown": "Erro desconhecido."
+    "errorUnknown": "Erro desconhecido.",
+    "smtpHeading": "Email de saída (SMTP)",
+    "smtpHint": "Obrigatório antes de esta organização poder enviar emails ou campanhas — não há reserva ao nível da plataforma.",
+    "smtpConfigured": "Configurado — a enviar de {from}",
+    "smtpNotConfigured": "Ainda não configurado",
+    "smtpHost": "Servidor SMTP",
+    "smtpPort": "Porta",
+    "smtpSecure": "Usar TLS",
+    "smtpUser": "Utilizador",
+    "smtpPassword": "Password",
+    "smtpPasswordHint": "Deixa em branco para manter a password atual",
+    "smtpFrom": "Endereço de envio",
+    "smtpFromPlaceholder": "no-reply@oteudominio.com",
+    "smtpSave": "Guardar configuração SMTP",
+    "smtpSaving": "A guardar...",
+    "errorSmtpRequiredFields": "Servidor, porta, utilizador e password são obrigatórios.",
+    "errorSmtpInvalidPort": "A porta tem de ser um número positivo."
   },
   "LocaleSwitcher": {
     "label": "Idioma"

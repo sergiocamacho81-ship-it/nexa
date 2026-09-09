@@ -379,7 +379,23 @@
     "errorOnlyManagersManage": "Only OWNER/ADMIN can manage members.",
     "errorNeedsOneOwner": "The organization needs at least one OWNER.",
     "emailUnavailable": "(email unavailable)",
-    "errorUnknown": "Unknown error."
+    "errorUnknown": "Unknown error.",
+    "smtpHeading": "Outbound email (SMTP)",
+    "smtpHint": "Required before this organization can send from Email or Campaigns — no platform-wide fallback.",
+    "smtpConfigured": "Configured — sending from {from}",
+    "smtpNotConfigured": "Not configured yet",
+    "smtpHost": "SMTP host",
+    "smtpPort": "Port",
+    "smtpSecure": "Use TLS",
+    "smtpUser": "Username",
+    "smtpPassword": "Password",
+    "smtpPasswordHint": "Leave blank to keep the current password",
+    "smtpFrom": "From address",
+    "smtpFromPlaceholder": "no-reply@yourdomain.com",
+    "smtpSave": "Save SMTP settings",
+    "smtpSaving": "Saving...",
+    "errorSmtpRequiredFields": "Host, port, username and password are required.",
+    "errorSmtpInvalidPort": "Port must be a positive number."
   },
   "LocaleSwitcher": {
     "label": "Language"

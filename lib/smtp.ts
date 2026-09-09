@@ -1,23 +1,31 @@
 import nodemailer from "nodemailer";
 
-export function getSmtpTransport() {
-  const host = process.env.SMTP_HOST;
-  const port = process.env.SMTP_PORT;
-  const user = process.env.SMTP_USER;
-  const password = process.env.SMTP_PASSWORD;
+// Outbound email is configured per organization (Settings), not at the
+// platform level — every org must set its own before Email/Campaigns work.
+type OrgSmtpConfig = {
+  smtpHost: string | null;
+  smtpPort: number | null;
+  smtpSecure: boolean;
+  smtpUser: string | null;
+  smtpPassword: string | null;
+  smtpFrom: string | null;
+};
 
-  if (!host || !port || !user || !password) {
+export function getSmtpTransport(org: OrgSmtpConfig) {
+  const { smtpHost, smtpPort, smtpUser, smtpPassword } = org;
+
+  if (!smtpHost || !smtpPort || !smtpUser || !smtpPassword) {
     return null;
   }
 
   return nodemailer.createTransport({
-    host,
-    port: Number(port),
-    secure: process.env.SMTP_SECURE === "true",
-    auth: { user, pass: password },
+    host: smtpHost,
+    port: smtpPort,
+    secure: org.smtpSecure,
+    auth: { user: smtpUser, pass: smtpPassword },
   });
 }
 
-export function getSmtpFromAddress(): string | null {
-  return process.env.SMTP_FROM ?? process.env.SMTP_USER ?? null;
+export function getSmtpFromAddress(org: OrgSmtpConfig): string | null {
+  return org.smtpFrom ?? org.smtpUser ?? null;
 }

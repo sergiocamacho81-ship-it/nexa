@@ -13,6 +13,18 @@ model Organization {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  // Outbound email is configured per organization, not at the platform
+  // level — every org must set its own before Email/Campaigns can send.
+  // Stored as plain text (no field-level encryption yet); access is gated
+  // the same way every other org field is (RLS + app-layer membership
+  // checks), not by any additional secrecy on this column.
+  smtpHost     String?  @map("smtp_host")
+  smtpPort     Int?     @map("smtp_port")
+  smtpSecure   Boolean  @default(false) @map("smtp_secure")
+  smtpUser     String?  @map("smtp_user")
+  smtpPassword String?  @map("smtp_password")
+  smtpFrom     String?  @map("smtp_from")
+
   memberships    Membership[]
   contacts       Contact[]
   companies      Company[]

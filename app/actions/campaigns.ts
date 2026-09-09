@@ -107,8 +107,8 @@ export async function sendCampaign(formData: FormData) {
 
   await prisma.campaign.update({ where: { id: campaign.id }, data: { status: "SENDING" } });
 
-  const transport = getSmtpTransport();
-  const fromAddress = getSmtpFromAddress();
+  const transport = getSmtpTransport(organization);
+  const fromAddress = getSmtpFromAddress(organization);
   const html = renderEmailHtml({ subject: campaign.subject, body: campaign.body });
 
   for (const recipient of campaign.recipients) {

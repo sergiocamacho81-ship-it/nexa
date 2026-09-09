@@ -5,6 +5,7 @@ import { UpdateOrgNameForm } from "./update-org-name-form";
 import { AddMemberForm } from "./add-member-form";
 import { MemberRoleSelect } from "./member-role-select";
 import { RemoveMemberButton } from "./remove-member-button";
+import { SmtpSettingsForm } from "./smtp-settings-form";
 
 export default async function SettingsPage({
   params,
@@ -32,6 +33,14 @@ export default async function SettingsPage({
         <p className="text-muted" style={{ fontSize: "11px", marginTop: "6px" }}>
           {t("slugNote", { slug: organization.slug })}
         </p>
+      </section>
+
+      <section>
+        <h6 className="text-muted mb-3">{t("smtpHeading")}</h6>
+        <p className="text-muted text-sm" style={{ marginTop: "-8px", marginBottom: "8px" }}>
+          {t("smtpHint")}
+        </p>
+        <SmtpSettingsForm orgSlug={orgSlug} organization={organization} disabled={!canManage} />
       </section>
 
       <section>

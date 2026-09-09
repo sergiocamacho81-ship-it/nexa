@@ -12,7 +12,7 @@ delivery, secrets) — not the same thing as an in-app **organization admin** (s
 | App hosting | Vercel | Project `sergiocamacho81-9074s-projects/nexa`, production URL `https://nexa-sigma-woad.vercel.app` |
 | Source control | GitHub | `https://github.com/sergiocamacho81-ship-it/nexa`, branch `master` deploys to production |
 | Database + Auth | Supabase | Postgres + Supabase Auth (email/password) |
-| Outbound email | Infomaniak SMTP | Single mailbox (`contact@vingelis.ch`), used for both transactional email and campaigns |
+| Outbound email | Per organization | Each org sets its own SMTP account in-app (Settings) — see § 2 |
 
 There is currently one environment: **production**. There is no separate
 staging/preview Supabase project — local development points at the same Supabase
@@ -31,7 +31,12 @@ All required at build and/or runtime. Names and where to find each value are in
 | `SUPABASE_JWKS_URL` | (reserved) | Supabase → Settings → API |
 | `DATABASE_URL` | Prisma runtime queries | Supabase → Settings → Database → Connection string → **Transaction pooler**, port 6543, `?pgbouncer=true` |
 | `DIRECT_URL` | Prisma Migrate only | Supabase → Settings → Database → Connection string → **Direct connection**, port 5432 |
-| `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` / `SMTP_USER` / `SMTP_PASSWORD` / `SMTP_FROM` | Email + Campaigns modules | Your SMTP provider's settings page |
+
+Outbound email (Email + Campaigns modules) is **not** an env var — each organization
+configures its own SMTP account in-app, under **Settings → Outbound email (SMTP)**
+(`Organization.smtp*` columns). There is deliberately no platform-wide fallback: an
+organization that hasn't set its own SMTP account simply can't send until it does.
+See the [Admin Guide](./admin-guide/) for the in-app side of this.
 
 In Vercel, these are set under **Project → Settings → Environment Variables**, scoped
 to **Production**. `NEXT_PUBLIC_*` variables are visible to the browser by design

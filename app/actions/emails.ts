@@ -59,8 +59,8 @@ export async function sendEmail(
     if (!deal) return { error: t("errorInvalidDeal") };
   }
 
-  const transport = getSmtpTransport();
-  const fromAddress = getSmtpFromAddress();
+  const transport = getSmtpTransport(organization);
+  const fromAddress = getSmtpFromAddress(organization);
 
   if (!transport || !fromAddress) {
     return { error: t("errorSmtpNotConfigured") };

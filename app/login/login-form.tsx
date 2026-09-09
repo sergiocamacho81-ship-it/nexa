@@ -27,9 +27,19 @@ export function LoginForm() {
 
   return (
     <div className="card elev-md w-full max-w-sm">
-      <Image src="/logo-mark.svg" alt={t("brand")} width={40} height={40} />
       <div>
-        <h1 className="mb-0">Nexa</h1>
+        <div className="flex items-center gap-2" style={{ marginBottom: "6px" }}>
+          <Image src="/logo-mark.svg" alt={t("brand")} width={16} height={16} />
+          <span
+            className="text-muted"
+            style={{ fontSize: "11px", letterSpacing: "0.08em", textTransform: "uppercase" }}
+          >
+            {t("brand")}
+          </span>
+        </div>
+        <h1 className="mb-0" style={{ fontSize: "52px" }}>
+          Nexa
+        </h1>
         <p className="text-muted text-sm">
           {mode === "signin" ? t("signInTitle") : t("signUpTitle")}
         </p>

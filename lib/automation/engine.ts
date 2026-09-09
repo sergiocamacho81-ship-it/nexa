@@ -62,16 +62,22 @@ async function executeAction(
       if (!payload.contactId) {
         throw new Error("Sem contacto associado ao evento — não há destinatário.");
       }
-      const contact = await prisma.contact.findUnique({ where: { id: payload.contactId } });
+      const [contact, organization] = await Promise.all([
+        prisma.contact.findUnique({ where: { id: payload.contactId } }),
+        prisma.organization.findUnique({ where: { id: payload.organizationId } }),
+      ]);
       if (!contact?.email) {
         throw new Error("O contacto associado não tem email.");
+      }
+      if (!organization) {
+        throw new Error("Organização não encontrada.");
       }
 
       const subject = typeof config.subject === "string" && config.subject ? config.subject : "Nexa";
       const body = typeof config.body === "string" ? config.body : "";
 
-      const transport = getSmtpTransport();
-      const fromAddress = getSmtpFromAddress();
+      const transport = getSmtpTransport(organization);
+      const fromAddress = getSmtpFromAddress(organization);
 
       let status: "SENT" | "FAILED" = "SENT";
       let error: string | null = null;

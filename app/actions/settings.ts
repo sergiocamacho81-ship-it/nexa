@@ -65,8 +65,12 @@ export async function getOrganizationSettings(orgSlug: string) {
 
   const currentMembership = memberships.find((m) => m.userId === user.id);
 
+  // The stored SMTP password is never sent to the client — the form only
+  // ever shows whether one is set, never its value.
+  const { smtpPassword, ...organizationWithoutSmtpPassword } = organization;
+
   return {
-    organization,
+    organization: { ...organizationWithoutSmtpPassword, smtpConfigured: Boolean(smtpPassword) },
     members,
     currentUserRole: currentMembership?.role ?? "MEMBER",
   };
@@ -88,6 +92,58 @@ export async function updateOrganizationName(
   await prisma.organization.update({ where: { id: organization.id }, data: { name } });
   revalidatePath(`/app/${orgSlug}/settings`);
   return { error: null };
+}
+
+export type SmtpFormState = { error: string | null; success?: boolean };
+
+export async function updateOrgSmtp(
+  _prevState: SmtpFormState,
+  formData: FormData,
+): Promise<SmtpFormState> {
+  const t = await getTranslations("Settings");
+  const orgSlug = String(formData.get("orgSlug") ?? "");
+  const user = await getCurrentUser();
+  const organization = await getOrgForCurrentUser(orgSlug);
+  if (!user || !organization) return { error: t("errorOrgNotFound") };
+
+  const membership = await prisma.membership.findUnique({
+    where: { userId_organizationId: { userId: user.id, organizationId: organization.id } },
+  });
+  if (!membership || !MANAGER_ROLES.includes(membership.role)) {
+    return { error: t("errorOnlyManagersManage") };
+  }
+
+  const smtpHost = String(formData.get("smtpHost") ?? "").trim();
+  const smtpPortRaw = String(formData.get("smtpPort") ?? "").trim();
+  const smtpSecure = formData.get("smtpSecure") === "on";
+  const smtpUser = String(formData.get("smtpUser") ?? "").trim();
+  const smtpPasswordRaw = String(formData.get("smtpPassword") ?? "");
+  const smtpFrom = String(formData.get("smtpFrom") ?? "").trim();
+
+  if (!smtpHost || !smtpPortRaw || !smtpUser) {
+    return { error: t("errorSmtpRequiredFields") };
+  }
+
+  const smtpPort = Number(smtpPortRaw);
+  if (!Number.isInteger(smtpPort) || smtpPort <= 0) {
+    return { error: t("errorSmtpInvalidPort") };
+  }
+
+  // A blank password field means "keep the existing one" (it's never
+  // pre-filled back into the form) — only overwrite it when a new value is
+  // actually typed, and require one at all on first-time setup.
+  const smtpPassword = smtpPasswordRaw || organization.smtpPassword;
+  if (!smtpPassword) {
+    return { error: t("errorSmtpRequiredFields") };
+  }
+
+  await prisma.organization.update({
+    where: { id: organization.id },
+    data: { smtpHost, smtpPort, smtpSecure, smtpUser, smtpPassword, smtpFrom: smtpFrom || null },
+  });
+
+  revalidatePath(`/app/${orgSlug}/settings`);
+  return { error: null, success: true };
 }
 
 export async function addMember(
