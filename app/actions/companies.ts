@@ -12,7 +12,7 @@ export async function listCompanies(orgSlug: string) {
   if (!organization) return [];
 
   return prisma.company.findMany({
-    where: { organizationId: organization.id },
+    where: { organizationId: organization.id, deletedAt: null },
     orderBy: { createdAt: "desc" },
   });
 }
@@ -62,7 +62,7 @@ export async function updateCompany(
   }
 
   const existing = await prisma.company.findFirst({
-    where: { id: companyId, organizationId: organization.id },
+    where: { id: companyId, organizationId: organization.id, deletedAt: null },
   });
   if (!existing) {
     return { error: t("errorOrgNotFound") };
@@ -93,8 +93,9 @@ export async function deleteCompany(formData: FormData) {
     throw new Error("Unauthorized");
   }
 
-  await prisma.company.deleteMany({
-    where: { id: companyId, organizationId: organization.id },
+  await prisma.company.updateMany({
+    where: { id: companyId, organizationId: organization.id, deletedAt: null },
+    data: { deletedAt: new Date() },
   });
 
   revalidatePath(`/app/${orgSlug}/companies`);

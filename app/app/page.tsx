@@ -1,11 +1,15 @@
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
-import { listMyOrganizations } from "@/app/actions/organizations";
+import { getTranslations, getLocale } from "next-intl/server";
+import { listMyOrganizations, listMyDeletedOrganizations } from "@/app/actions/organizations";
 import { CreateOrganizationForm } from "./create-organization-form";
+import { RestoreOrganizationButton } from "./restore-organization-button";
 
 export default async function AppHome() {
-  const t = await getTranslations("Organizations");
-  const organizations = await listMyOrganizations();
+  const [t, locale] = await Promise.all([getTranslations("Organizations"), getLocale()]);
+  const [organizations, deletedOrganizations] = await Promise.all([
+    listMyOrganizations(),
+    listMyDeletedOrganizations(),
+  ]);
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-6 py-12">
@@ -47,6 +51,34 @@ export default async function AppHome() {
         <h6 className="text-muted mb-3">{t("createNew")}</h6>
         <CreateOrganizationForm />
       </section>
+
+      {deletedOrganizations.length > 0 && (
+        <section>
+          <h6 className="text-muted mb-3">{t("deletedHeading")}</h6>
+          <p className="text-muted text-sm" style={{ marginTop: "-8px", marginBottom: "8px" }}>
+            {t("deletedHint")}
+          </p>
+          <div className="flex flex-col gap-2">
+            {deletedOrganizations.map((org) => (
+              <div key={org.id} className="card elev-sm">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="card-title">{org.name}</p>
+                    <p className="card-meta">
+                      {t("deletedOn", {
+                        date: new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(
+                          org.deletedAt,
+                        ),
+                      })}
+                    </p>
+                  </div>
+                  <RestoreOrganizationButton organizationId={org.id} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

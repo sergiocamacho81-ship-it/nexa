@@ -133,7 +133,7 @@ export async function runAutomationsForTrigger(
   payload: AutomationTriggerPayload,
 ): Promise<void> {
   const automations = await prisma.automation.findMany({
-    where: { organizationId: payload.organizationId, triggerType, enabled: true },
+    where: { organizationId: payload.organizationId, triggerType, enabled: true, deletedAt: null },
     include: { actions: { orderBy: { order: "asc" } } },
   });
 

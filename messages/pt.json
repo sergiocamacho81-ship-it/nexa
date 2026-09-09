@@ -14,7 +14,8 @@
     "campaigns": "Campanhas",
     "segments": "Segmentos",
     "settings": "Definições",
-    "signOut": "Sair"
+    "signOut": "Sair",
+    "trash": "Lixo"
   },
   "Auth": {
     "brand": "Vingelis",
@@ -54,7 +55,12 @@
     "create": "Criar",
     "creating": "A criar...",
     "errorNameRequired": "O nome da organização é obrigatório.",
-    "errorInvalidSlug": "Nome inválido para gerar um slug."
+    "errorInvalidSlug": "Nome inválido para gerar um slug.",
+    "deletedHeading": "Eliminadas recentemente",
+    "deletedHint": "Organizações que eras dono, eliminadas nos últimos 30 dias.",
+    "restore": "Restaurar",
+    "restoring": "A restaurar...",
+    "deletedOn": "Eliminada a {date}"
   },
   "OrgLayout": {
     "membersCount": "{count} membro(s)"
@@ -395,7 +401,12 @@
     "smtpSave": "Guardar configuração SMTP",
     "smtpSaving": "A guardar...",
     "errorSmtpRequiredFields": "Servidor, porta, utilizador e password são obrigatórios.",
-    "errorSmtpInvalidPort": "A porta tem de ser um número positivo."
+    "errorSmtpInvalidPort": "A porta tem de ser um número positivo.",
+    "dangerZoneHeading": "Zona de perigo",
+    "deleteOrgHint": "Move a organização para o lixo. Um OWNER pode restaurá-la dentro de 30 dias a partir da lista de organizações; depois disso desaparece definitivamente.",
+    "deleteOrgButton": "Eliminar organização",
+    "deleteOrgConfirm": "Eliminar \"{name}\"? Isto pode ser revertido dentro de 30 dias.",
+    "errorOnlyOwnerDelete": "Só um OWNER pode eliminar a organização."
   },
   "LocaleSwitcher": {
     "label": "Idioma"
@@ -441,5 +452,24 @@
     "VS": "Valais",
     "ZG": "Zug",
     "ZH": "Zurique"
+  },
+  "Trash": {
+    "heading": "Lixo ({count})",
+    "hint": "Os itens eliminados ficam guardados 30 dias e podem ser restaurados por um OWNER ou ADMIN. Depois disso desaparecem definitivamente.",
+    "none": "O lixo está vazio.",
+    "typeContact": "Contacto",
+    "typeCompany": "Empresa",
+    "typeDeal": "Negócio",
+    "typeActivity": "Atividade",
+    "typeTask": "Tarefa",
+    "typeSegment": "Segmento",
+    "typeAutomation": "Automação",
+    "typeCampaign": "Campanha",
+    "typeMember": "Membro",
+    "deletedOn": "Eliminado a {date}",
+    "restore": "Restaurar",
+    "restoring": "A restaurar...",
+    "restored": "Restaurado.",
+    "readOnlyHint": "Só um OWNER ou ADMIN pode restaurar itens."
   }
 }

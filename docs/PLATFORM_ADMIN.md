@@ -130,3 +130,21 @@ uses, already present from initial setup.)
   `pg_class.relrowsecurity` and `pg_policies` for the table in the Supabase SQL editor.
 - **Password reset link goes to the wrong place or errors out.** See § 6 — the
   production origin is very likely missing from Supabase's Redirect URLs allowlist.
+- **Trash keeps growing / old items aren't actually gone after 30 days.** There is no
+  scheduled purge job (no cron infra in this deployment — see § 8). Retention is
+  enforced lazily: opening `/app/[orgSlug]/trash` hard-deletes anything past the
+  30-day window before showing the list. If nobody opens Trash for an org, its
+  expired rows just sit there a bit longer than advertised — harmless, but worth
+  knowing if you're auditing storage.
+
+## 8. Trash & data retention
+
+Soft-deleted records (`deletedAt` set — see
+[ARCHITECTURE.md](./ARCHITECTURE.md) § 3a) are kept for 30 days and are
+restorable by an OWNER/ADMIN from `/app/[orgSlug]/trash`; a deleted organization
+itself is restorable by its former Owner from `/app`. There is **no scheduled purge
+job** — retention is enforced lazily, by `listTrash()` sweeping (hard-deleting)
+anything past 30 days each time the Trash page is opened for that org. If this needs
+to become a hard guarantee (e.g. for a data-retention compliance requirement), the
+straightforward upgrade is a Vercel Cron hitting a Route Handler that calls the same
+purge logic on a schedule — not yet set up.

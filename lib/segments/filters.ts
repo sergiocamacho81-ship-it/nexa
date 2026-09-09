@@ -34,7 +34,7 @@ export function buildContactWhere(
   organizationId: string,
   filters: SegmentFilters,
 ): Prisma.ContactWhereInput {
-  const where: Prisma.ContactWhereInput = { organizationId };
+  const where: Prisma.ContactWhereInput = { organizationId, deletedAt: null };
 
   if (filters.companyId) where.companyId = filters.companyId;
   if (filters.hasEmail === true) where.email = { not: null };

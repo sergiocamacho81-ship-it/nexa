@@ -14,7 +14,8 @@
     "campaigns": "Campagnes",
     "segments": "Segments",
     "settings": "Paramètres",
-    "signOut": "Se déconnecter"
+    "signOut": "Se déconnecter",
+    "trash": "Corbeille"
   },
   "Auth": {
     "brand": "Vingelis",
@@ -54,7 +55,12 @@
     "create": "Créer",
     "creating": "Création...",
     "errorNameRequired": "Le nom de l'organisation est obligatoire.",
-    "errorInvalidSlug": "Nom invalide pour générer un identifiant."
+    "errorInvalidSlug": "Nom invalide pour générer un identifiant.",
+    "deletedHeading": "Supprimées récemment",
+    "deletedHint": "Organisations dont vous étiez propriétaire, supprimées au cours des 30 derniers jours.",
+    "restore": "Restaurer",
+    "restoring": "Restauration...",
+    "deletedOn": "Supprimée le {date}"
   },
   "OrgLayout": {
     "membersCount": "{count} membre(s)"
@@ -395,7 +401,12 @@
     "smtpSave": "Enregistrer la configuration SMTP",
     "smtpSaving": "Enregistrement...",
     "errorSmtpRequiredFields": "Le serveur, le port, le nom d'utilisateur et le mot de passe sont obligatoires.",
-    "errorSmtpInvalidPort": "Le port doit être un nombre positif."
+    "errorSmtpInvalidPort": "Le port doit être un nombre positif.",
+    "dangerZoneHeading": "Zone dangereuse",
+    "deleteOrgHint": "Déplace l'organisation vers la corbeille. Un OWNER peut la restaurer dans les 30 jours depuis la liste des organisations ; après cela, elle disparaît définitivement.",
+    "deleteOrgButton": "Supprimer l'organisation",
+    "deleteOrgConfirm": "Supprimer « {name} » ? Cela peut être annulé dans les 30 jours.",
+    "errorOnlyOwnerDelete": "Seul un OWNER peut supprimer l'organisation."
   },
   "LocaleSwitcher": {
     "label": "Langue"
@@ -441,5 +452,24 @@
     "VS": "Valais",
     "ZG": "Zoug",
     "ZH": "Zurich"
+  },
+  "Trash": {
+    "heading": "Corbeille ({count})",
+    "hint": "Les éléments supprimés sont conservés 30 jours et peuvent être restaurés par un OWNER ou un ADMIN. Après cela, ils disparaissent définitivement.",
+    "none": "La corbeille est vide.",
+    "typeContact": "Contact",
+    "typeCompany": "Entreprise",
+    "typeDeal": "Affaire",
+    "typeActivity": "Activité",
+    "typeTask": "Tâche",
+    "typeSegment": "Segment",
+    "typeAutomation": "Automatisation",
+    "typeCampaign": "Campagne",
+    "typeMember": "Membre",
+    "deletedOn": "Supprimé le {date}",
+    "restore": "Restaurer",
+    "restoring": "Restauration...",
+    "restored": "Restauré.",
+    "readOnlyHint": "Seul un OWNER ou un ADMIN peut restaurer des éléments."
   }
 }

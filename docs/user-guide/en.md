@@ -31,9 +31,18 @@ overdue tasks, campaign count, and a feed of recent activity.
 
 ## Contacts
 
-People. Each contact has a first name (required), last name, email, phone, and
-optionally a linked company. Click a contact to see their full activity, deals, and
-tasks. Deleting a contact is permanent.
+People. Each contact has a first name (required), last name, email, phone, an
+optional linked company, a preferred language, and a city/canton (Swiss cantons —
+useful for the geographic filters in Segments). Creating one is a short 2-step
+wizard: basics first, then the optional details. Click **Edit** on any contact to
+change it later.
+
+**Importing many at once:** use **Import CSV** above the contact list. The first row
+must be a header; only `firstName` is required. `company` is matched by exact name to
+an existing company (left blank if there's no match — it never creates a company for
+you). You'll see how many rows imported and the reason for any that failed.
+
+Deleting a contact isn't permanent right away — see [Trash](#trash) below.
 
 ## Companies
 
@@ -74,9 +83,9 @@ in that deal's context — through your organization's configured mail account. 
 send (successful or failed) is logged with its subject, recipient, and timestamp, so
 you always have a record of what was sent and when.
 
-> Sending requires the organization's SMTP account to be configured (an organization
-> admin sets this up at the platform level — see the Admin Guide or ask whoever set up
-> your Nexa instance if sending isn't working).
+> Sending requires the organization's own SMTP account to be configured in Settings —
+> see the [Admin Guide](../admin-guide/en.md) or ask an organization admin if sending
+> isn't working.
 
 ## Automations
 
@@ -94,11 +103,12 @@ and why.
 
 ## Segments
 
-A saved, reusable filter over your contacts — e.g. "contacts at Acme Corp with an
-email" or "contacts created after a given date." A segment isn't a fixed list: it's
-recalculated every time it's used, so it always reflects your current contacts.
-Segments exist mainly to feed Campaigns (see below), but the same filter logic is
-reusable anywhere a targeted contact list is useful.
+A saved, reusable filter over your contacts — by company, whether they have an email,
+creation date range, Swiss canton, or city (e.g. "contacts at Acme Corp with an
+email" or "contacts in Geneva"). A segment isn't a fixed list: it's recalculated
+every time it's used, so it always reflects your current contacts. Segments exist
+mainly to feed Campaigns (see below), but the same filter logic is reusable anywhere
+a targeted contact list is useful.
 
 ## Campaigns
 
@@ -108,12 +118,18 @@ recipients succeeded and how many failed, with the specific error for any that f
 Campaigns are one-shot: once sent, a campaign's status moves from **Draft** to
 **Sending** to **Sent** and can't be re-sent as the same campaign.
 
+## Trash
+
+Deleting a contact, company, deal, activity, task, segment, automation, or campaign
+doesn't remove it right away — it moves to the Trash, where it stays for **30 days**
+and can be restored by an organization OWNER or ADMIN. After 30 days it's gone for
+good. If you deleted something by mistake, ask an admin to restore it from **Trash**
+in the nav — or do it yourself if you hold that role.
+
 ## Tips
 
-- Deleting anything (a contact, a segment, a member) is permanent — there's no undo or
-  trash.
 - Every list is scoped to your current organization; switching organizations (via the
   "Open" link from the organization list) changes everything you see.
-- If something you expect to see is missing, check you're in the right organization
-  and that your role has access to it (see the [Admin Guide](../admin-guide/en.md) for
-  what each role can do).
+- If something you expect to see is missing, check you're in the right organization,
+  that your role has access to it (see the [Admin Guide](../admin-guide/en.md) for
+  what each role can do), and that it isn't sitting in Trash.

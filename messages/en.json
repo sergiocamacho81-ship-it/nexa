@@ -14,7 +14,8 @@
     "campaigns": "Campaigns",
     "segments": "Segments",
     "settings": "Settings",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "trash": "Trash"
   },
   "Auth": {
     "brand": "Vingelis",
@@ -54,7 +55,12 @@
     "create": "Create",
     "creating": "Creating...",
     "errorNameRequired": "The organization name is required.",
-    "errorInvalidSlug": "Invalid name to generate a slug."
+    "errorInvalidSlug": "Invalid name to generate a slug.",
+    "deletedHeading": "Recently deleted",
+    "deletedHint": "Organizations you owned, deleted within the last 30 days.",
+    "restore": "Restore",
+    "restoring": "Restoring...",
+    "deletedOn": "Deleted {date}"
   },
   "OrgLayout": {
     "membersCount": "{count} member(s)"
@@ -395,7 +401,12 @@
     "smtpSave": "Save SMTP settings",
     "smtpSaving": "Saving...",
     "errorSmtpRequiredFields": "Host, port, username and password are required.",
-    "errorSmtpInvalidPort": "Port must be a positive number."
+    "errorSmtpInvalidPort": "Port must be a positive number.",
+    "dangerZoneHeading": "Danger zone",
+    "deleteOrgHint": "Moves the organization to the trash. An OWNER can restore it within 30 days from the organization list; after that it's gone for good.",
+    "deleteOrgButton": "Delete organization",
+    "deleteOrgConfirm": "Delete \"{name}\"? This can be undone within 30 days.",
+    "errorOnlyOwnerDelete": "Only an OWNER can delete the organization."
   },
   "LocaleSwitcher": {
     "label": "Language"
@@ -441,5 +452,24 @@
     "VS": "Valais",
     "ZG": "Zug",
     "ZH": "Zurich"
+  },
+  "Trash": {
+    "heading": "Trash ({count})",
+    "hint": "Deleted items are kept for 30 days and can be restored by an OWNER or ADMIN. After that they're gone for good.",
+    "none": "Trash is empty.",
+    "typeContact": "Contact",
+    "typeCompany": "Company",
+    "typeDeal": "Deal",
+    "typeActivity": "Activity",
+    "typeTask": "Task",
+    "typeSegment": "Segment",
+    "typeAutomation": "Automation",
+    "typeCampaign": "Campaign",
+    "typeMember": "Member",
+    "deletedOn": "Deleted {date}",
+    "restore": "Restore",
+    "restoring": "Restoring...",
+    "restored": "Restored.",
+    "readOnlyHint": "Only an OWNER or ADMIN can restore items."
   }
 }

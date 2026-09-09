@@ -14,7 +14,8 @@
     "campaigns": "Kampagnen",
     "segments": "Segmente",
     "settings": "Einstellungen",
-    "signOut": "Abmelden"
+    "signOut": "Abmelden",
+    "trash": "Papierkorb"
   },
   "Auth": {
     "brand": "Vingelis",
@@ -54,7 +55,12 @@
     "create": "Erstellen",
     "creating": "Wird erstellt...",
     "errorNameRequired": "Der Name der Organisation ist erforderlich.",
-    "errorInvalidSlug": "Ungültiger Name zur Erzeugung eines Slugs."
+    "errorInvalidSlug": "Ungültiger Name zur Erzeugung eines Slugs.",
+    "deletedHeading": "Kürzlich gelöscht",
+    "deletedHint": "Organisationen, deren Owner du warst, gelöscht in den letzten 30 Tagen.",
+    "restore": "Wiederherstellen",
+    "restoring": "Wird wiederhergestellt...",
+    "deletedOn": "Gelöscht am {date}"
   },
   "OrgLayout": {
     "membersCount": "{count} Mitglied(er)"
@@ -395,7 +401,12 @@
     "smtpSave": "SMTP-Einstellungen speichern",
     "smtpSaving": "Wird gespeichert...",
     "errorSmtpRequiredFields": "Server, Port, Benutzername und Passwort sind erforderlich.",
-    "errorSmtpInvalidPort": "Der Port muss eine positive Zahl sein."
+    "errorSmtpInvalidPort": "Der Port muss eine positive Zahl sein.",
+    "dangerZoneHeading": "Gefahrenzone",
+    "deleteOrgHint": "Verschiebt die Organisation in den Papierkorb. Ein OWNER kann sie innerhalb von 30 Tagen aus der Organisationsliste wiederherstellen; danach ist sie endgültig weg.",
+    "deleteOrgButton": "Organisation löschen",
+    "deleteOrgConfirm": "„{name}“ löschen? Dies kann innerhalb von 30 Tagen rückgängig gemacht werden.",
+    "errorOnlyOwnerDelete": "Nur ein OWNER kann die Organisation löschen."
   },
   "LocaleSwitcher": {
     "label": "Sprache"
@@ -441,5 +452,24 @@
     "VS": "Wallis",
     "ZG": "Zug",
     "ZH": "Zürich"
+  },
+  "Trash": {
+    "heading": "Papierkorb ({count})",
+    "hint": "Gelöschte Elemente werden 30 Tage aufbewahrt und können von einem OWNER oder ADMIN wiederhergestellt werden. Danach sind sie endgültig weg.",
+    "none": "Der Papierkorb ist leer.",
+    "typeContact": "Kontakt",
+    "typeCompany": "Unternehmen",
+    "typeDeal": "Deal",
+    "typeActivity": "Aktivität",
+    "typeTask": "Aufgabe",
+    "typeSegment": "Segment",
+    "typeAutomation": "Automatisierung",
+    "typeCampaign": "Kampagne",
+    "typeMember": "Mitglied",
+    "deletedOn": "Gelöscht am {date}",
+    "restore": "Wiederherstellen",
+    "restoring": "Wird wiederhergestellt...",
+    "restored": "Wiederhergestellt.",
+    "readOnlyHint": "Nur ein OWNER oder ADMIN kann Elemente wiederherstellen."
   }
 }

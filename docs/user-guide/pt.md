@@ -33,9 +33,19 @@ tarefas pendentes e atrasadas, número de campanhas, e um feed de atividade rece
 
 ## Contactos
 
-Pessoas. Cada contacto tem nome próprio (obrigatório), apelido, email, telefone e,
-opcionalmente, uma empresa associada. Clica num contacto para ver toda a sua
-atividade, negócios e tarefas. Eliminar um contacto é permanente.
+Pessoas. Cada contacto tem nome próprio (obrigatório), apelido, email, telefone,
+opcionalmente uma empresa associada, um idioma preferido, e uma cidade/cantão
+(cantões suíços — úteis para os filtros geográficos em Segmentos). Criar um contacto
+é um pequeno assistente de 2 passos: primeiro os dados básicos, depois os detalhes
+opcionais. Clica em **Editar** em qualquer contacto para o alterares mais tarde.
+
+**Importar vários de uma vez:** usa **Importar CSV** por cima da lista de contactos.
+A primeira linha tem de ser o cabeçalho; só `firstName` é obrigatório. `company` é
+associada por nome exato a uma empresa existente (fica em branco se não houver
+correspondência — nunca cria uma empresa por ti). Vês quantas linhas foram
+importadas e o motivo de qualquer falha.
+
+Eliminar um contacto não é logo permanente — vê [Lixo](#lixo) mais abaixo.
 
 ## Empresas
 
@@ -77,10 +87,9 @@ configurada para a tua organização. Todos os envios (com sucesso ou falhados) 
 registados com o assunto, destinatário e data/hora, para teres sempre um registo do
 que foi enviado e quando.
 
-> O envio requer que a conta SMTP da organização esteja configurada (um
-> administrador da organização trata disso ao nível da plataforma — consulta o
-> Manual do Administrador ou contacta quem configurou a tua instância do Nexa se o
-> envio não estiver a funcionar).
+> O envio requer que a conta SMTP da própria organização esteja configurada em
+> Definições — consulta o [Manual do Administrador](../admin-guide/pt.md) ou
+> contacta um administrador da organização se o envio não estiver a funcionar.
 
 ## Automações
 
@@ -99,12 +108,13 @@ ações teve sucesso ou falhou, e porquê.
 
 ## Segmentos
 
-Um filtro guardado e reutilizável sobre os teus contactos — por exemplo, "contactos
-na Acme Corp com email" ou "contactos criados depois de uma data". Um segmento não é
-uma lista fixa: é recalculado sempre que é usado, por isso reflete sempre os teus
-contactos atuais. Os segmentos existem principalmente para alimentar Campanhas (ver
-abaixo), mas a mesma lógica de filtro é reutilizável em qualquer sítio onde uma lista
-de contactos direcionada seja útil.
+Um filtro guardado e reutilizável sobre os teus contactos — por empresa, se têm
+email, intervalo de datas de criação, cantão suíço ou cidade (por exemplo, "contactos
+na Acme Corp com email" ou "contactos em Genebra"). Um segmento não é uma lista fixa:
+é recalculado sempre que é usado, por isso reflete sempre os teus contactos atuais.
+Os segmentos existem principalmente para alimentar Campanhas (ver abaixo), mas a
+mesma lógica de filtro é reutilizável em qualquer sítio onde uma lista de contactos
+direcionada seja útil.
 
 ## Campanhas
 
@@ -115,13 +125,19 @@ de cada falha. As campanhas são de disparo único: depois de enviada, o estado 
 de **Rascunho** a **A enviar** a **Enviada**, e não pode ser reenviada como a mesma
 campanha.
 
+## Lixo
+
+Eliminar um contacto, empresa, negócio, atividade, tarefa, segmento, automação ou
+campanha não os remove logo — vão para o **Lixo**, onde ficam **30 dias** e podem
+ser restaurados por um OWNER ou ADMIN da organização. Depois de 30 dias, desaparecem
+definitivamente. Se eliminaste algo por engano, pede a um administrador para
+restaurar a partir do **Lixo** no menu — ou faz isso tu mesmo, se tiveres esse papel.
+
 ## Dicas
 
-- Eliminar seja o que for (um contacto, um segmento, um membro) é permanente — não há
-  desfazer nem lixo.
 - Todas as listas estão limitadas à tua organização atual; mudar de organização
   (através do link "Abrir" na lista de organizações) muda tudo o que vês.
-- Se algo que esperas ver estiver em falta, confirma que estás na organização certa e
+- Se algo que esperas ver estiver em falta, confirma que estás na organização certa,
   que o teu papel tem acesso a isso (consulta o
   [Manual do Administrador](../admin-guide/pt.md) para saber o que cada papel pode
-  fazer).
+  fazer), e que não está no Lixo.

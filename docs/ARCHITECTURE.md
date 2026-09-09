@@ -15,7 +15,7 @@ deployment, see [PLATFORM_ADMIN.md](./PLATFORM_ADMIN.md).
 | Database | Postgres, hosted on Supabase |
 | ORM | Prisma 7, via `@prisma/adapter-pg` (driver adapter, not Prisma's own connection pool) |
 | i18n | next-intl 4, cookie-based locale (no URL routing) |
-| Email | Nodemailer over SMTP |
+| Email | Nodemailer, SMTP configured per organization (`Organization.smtp*`) |
 | Hosting | Vercel |
 
 Everything runs as a single Next.js app — there is no separate backend service.
@@ -87,8 +87,9 @@ Organization ──< Automation ──< AutomationAction, AutomationRun
 Organization ──< Segment ──< Campaign ──< CampaignRecipient ── Contact
 ```
 
-All primary keys are UUIDs. Every FK to `Organization` is indexed. Deleting an
-`Organization` cascades to everything under it.
+All primary keys are UUIDs. Every FK to `Organization` is indexed. The cascade
+FKs (`onDelete: Cascade`) are a DB-level safety net; the app itself never hard-deletes
+an `Organization` — see § 3a.
 
 **Automations** are deliberately schema-light: `triggerType` and `actionType` are
 plain strings, and an action's parameters live in a `Json` config blob
@@ -98,9 +99,46 @@ migration required. Current triggers: `contact.created`, `deal.stage_changed`,
 `task.completed`. Current actions: `create_task`, `create_activity`, `send_email`.
 
 **Segments** are similarly schema-light: `Segment.filters` is a small structured JSON
-object (`{ companyId?, hasEmail?, createdAfter?, createdBefore? }`, see
+object (`{ companyId?, hasEmail?, createdAfter?, createdBefore?, canton?, city? }`, see
 `lib/segments/filters.ts`), not a stored snapshot — a segment's contacts are
 recomputed live every time it's read (e.g. when a Campaign picks its recipients).
+
+## 3a. Soft delete & the Trash
+
+`Contact`, `Company`, `Deal`, `Activity`, `Task`, `Segment`, `Automation`,
+`Campaign`, `Membership`, and `Organization` all carry a nullable `deletedAt`. Every
+"Remove"/"Delete" action in the app sets it instead of issuing a hard `DELETE`; every
+list query filters `deletedAt: null`. `app/actions/trash.ts` is the one place that
+reads the other side of that filter (`deletedAt: { not: null }`) and exposes
+`restoreTrashItem` (OWNER/ADMIN only, per-entity `updateMany` back to `deletedAt:
+null`) at `/app/[orgSlug]/trash`.
+
+- **Retention is 30 days**, enforced by a *lazy sweep*: `listTrash()` hard-deletes
+  anything past the window before it reads the list, rather than a scheduled job —
+  there's no cron infrastructure in this deployment (see
+  [PLATFORM_ADMIN.md](./PLATFORM_ADMIN.md)). A trash entry older than 30 days that
+  nobody happens to view stays in the DB (harmlessly) a little longer than the stated
+  window; it never resurrects.
+- **`Membership`'s restore path reuses the same row.** `(userId, organizationId)` is a
+  DB-level unique constraint that soft-delete doesn't relax (Prisma has no partial
+  unique index here), so re-adding a removed member (`addMember` in
+  `app/actions/settings.ts`) looks for an existing soft-deleted row for that pair and
+  restores it (clearing `deletedAt`, updating `role`) instead of inserting a new one.
+  `restoreTrashItem` for `type: "member"` does the same restore, from the other
+  direction.
+- **`Organization` deletion is Owner-only** (`deleteOrganization` in
+  `app/actions/organizations.ts`) and doesn't cascade a soft-delete to its children —
+  a restored org's contacts/deals/etc. are simply whatever wasn't independently
+  trashed. Because a soft-deleted org is invisible to `getOrgForCurrentUser` (see
+  § 2, which now also excludes a soft-deleted `Membership` — a removed member loses
+  access immediately, not just from listings), there is no in-org route left to
+  restore it from; `listMyDeletedOrganizations`
+  bypasses that filter (scoped to orgs the current user owned) so `/app` can offer
+  Restore directly on the organization list.
+- **Known gap:** soft-deleting a parent (e.g. a Company) does not hide it from
+  relations that still point at it (a Contact's `company` include keeps showing the
+  trashed company's name until it's restored or purged). Not treated as a bug — just
+  not built yet.
 
 ## 4. Auth
 

@@ -6,6 +6,7 @@ import { AddMemberForm } from "./add-member-form";
 import { MemberRoleSelect } from "./member-role-select";
 import { RemoveMemberButton } from "./remove-member-button";
 import { SmtpSettingsForm } from "./smtp-settings-form";
+import { DeleteOrganizationButton } from "./delete-organization-button";
 
 export default async function SettingsPage({
   params,
@@ -84,6 +85,16 @@ export default async function SettingsPage({
             {t("addMemberHint")}
           </p>
           <AddMemberForm orgSlug={orgSlug} />
+        </section>
+      )}
+
+      {currentUserRole === "OWNER" && (
+        <section>
+          <h6 className="text-muted mb-3">{t("dangerZoneHeading")}</h6>
+          <p className="text-muted text-sm" style={{ marginTop: "-8px", marginBottom: "8px" }}>
+            {t("deleteOrgHint")}
+          </p>
+          <DeleteOrganizationButton organizationId={organization.id} organizationName={organization.name} />
         </section>
       )}
     </div>

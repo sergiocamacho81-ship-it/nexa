@@ -27,6 +27,7 @@ export default async function OrgLayout({
     { href: `/app/${orgSlug}/automations`, label: t("automations") },
     { href: `/app/${orgSlug}/campaigns`, label: t("campaigns") },
     { href: `/app/${orgSlug}/segments`, label: t("segments") },
+    { href: `/app/${orgSlug}/trash`, label: t("trash") },
     { href: `/app/${orgSlug}/settings`, label: t("settings") },
   ];
 

@@ -10,17 +10,23 @@ import { SWISS_CANTONS } from "@/lib/swiss-cantons";
 
 // Resolves an organization by slug and verifies the current user is a
 // member of it. Returns null if either check fails, so callers can 404/redirect.
+// Both the org and the membership are soft-deletable, so both checks must
+// exclude deleted rows — a removed member (or a trashed org) must lose
+// access immediately, not just disappear from listings.
 export async function getOrgForCurrentUser(orgSlug: string) {
   const user = await getCurrentUser();
   if (!user) return null;
 
   const organization = await prisma.organization.findUnique({
-    where: { slug: orgSlug },
+    where: { slug: orgSlug, deletedAt: null },
   });
   if (!organization) return null;
 
   const membership = await prisma.membership.findUnique({
-    where: { userId_organizationId: { userId: user.id, organizationId: organization.id } },
+    where: {
+      userId_organizationId: { userId: user.id, organizationId: organization.id },
+      deletedAt: null,
+    },
   });
   if (!membership) return null;
 
@@ -36,7 +42,7 @@ export async function listContacts(orgSlug: string) {
   if (!organization) return [];
 
   return prisma.contact.findMany({
-    where: { organizationId: organization.id },
+    where: { organizationId: organization.id, deletedAt: null },
     include: { company: { select: { id: true, name: true } } },
     orderBy: { createdAt: "desc" },
   });
@@ -81,7 +87,7 @@ async function parseContactFields(
 
   if (companyId) {
     const company = await prisma.company.findFirst({
-      where: { id: companyId, organizationId },
+      where: { id: companyId, organizationId, deletedAt: null },
     });
     if (!company) {
       return { error: t("errorInvalidCompany") };
@@ -153,7 +159,7 @@ export async function updateContact(
   }
 
   const existing = await prisma.contact.findFirst({
-    where: { id: contactId, organizationId: organization.id },
+    where: { id: contactId, organizationId: organization.id, deletedAt: null },
   });
   if (!existing) {
     return { error: t("errorOrgNotFound") };
@@ -180,8 +186,9 @@ export async function deleteContact(formData: FormData) {
     throw new Error("Unauthorized");
   }
 
-  await prisma.contact.deleteMany({
-    where: { id: contactId, organizationId: organization.id },
+  await prisma.contact.updateMany({
+    where: { id: contactId, organizationId: organization.id, deletedAt: null },
+    data: { deletedAt: new Date() },
   });
 
   revalidatePath(`/app/${orgSlug}/contacts`);
@@ -290,7 +297,7 @@ export async function importContacts(
   }
 
   const companies = await prisma.company.findMany({
-    where: { organizationId: organization.id },
+    where: { organizationId: organization.id, deletedAt: null },
     select: { id: true, name: true },
   });
   const companyByName = new Map(companies.map((c) => [c.name.trim().toLowerCase(), c.id]));

@@ -34,10 +34,19 @@ attività recenti.
 
 ## Contatti
 
-Persone. Ogni contatto ha un nome (obbligatorio), cognome, email, telefono e,
-facoltativamente, un'azienda collegata. Clicca su un contatto per vedere tutta la
-sua attività, le trattative e le attività da svolgere. Eliminare un contatto è
-permanente.
+Persone. Ogni contatto ha un nome (obbligatorio), cognome, email, telefono,
+facoltativamente un'azienda collegata, una lingua preferita, e una città/cantone
+(cantoni svizzeri — utili per i filtri geografici in Segmenti). La creazione è una
+breve procedura guidata in 2 passaggi: prima i dati di base, poi i dettagli
+facoltativi. Clicca su **Modifica** su qualsiasi contatto per cambiarlo in seguito.
+
+**Importare più contatti insieme:** usa **Importa CSV** sopra l'elenco dei contatti.
+La prima riga deve essere l'intestazione; solo `firstName` è obbligatorio. `company`
+viene associata per nome esatto a un'azienda esistente (lasciata vuota se non c'è
+corrispondenza — non crea mai un'azienda al posto tuo). Vedrai quante righe sono
+state importate e il motivo di eventuali fallimenti.
+
+Eliminare un contatto non è subito permanente — vedi [Cestino](#cestino) più sotto.
 
 ## Aziende
 
@@ -79,10 +88,9 @@ email configurato per la tua organizzazione. Ogni invio (riuscito o fallito) vie
 registrato con oggetto, destinatario e data/ora, così hai sempre traccia di cosa è
 stato inviato e quando.
 
-> L'invio richiede che l'account SMTP dell'organizzazione sia configurato (un
-> amministratore dell'organizzazione lo configura a livello di piattaforma —
-> consulta la Guida amministratore o contatta chi ha configurato la tua istanza
-> Nexa se l'invio non funziona).
+> L'invio richiede che l'account SMTP proprio dell'organizzazione sia configurato
+> nelle Impostazioni — consulta la [Guida amministratore](../admin-guide/it.md) o
+> contatta un amministratore dell'organizzazione se l'invio non funziona.
 
 ## Automazioni
 
@@ -101,8 +109,9 @@ ciascuna delle sue azioni è riuscita o fallita, e perché.
 
 ## Segmenti
 
-Un filtro salvato e riutilizzabile sui tuoi contatti — ad esempio "contatti presso
-Acme Corp con email" o "contatti creati dopo una certa data". Un segmento non è un
+Un filtro salvato e riutilizzabile sui tuoi contatti — per azienda, presenza di
+un'email, intervallo di date di creazione, cantone svizzero o città (ad esempio
+"contatti presso Acme Corp con email" o "contatti a Ginevra"). Un segmento non è un
 elenco fisso: viene ricalcolato ogni volta che viene usato, quindi riflette sempre i
 tuoi contatti attuali. I segmenti esistono principalmente per alimentare le
 Campagne (vedi sotto), ma la stessa logica di filtro è riutilizzabile ovunque serva
@@ -117,14 +126,21 @@ l'errore specifico per ogni fallimento. Le campagne sono a invio unico: una volt
 inviata, lo stato passa da **Bozza** a **Invio in corso** a **Inviata**, e non può
 essere reinviata come la stessa campagna.
 
+## Cestino
+
+Eliminare un contatto, azienda, trattativa, attività, attività da svolgere,
+segmento, automazione o campagna non li rimuove subito — vanno nel **Cestino**, dove
+restano **30 giorni** e possono essere ripristinati da un OWNER o ADMIN
+dell'organizzazione. Dopo 30 giorni spariscono definitivamente. Se hai eliminato
+qualcosa per errore, chiedi a un amministratore di ripristinarlo dal **Cestino** nel
+menu — oppure fallo tu stesso, se hai quel ruolo.
+
 ## Consigli
 
-- Eliminare qualsiasi cosa (un contatto, un segmento, un membro) è permanente — non
-  c'è annullamento né cestino.
 - Ogni elenco è limitato alla tua organizzazione attuale; cambiare organizzazione
   (tramite il link "Apri" nell'elenco delle organizzazioni) cambia tutto ciò che
   vedi.
 - Se manca qualcosa che ti aspetti di vedere, verifica di essere nell'organizzazione
-  giusta e che il tuo ruolo vi abbia accesso (consulta la
+  giusta, che il tuo ruolo vi abbia accesso (consulta la
   [Guida amministratore](../admin-guide/it.md) per sapere cosa può fare ciascun
-  ruolo).
+  ruolo), e che non sia nel Cestino.

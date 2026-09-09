@@ -35,10 +35,21 @@ letzten Aktivitäten.
 
 ## Kontakte
 
-Personen. Jeder Kontakt hat einen Vornamen (Pflichtfeld), Nachname, E-Mail, Telefon
-und optional ein verknüpftes Unternehmen. Klicke auf einen Kontakt, um dessen
-gesamte Aktivität, Deals und Aufgaben zu sehen. Das Löschen eines Kontakts ist
-endgültig.
+Personen. Jeder Kontakt hat einen Vornamen (Pflichtfeld), Nachname, E-Mail, Telefon,
+optional ein verknüpftes Unternehmen, eine bevorzugte Sprache und eine Stadt/einen
+Kanton (Schweizer Kantone — nützlich für die geografischen Filter in Segmenten). Das
+Anlegen ist ein kurzer Assistent in 2 Schritten: erst die Grunddaten, dann die
+optionalen Details. Klicke bei einem Kontakt auf **Bearbeiten**, um ihn später zu
+ändern.
+
+**Mehrere auf einmal importieren:** Nutze **CSV importieren** oberhalb der
+Kontaktliste. Die erste Zeile muss die Kopfzeile sein; nur `firstName` ist Pflicht.
+`company` wird per exaktem Namen einem bestehenden Unternehmen zugeordnet (bleibt
+ohne Treffer leer — es wird nie ein Unternehmen für dich erstellt). Du siehst, wie
+viele Zeilen importiert wurden und den Grund für jeden Fehlschlag.
+
+Das Löschen eines Kontakts ist nicht sofort endgültig — siehe [Papierkorb](#papierkorb)
+weiter unten.
 
 ## Unternehmen
 
@@ -82,10 +93,9 @@ Organisation konfigurierte E-Mail-Konto. Jeder Versand (erfolgreich oder
 fehlgeschlagen) wird mit Betreff, Empfänger und Zeitstempel protokolliert, sodass du
 immer nachvollziehen kannst, was wann versendet wurde.
 
-> Für den Versand muss das SMTP-Konto der Organisation konfiguriert sein (ein
-> Organisations-Admin richtet dies auf Plattformebene ein — siehe das
-> Administratorhandbuch oder wende dich an die Person, die deine Nexa-Instanz
-> eingerichtet hat, falls der Versand nicht funktioniert).
+> Für den Versand muss das eigene SMTP-Konto der Organisation in den Einstellungen
+> konfiguriert sein — siehe das [Administratorhandbuch](../admin-guide/de.md) oder
+> wende dich an einen Organisations-Admin, falls der Versand nicht funktioniert.
 
 ## Automatisierungen
 
@@ -104,12 +114,13 @@ ihrer Aktionen erfolgreich war oder fehlgeschlagen ist, und warum.
 
 ## Segmente
 
-Ein gespeicherter, wiederverwendbarer Filter über deine Kontakte — z. B. "Kontakte
-bei Acme Corp mit E-Mail" oder "Kontakte, die nach einem bestimmten Datum erstellt
-wurden". Ein Segment ist keine feste Liste: Es wird bei jeder Verwendung neu
-berechnet und spiegelt daher immer deine aktuellen Kontakte wider. Segmente dienen
-hauptsächlich dazu, Kampagnen zu speisen (siehe unten), aber dieselbe Filterlogik ist
-überall dort wiederverwendbar, wo eine gezielte Kontaktliste nützlich ist.
+Ein gespeicherter, wiederverwendbarer Filter über deine Kontakte — nach Unternehmen,
+ob eine E-Mail vorhanden ist, Erstellungsdatum-Bereich, Schweizer Kanton oder Stadt
+(z. B. "Kontakte bei Acme Corp mit E-Mail" oder "Kontakte in Genf"). Ein Segment ist
+keine feste Liste: Es wird bei jeder Verwendung neu berechnet und spiegelt daher
+immer deine aktuellen Kontakte wider. Segmente dienen hauptsächlich dazu, Kampagnen
+zu speisen (siehe unten), aber dieselbe Filterlogik ist überall dort
+wiederverwendbar, wo eine gezielte Kontaktliste nützlich ist.
 
 ## Kampagnen
 
@@ -120,13 +131,22 @@ fehlgeschlagen sind, mit dem genauen Fehler für jeden Fehlschlag. Kampagnen sin
 einmalig: Nach dem Versand wechselt der Status von **Entwurf** zu **Wird gesendet**
 zu **Gesendet** und kann nicht als dieselbe Kampagne erneut gesendet werden.
 
+## Papierkorb
+
+Das Löschen eines Kontakts, Unternehmens, Deals, einer Aktivität, Aufgabe, eines
+Segments, einer Automatisierung oder Kampagne entfernt sie nicht sofort — sie
+wandern in den **Papierkorb**, wo sie **30 Tage** bleiben und von einem OWNER oder
+ADMIN der Organisation wiederhergestellt werden können. Nach 30 Tagen sind sie
+endgültig weg. Hast du versehentlich etwas gelöscht, bitte einen Admin, es aus dem
+**Papierkorb** im Menü wiederherzustellen — oder mach es selbst, falls du diese
+Rolle hast.
+
 ## Tipps
 
-- Das Löschen von irgendetwas (ein Kontakt, ein Segment, ein Mitglied) ist endgültig
-  — es gibt weder Rückgängig noch einen Papierkorb.
 - Jede Liste ist auf deine aktuelle Organisation beschränkt; der Wechsel der
   Organisation (über den Link "Öffnen" in der Organisationsliste) ändert alles, was
   du siehst.
-- Fehlt etwas, das du erwartest, prüfe, ob du in der richtigen Organisation bist und
-  ob deine Rolle darauf Zugriff hat (siehe das
-  [Administratorhandbuch](../admin-guide/de.md) für die Rechte jeder Rolle).
+- Fehlt etwas, das du erwartest, prüfe, ob du in der richtigen Organisation bist, ob
+  deine Rolle darauf Zugriff hat (siehe das
+  [Administratorhandbuch](../admin-guide/de.md) für die Rechte jeder Rolle), und ob
+  es nicht im Papierkorb liegt.

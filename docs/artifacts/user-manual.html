@@ -369,7 +369,10 @@ en: {
       <p>The first thing you see inside an organization: counts of contacts and companies, open deal value and count, total won value, your pipeline broken down by stage, pending and overdue tasks, campaign count, and a feed of recent activity.</p>
     ` },
     { id: "contacts", h: "Contacts", body: `
-      <p>People. Each contact has a first name (required), last name, email, phone, and optionally a linked company. Click a contact to see their full activity, deals, and tasks. Deleting a contact is permanent.</p>
+      <p>People. Each contact has a first name (required), last name, email, phone, an optional linked company, a preferred language, and a city/canton (Swiss cantons — useful for the geographic filters in Segments). Creating one is a short 2-step wizard: basics first, then the optional details. Click <strong>Edit</strong> on any contact to change it later.</p>
+      <h3>Importing many at once</h3>
+      <p>Use <strong>Import CSV</strong> above the contact list. The first row must be a header; only <code>firstName</code> is required. <code>company</code> is matched by exact name to an existing company (left blank if there's no match — it never creates a company for you). You'll see how many rows imported and the reason for any that failed.</p>
+      <p>Deleting a contact isn't permanent right away — see <a href="#trash">Trash</a> below.</p>
     ` },
     { id: "companies", h: "Companies", body: `
       <p>Organizations you do business with. A company has a name and an optional website domain. Linking contacts and deals to a company lets you see everything related to that company in one place.</p>
@@ -393,7 +396,7 @@ en: {
     ` },
     { id: "email", h: "Email", body: `
       <p>Send a one-off email to a contact — optionally tied to a specific deal, so it shows up in that deal's context — through your organization's configured mail account. Every send (successful or failed) is logged with its subject, recipient, and timestamp, so you always have a record of what was sent and when.</p>
-      <div class="note"><span class="icon">i</span><span>Sending requires the organization's SMTP account to be configured. Ask an organization admin if sending isn't working.</span></div>
+      <div class="note"><span class="icon">i</span><span>Sending requires the organization's own SMTP account to be configured in Settings. Ask an organization admin if sending isn't working.</span></div>
     ` },
     { id: "automations", h: "Automations", body: `
       <p>“When X happens, do Y” rules that run automatically — no manual step needed once set up.</p>
@@ -404,16 +407,18 @@ en: {
       <p>Each automation has a name, is enabled or disabled independently, and keeps a run log — every time it fires you can see whether each of its actions succeeded or failed, and why.</p>
     ` },
     { id: "segments", h: "Segments", body: `
-      <p>A saved, reusable filter over your contacts — e.g. “contacts at Acme Corp with an email” or “contacts created after a given date.” A segment isn't a fixed list: it's recalculated every time it's used, so it always reflects your current contacts. Segments exist mainly to feed Campaigns, but the same filter logic is reusable anywhere a targeted contact list is useful.</p>
+      <p>A saved, reusable filter over your contacts — by company, whether they have an email, creation date range, Swiss canton, or city (e.g. “contacts at Acme Corp with an email” or “contacts in Geneva”). A segment isn't a fixed list: it's recalculated every time it's used, so it always reflects your current contacts. Segments exist mainly to feed Campaigns, but the same filter logic is reusable anywhere a targeted contact list is useful.</p>
     ` },
     { id: "campaigns", h: "Campaigns", body: `
       <p>A bulk email sent to a segment — or to “everyone with an email” if you don't pick a segment. A campaign has a subject and a message body; once sent, you'll see how many recipients succeeded and how many failed, with the specific error for any that failed. Campaigns are one-shot: once sent, a campaign's status moves from <strong>Draft</strong> to <strong>Sending</strong> to <strong>Sent</strong> and can't be re-sent as the same campaign.</p>
     ` },
+    { id: "trash", h: "Trash", body: `
+      <p>Deleting a contact, company, deal, activity, task, segment, automation, or campaign doesn't remove it right away — it moves to the Trash, where it stays for <strong>30 days</strong> and can be restored by an organization OWNER or ADMIN. After 30 days it's gone for good. If you deleted something by mistake, ask an admin to restore it from <strong>Trash</strong> in the nav — or do it yourself if you hold that role.</p>
+    ` },
     { id: "tips", h: "Tips", body: `
       <div class="tip-list"><ul>
-        <li>Deleting anything (a contact, a segment, a member) is permanent — there's no undo or trash.</li>
         <li>Every list is scoped to your current organization; switching organizations changes everything you see.</li>
-        <li>If something you expect to see is missing, check you're in the right organization and that your role has access to it.</li>
+        <li>If something you expect to see is missing, check you're in the right organization, that your role has access to it, and that it isn't sitting in Trash.</li>
       </ul></div>
     ` },
   ],
@@ -439,7 +444,10 @@ pt: {
       <p>A primeira coisa que vês dentro de uma organização: contagem de contactos e empresas, valor e número de negócios abertos, valor total ganho, o teu pipeline por estágio, tarefas pendentes e atrasadas, número de campanhas, e um feed de atividade recente.</p>
     ` },
     { id: "contacts", h: "Contactos", body: `
-      <p>Pessoas. Cada contacto tem nome próprio (obrigatório), apelido, email, telefone e, opcionalmente, uma empresa associada. Clica num contacto para ver toda a sua atividade, negócios e tarefas. Eliminar um contacto é permanente.</p>
+      <p>Pessoas. Cada contacto tem nome próprio (obrigatório), apelido, email, telefone, opcionalmente uma empresa associada, um idioma preferido, e uma cidade/cantão (cantões suíços — úteis para os filtros geográficos em Segmentos). Criar um contacto é um pequeno assistente de 2 passos: primeiro os dados básicos, depois os detalhes opcionais. Clica em <strong>Editar</strong> em qualquer contacto para o alterares mais tarde.</p>
+      <h3>Importar vários de uma vez</h3>
+      <p>Usa <strong>Importar CSV</strong> por cima da lista de contactos. A primeira linha tem de ser o cabeçalho; só <code>firstName</code> é obrigatório. <code>company</code> é associada por nome exato a uma empresa existente (fica em branco se não houver correspondência — nunca cria uma empresa por ti). Vês quantas linhas foram importadas e o motivo de qualquer falha.</p>
+      <p>Eliminar um contacto não é logo permanente — vê <a href="#trash">Lixo</a> mais abaixo.</p>
     ` },
     { id: "companies", h: "Empresas", body: `
       <p>Organizações com quem fazes negócio. Uma empresa tem um nome e, opcionalmente, um domínio de website. Associar contactos e negócios a uma empresa permite ver tudo o que está relacionado com essa empresa num só sítio.</p>
@@ -463,7 +471,7 @@ pt: {
     ` },
     { id: "email", h: "Email", body: `
       <p>Envia um email pontual a um contacto — opcionalmente associado a um negócio específico, para aparecer no contexto desse negócio — através da conta de email configurada para a tua organização. Todos os envios ficam registados com o assunto, destinatário e data/hora, para teres sempre um registo do que foi enviado e quando.</p>
-      <div class="note"><span class="icon">i</span><span>O envio requer que a conta SMTP da organização esteja configurada. Contacta um administrador da organização se o envio não estiver a funcionar.</span></div>
+      <div class="note"><span class="icon">i</span><span>O envio requer que a conta SMTP da própria organização esteja configurada em Definições. Contacta um administrador da organização se o envio não estiver a funcionar.</span></div>
     ` },
     { id: "automations", h: "Automações", body: `
       <p>Regras “quando acontece X, faz Y” que correm automaticamente — sem qualquer passo manual depois de configuradas.</p>
@@ -474,16 +482,18 @@ pt: {
       <p>Cada automação tem um nome, pode ser ativada ou desativada independentemente, e mantém um registo de execuções — sempre que dispara podes ver se cada uma das suas ações teve sucesso ou falhou, e porquê.</p>
     ` },
     { id: "segments", h: "Segmentos", body: `
-      <p>Um filtro guardado e reutilizável sobre os teus contactos — por exemplo, “contactos na Acme Corp com email” ou “contactos criados depois de uma data”. Um segmento não é uma lista fixa: é recalculado sempre que é usado, por isso reflete sempre os teus contactos atuais. Os segmentos existem principalmente para alimentar Campanhas, mas a mesma lógica de filtro é reutilizável em qualquer sítio.</p>
+      <p>Um filtro guardado e reutilizável sobre os teus contactos — por empresa, se têm email, intervalo de datas de criação, cantão suíço ou cidade (por exemplo, “contactos na Acme Corp com email” ou “contactos em Genebra”). Um segmento não é uma lista fixa: é recalculado sempre que é usado, por isso reflete sempre os teus contactos atuais. Os segmentos existem principalmente para alimentar Campanhas, mas a mesma lógica de filtro é reutilizável em qualquer sítio.</p>
     ` },
     { id: "campaigns", h: "Campanhas", body: `
       <p>Um email em massa enviado a um segmento — ou a “todos com email” se não escolheres um segmento. Uma campanha tem um assunto e um corpo de mensagem; depois de enviada, vês quantos destinatários tiveram sucesso e quantos falharam, com o erro específico de cada falha. As campanhas são de disparo único: o estado passa de <strong>Rascunho</strong> a <strong>A enviar</strong> a <strong>Enviada</strong>, e não pode ser reenviada como a mesma campanha.</p>
     ` },
+    { id: "trash", h: "Lixo", body: `
+      <p>Eliminar um contacto, empresa, negócio, atividade, tarefa, segmento, automação ou campanha não os remove logo — vão para o <strong>Lixo</strong>, onde ficam <strong>30 dias</strong> e podem ser restaurados por um OWNER ou ADMIN da organização. Depois de 30 dias, desaparecem definitivamente. Se eliminaste algo por engano, pede a um administrador para restaurar a partir do <strong>Lixo</strong> no menu — ou faz isso tu mesmo, se tiveres esse papel.</p>
+    ` },
     { id: "tips", h: "Dicas", body: `
       <div class="tip-list"><ul>
-        <li>Eliminar seja o que for (um contacto, um segmento, um membro) é permanente — não há desfazer nem lixo.</li>
         <li>Todas as listas estão limitadas à tua organização atual; mudar de organização muda tudo o que vês.</li>
-        <li>Se algo que esperas ver estiver em falta, confirma que estás na organização certa e que o teu papel tem acesso a isso.</li>
+        <li>Se algo que esperas ver estiver em falta, confirma que estás na organização certa, que o teu papel tem acesso a isso, e que não está no Lixo.</li>
       </ul></div>
     ` },
   ],
@@ -509,7 +519,10 @@ fr: {
       <p>La première chose que vous voyez dans une organisation : le nombre de contacts et d'entreprises, la valeur et le nombre d'affaires ouvertes, la valeur totale gagnée, votre pipeline par étape, les tâches en attente et en retard, le nombre de campagnes, et un flux d'activité récente.</p>
     ` },
     { id: "contacts", h: "Contacts", body: `
-      <p>Des personnes. Chaque contact a un prénom (obligatoire), un nom, un email, un téléphone et, éventuellement, une entreprise associée. Cliquez sur un contact pour voir toute son activité, ses affaires et ses tâches. Supprimer un contact est définitif.</p>
+      <p>Des personnes. Chaque contact a un prénom (obligatoire), un nom, un email, un téléphone, éventuellement une entreprise associée, une langue préférée, et une ville/canton (cantons suisses — utiles pour les filtres géographiques dans Segments). La création est un court assistant en 2 étapes : d'abord les informations de base, puis les détails optionnels. Cliquez sur <strong>Modifier</strong> sur n'importe quel contact pour le changer plus tard.</p>
+      <h3>Importer plusieurs contacts à la fois</h3>
+      <p>Utilisez <strong>Importer un CSV</strong> au-dessus de la liste de contacts. La première ligne doit être l'en-tête ; seul <code>firstName</code> est obligatoire. <code>company</code> est associé par nom exact à une entreprise existante (laissé vide sans correspondance — cela ne crée jamais d'entreprise à votre place). Vous verrez combien de lignes ont été importées et la raison de tout échec.</p>
+      <p>Supprimer un contact n'est pas immédiatement définitif — voir <a href="#trash">Corbeille</a> ci-dessous.</p>
     ` },
     { id: "companies", h: "Entreprises", body: `
       <p>Les organisations avec qui vous travaillez. Une entreprise a un nom et, éventuellement, un domaine de site web. Associer des contacts et des affaires à une entreprise permet de voir tout ce qui la concerne au même endroit.</p>
@@ -533,7 +546,7 @@ fr: {
     ` },
     { id: "email", h: "Email", body: `
       <p>Envoyez un email ponctuel à un contact — éventuellement lié à une affaire précise — via le compte email configuré pour votre organisation. Chaque envoi est enregistré avec son objet, son destinataire et son horodatage, pour garder une trace de ce qui a été envoyé et quand.</p>
-      <div class="note"><span class="icon">i</span><span>L'envoi nécessite que le compte SMTP de l'organisation soit configuré. Contactez un administrateur de l'organisation si l'envoi ne fonctionne pas.</span></div>
+      <div class="note"><span class="icon">i</span><span>L'envoi nécessite que le compte SMTP propre à l'organisation soit configuré dans Paramètres. Contactez un administrateur de l'organisation si l'envoi ne fonctionne pas.</span></div>
     ` },
     { id: "automations", h: "Automatisations", body: `
       <p>Des règles « quand X se produit, fais Y » qui s'exécutent automatiquement — sans aucune étape manuelle une fois configurées.</p>
@@ -544,16 +557,18 @@ fr: {
       <p>Chaque automatisation a un nom, peut être activée ou désactivée indépendamment, et conserve un journal d'exécution — à chaque déclenchement, vous voyez si chacune de ses actions a réussi ou échoué, et pourquoi.</p>
     ` },
     { id: "segments", h: "Segments", body: `
-      <p>Un filtre enregistré et réutilisable sur vos contacts — par exemple « contacts chez Acme Corp avec un email » ou « contacts créés après une date donnée ». Un segment n'est pas une liste figée : il est recalculé à chaque utilisation, donc il reflète toujours vos contacts actuels. Les segments existent surtout pour alimenter les Campagnes, mais la même logique de filtre est réutilisable partout ailleurs.</p>
+      <p>Un filtre enregistré et réutilisable sur vos contacts — par entreprise, présence d'un email, plage de dates de création, canton suisse ou ville (par exemple « contacts chez Acme Corp avec un email » ou « contacts à Genève »). Un segment n'est pas une liste figée : il est recalculé à chaque utilisation, donc il reflète toujours vos contacts actuels. Les segments existent surtout pour alimenter les Campagnes, mais la même logique de filtre est réutilisable partout ailleurs.</p>
     ` },
     { id: "campaigns", h: "Campagnes", body: `
       <p>Un email envoyé en masse à un segment — ou à « tous ceux qui ont un email » si vous ne choisissez pas de segment. Une campagne a un objet et un corps de message ; une fois envoyée, vous voyez combien de destinataires ont réussi et combien ont échoué, avec l'erreur précise pour chaque échec. Les campagnes sont à usage unique : le statut passe de <strong>Brouillon</strong> à <strong>Envoi en cours</strong> à <strong>Envoyée</strong>, et ne peut pas être renvoyée en tant que même campagne.</p>
     ` },
+    { id: "trash", h: "Corbeille", body: `
+      <p>Supprimer un contact, une entreprise, une affaire, une activité, une tâche, un segment, une automatisation ou une campagne ne le supprime pas tout de suite — cela passe dans la <strong>Corbeille</strong>, où cela reste <strong>30 jours</strong> et peut être restauré par un OWNER ou un ADMIN de l'organisation. Après 30 jours, c'est définitivement perdu. Si vous avez supprimé quelque chose par erreur, demandez à un administrateur de le restaurer depuis <strong>Corbeille</strong> dans le menu — ou faites-le vous-même si vous avez ce rôle.</p>
+    ` },
     { id: "tips", h: "Astuces", body: `
       <div class="tip-list"><ul>
-        <li>Supprimer quoi que ce soit (un contact, un segment, un membre) est définitif — il n'y a ni annulation ni corbeille.</li>
         <li>Chaque liste est limitée à votre organisation actuelle ; changer d'organisation change tout ce que vous voyez.</li>
-        <li>Si quelque chose que vous attendez de voir manque, vérifiez que vous êtes dans la bonne organisation et que votre rôle y a accès.</li>
+        <li>Si quelque chose que vous attendez de voir manque, vérifiez que vous êtes dans la bonne organisation, que votre rôle y a accès, et que ce n'est pas dans la Corbeille.</li>
       </ul></div>
     ` },
   ],
@@ -579,7 +594,10 @@ de: {
       <p>Das Erste, was du in einer Organisation siehst: Anzahl der Kontakte und Unternehmen, Wert und Anzahl offener Deals, gesamter gewonnener Wert, deine Pipeline nach Phase, ausstehende und überfällige Aufgaben, Anzahl der Kampagnen, sowie ein Feed der letzten Aktivitäten.</p>
     ` },
     { id: "contacts", h: "Kontakte", body: `
-      <p>Personen. Jeder Kontakt hat einen Vornamen (Pflichtfeld), Nachname, E-Mail, Telefon und optional ein verknüpftes Unternehmen. Klicke auf einen Kontakt, um dessen gesamte Aktivität, Deals und Aufgaben zu sehen. Das Löschen eines Kontakts ist endgültig.</p>
+      <p>Personen. Jeder Kontakt hat einen Vornamen (Pflichtfeld), Nachname, E-Mail, Telefon, optional ein verknüpftes Unternehmen, eine bevorzugte Sprache und eine Stadt/einen Kanton (Schweizer Kantone — nützlich für die geografischen Filter in Segmenten). Das Anlegen ist ein kurzer Assistent in 2 Schritten: erst die Grunddaten, dann die optionalen Details. Klicke bei einem Kontakt auf <strong>Bearbeiten</strong>, um ihn später zu ändern.</p>
+      <h3>Mehrere auf einmal importieren</h3>
+      <p>Nutze <strong>CSV importieren</strong> oberhalb der Kontaktliste. Die erste Zeile muss die Kopfzeile sein; nur <code>firstName</code> ist Pflicht. <code>company</code> wird per exaktem Namen einem bestehenden Unternehmen zugeordnet (bleibt ohne Treffer leer — es wird nie ein Unternehmen für dich erstellt). Du siehst, wie viele Zeilen importiert wurden und den Grund für jeden Fehlschlag.</p>
+      <p>Das Löschen eines Kontakts ist nicht sofort endgültig — siehe <a href="#trash">Papierkorb</a> weiter unten.</p>
     ` },
     { id: "companies", h: "Unternehmen", body: `
       <p>Organisationen, mit denen du Geschäfte machst. Ein Unternehmen hat einen Namen und optional eine Website-Domain. Wenn du Kontakte und Deals mit einem Unternehmen verknüpfst, siehst du alles Zugehörige an einem Ort.</p>
@@ -603,7 +621,7 @@ de: {
     ` },
     { id: "email", h: "E-Mail", body: `
       <p>Sende eine einmalige E-Mail an einen Kontakt — optional mit einem bestimmten Deal verknüpft — über das für deine Organisation konfigurierte E-Mail-Konto. Jeder Versand wird mit Betreff, Empfänger und Zeitstempel protokolliert, sodass du immer nachvollziehen kannst, was wann versendet wurde.</p>
-      <div class="note"><span class="icon">i</span><span>Für den Versand muss das SMTP-Konto der Organisation konfiguriert sein. Wende dich an einen Organisations-Admin, falls der Versand nicht funktioniert.</span></div>
+      <div class="note"><span class="icon">i</span><span>Für den Versand muss das eigene SMTP-Konto der Organisation in den Einstellungen konfiguriert sein. Wende dich an einen Organisations-Admin, falls der Versand nicht funktioniert.</span></div>
     ` },
     { id: "automations", h: "Automatisierungen", body: `
       <p>Regeln nach dem Muster „wenn X passiert, tue Y“, die automatisch ausgeführt werden — kein manueller Schritt nötig, sobald sie eingerichtet sind.</p>
@@ -614,16 +632,18 @@ de: {
       <p>Jede Automatisierung hat einen Namen, kann unabhängig aktiviert oder deaktiviert werden und führt ein Ausführungsprotokoll — bei jeder Auslösung siehst du, ob jede ihrer Aktionen erfolgreich war, und warum.</p>
     ` },
     { id: "segments", h: "Segmente", body: `
-      <p>Ein gespeicherter, wiederverwendbarer Filter über deine Kontakte — z. B. „Kontakte bei Acme Corp mit E-Mail“ oder „Kontakte, die nach einem bestimmten Datum erstellt wurden“. Ein Segment ist keine feste Liste: Es wird bei jeder Verwendung neu berechnet. Segmente dienen hauptsächlich dazu, Kampagnen zu speisen, aber dieselbe Filterlogik ist überall nützlich.</p>
+      <p>Ein gespeicherter, wiederverwendbarer Filter über deine Kontakte — nach Unternehmen, ob eine E-Mail vorhanden ist, Erstellungsdatum-Bereich, Schweizer Kanton oder Stadt (z. B. „Kontakte bei Acme Corp mit E-Mail“ oder „Kontakte in Genf“). Ein Segment ist keine feste Liste: Es wird bei jeder Verwendung neu berechnet. Segmente dienen hauptsächlich dazu, Kampagnen zu speisen, aber dieselbe Filterlogik ist überall nützlich.</p>
     ` },
     { id: "campaigns", h: "Kampagnen", body: `
       <p>Eine Massen-E-Mail an ein Segment — oder an „alle mit E-Mail-Adresse“, wenn du kein Segment auswählst. Eine Kampagne hat einen Betreff und einen Nachrichtentext; nach dem Versand siehst du, wie viele Empfänger erfolgreich waren und wie viele fehlgeschlagen sind. Kampagnen sind einmalig: Der Status wechselt von <strong>Entwurf</strong> zu <strong>Wird gesendet</strong> zu <strong>Gesendet</strong>.</p>
     ` },
+    { id: "trash", h: "Papierkorb", body: `
+      <p>Das Löschen eines Kontakts, Unternehmens, Deals, einer Aktivität, Aufgabe, eines Segments, einer Automatisierung oder Kampagne entfernt sie nicht sofort — sie wandern in den <strong>Papierkorb</strong>, wo sie <strong>30 Tage</strong> bleiben und von einem OWNER oder ADMIN der Organisation wiederhergestellt werden können. Nach 30 Tagen sind sie endgültig weg. Hast du versehentlich etwas gelöscht, bitte einen Admin, es aus dem <strong>Papierkorb</strong> im Menü wiederherzustellen — oder mach es selbst, falls du diese Rolle hast.</p>
+    ` },
     { id: "tips", h: "Tipps", body: `
       <div class="tip-list"><ul>
-        <li>Das Löschen von irgendetwas ist endgültig — es gibt weder Rückgängig noch einen Papierkorb.</li>
         <li>Jede Liste ist auf deine aktuelle Organisation beschränkt; der Wechsel der Organisation ändert alles, was du siehst.</li>
-        <li>Fehlt etwas, das du erwartest, prüfe, ob du in der richtigen Organisation bist und ob deine Rolle darauf Zugriff hat.</li>
+        <li>Fehlt etwas, das du erwartest, prüfe, ob du in der richtigen Organisation bist, ob deine Rolle darauf Zugriff hat, und ob es nicht im Papierkorb liegt.</li>
       </ul></div>
     ` },
   ],
@@ -649,7 +669,10 @@ it: {
       <p>La prima cosa che vedi dentro un'organizzazione: conteggio di contatti e aziende, valore e numero di trattative aperte, valore totale vinto, la tua pipeline per fase, attività da svolgere in sospeso e scadute, numero di campagne, e un feed delle attività recenti.</p>
     ` },
     { id: "contacts", h: "Contatti", body: `
-      <p>Persone. Ogni contatto ha un nome (obbligatorio), cognome, email, telefono e, facoltativamente, un'azienda collegata. Clicca su un contatto per vedere tutta la sua attività, le trattative e le attività da svolgere. Eliminare un contatto è permanente.</p>
+      <p>Persone. Ogni contatto ha un nome (obbligatorio), cognome, email, telefono, facoltativamente un'azienda collegata, una lingua preferita, e una città/cantone (cantoni svizzeri — utili per i filtri geografici in Segmenti). La creazione è una breve procedura guidata in 2 passaggi: prima i dati di base, poi i dettagli facoltativi. Clicca su <strong>Modifica</strong> su qualsiasi contatto per cambiarlo in seguito.</p>
+      <h3>Importare più contatti insieme</h3>
+      <p>Usa <strong>Importa CSV</strong> sopra l'elenco dei contatti. La prima riga deve essere l'intestazione; solo <code>firstName</code> è obbligatorio. <code>company</code> viene associata per nome esatto a un'azienda esistente (lasciata vuota se non c'è corrispondenza — non crea mai un'azienda al posto tuo). Vedrai quante righe sono state importate e il motivo di eventuali fallimenti.</p>
+      <p>Eliminare un contatto non è subito permanente — vedi <a href="#trash">Cestino</a> più sotto.</p>
     ` },
     { id: "companies", h: "Aziende", body: `
       <p>Organizzazioni con cui fai affari. Un'azienda ha un nome e, facoltativamente, un dominio del sito web. Collegare contatti e trattative a un'azienda permette di vedere tutto ciò che la riguarda in un unico posto.</p>
@@ -673,7 +696,7 @@ it: {
     ` },
     { id: "email", h: "Email", body: `
       <p>Invia un'email singola a un contatto — facoltativamente collegata a una trattativa specifica — tramite l'account email configurato per la tua organizzazione. Ogni invio viene registrato con oggetto, destinatario e data/ora, così hai sempre traccia di cosa è stato inviato e quando.</p>
-      <div class="note"><span class="icon">i</span><span>L'invio richiede che l'account SMTP dell'organizzazione sia configurato. Contatta un amministratore dell'organizzazione se l'invio non funziona.</span></div>
+      <div class="note"><span class="icon">i</span><span>L'invio richiede che l'account SMTP proprio dell'organizzazione sia configurato nelle Impostazioni. Contatta un amministratore dell'organizzazione se l'invio non funziona.</span></div>
     ` },
     { id: "automations", h: "Automazioni", body: `
       <p>Regole “quando succede X, fai Y” che vengono eseguite automaticamente — nessun passaggio manuale una volta configurate.</p>
@@ -684,16 +707,18 @@ it: {
       <p>Ogni automazione ha un nome, può essere attivata o disattivata indipendentemente, e mantiene un registro delle esecuzioni — ogni volta che si attiva puoi vedere se ciascuna delle sue azioni è riuscita o fallita, e perché.</p>
     ` },
     { id: "segments", h: "Segmenti", body: `
-      <p>Un filtro salvato e riutilizzabile sui tuoi contatti — ad esempio “contatti presso Acme Corp con email” o “contatti creati dopo una certa data”. Un segmento non è un elenco fisso: viene ricalcolato ogni volta che viene usato. I segmenti esistono principalmente per alimentare le Campagne, ma la stessa logica di filtro è riutilizzabile ovunque.</p>
+      <p>Un filtro salvato e riutilizzabile sui tuoi contatti — per azienda, presenza di un'email, intervallo di date di creazione, cantone svizzero o città (ad esempio “contatti presso Acme Corp con email” o “contatti a Ginevra”). Un segmento non è un elenco fisso: viene ricalcolato ogni volta che viene usato. I segmenti esistono principalmente per alimentare le Campagne, ma la stessa logica di filtro è riutilizzabile ovunque.</p>
     ` },
     { id: "campaigns", h: "Campagne", body: `
       <p>Un'email inviata in massa a un segmento — o a “tutti quelli con un'email” se non scegli un segmento. Una campagna ha un oggetto e un corpo del messaggio; una volta inviata, vedi quanti destinatari hanno avuto successo e quanti sono falliti, con l'errore specifico per ogni fallimento. Le campagne sono a invio unico: lo stato passa da <strong>Bozza</strong> a <strong>Invio in corso</strong> a <strong>Inviata</strong>.</p>
     ` },
+    { id: "trash", h: "Cestino", body: `
+      <p>Eliminare un contatto, azienda, trattativa, attività, attività da svolgere, segmento, automazione o campagna non li rimuove subito — vanno nel <strong>Cestino</strong>, dove restano <strong>30 giorni</strong> e possono essere ripristinati da un OWNER o ADMIN dell'organizzazione. Dopo 30 giorni spariscono definitivamente. Se hai eliminato qualcosa per errore, chiedi a un amministratore di ripristinarlo dal <strong>Cestino</strong> nel menu — oppure fallo tu stesso, se hai quel ruolo.</p>
+    ` },
     { id: "tips", h: "Consigli", body: `
       <div class="tip-list"><ul>
-        <li>Eliminare qualsiasi cosa è permanente — non c'è annullamento né cestino.</li>
         <li>Ogni elenco è limitato alla tua organizzazione attuale; cambiare organizzazione cambia tutto ciò che vedi.</li>
-        <li>Se manca qualcosa che ti aspetti di vedere, verifica di essere nell'organizzazione giusta e che il tuo ruolo vi abbia accesso.</li>
+        <li>Se manca qualcosa che ti aspetti di vedere, verifica di essere nell'organizzazione giusta, che il tuo ruolo vi abbia accesso, e che non sia nel Cestino.</li>
       </ul></div>
     ` },
   ],

@@ -15,7 +15,7 @@ export async function listCampaigns(orgSlug: string) {
   if (!organization) return [];
 
   return prisma.campaign.findMany({
-    where: { organizationId: organization.id },
+    where: { organizationId: organization.id, deletedAt: null },
     include: { recipients: true, segment: { select: { id: true, name: true } } },
     orderBy: { createdAt: "desc" },
   });
@@ -49,10 +49,14 @@ export async function createCampaign(
   // No segment picked -> every contact with an email (the old default).
   // Segment picked -> its filters, narrowed to contacts with an email since
   // a campaign can't reach someone without one either way.
-  let contactWhere = { organizationId: organization.id, email: { not: null } } as const;
+  let contactWhere = {
+    organizationId: organization.id,
+    deletedAt: null,
+    email: { not: null },
+  } as const;
   if (segmentId) {
     const segment = await prisma.segment.findFirst({
-      where: { id: segmentId, organizationId: organization.id },
+      where: { id: segmentId, organizationId: organization.id, deletedAt: null },
     });
     if (!segment) return { error: t("errorInvalidSegment") };
     const filters = parseSegmentFilters(segment.filters);
@@ -98,7 +102,7 @@ export async function sendCampaign(formData: FormData) {
   }
 
   const campaign = await prisma.campaign.findFirst({
-    where: { id: campaignId, organizationId: organization.id },
+    where: { id: campaignId, organizationId: organization.id, deletedAt: null },
     include: { recipients: { include: { contact: true } } },
   });
   if (!campaign || campaign.status !== "DRAFT") {
@@ -161,8 +165,9 @@ export async function deleteCampaign(formData: FormData) {
     throw new Error("Unauthorized");
   }
 
-  await prisma.campaign.deleteMany({
-    where: { id: campaignId, organizationId: organization.id },
+  await prisma.campaign.updateMany({
+    where: { id: campaignId, organizationId: organization.id, deletedAt: null },
+    data: { deletedAt: new Date() },
   });
 
   revalidatePath(`/app/${orgSlug}/campaigns`);

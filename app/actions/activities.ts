@@ -13,7 +13,7 @@ export async function listActivities(orgSlug: string) {
   if (!organization) return [];
 
   return prisma.activity.findMany({
-    where: { organizationId: organization.id },
+    where: { organizationId: organization.id, deletedAt: null },
     include: {
       contact: { select: { id: true, firstName: true, lastName: true } },
       company: { select: { id: true, name: true } },
@@ -52,19 +52,19 @@ export async function createActivity(
 
   if (contactId) {
     const contact = await prisma.contact.findFirst({
-      where: { id: contactId, organizationId: organization.id },
+      where: { id: contactId, organizationId: organization.id, deletedAt: null },
     });
     if (!contact) return { error: t("errorInvalidContact") };
   }
   if (companyId) {
     const company = await prisma.company.findFirst({
-      where: { id: companyId, organizationId: organization.id },
+      where: { id: companyId, organizationId: organization.id, deletedAt: null },
     });
     if (!company) return { error: t("errorInvalidCompany") };
   }
   if (dealId) {
     const deal = await prisma.deal.findFirst({
-      where: { id: dealId, organizationId: organization.id },
+      where: { id: dealId, organizationId: organization.id, deletedAt: null },
     });
     if (!deal) return { error: t("errorInvalidDeal") };
   }
@@ -93,8 +93,9 @@ export async function deleteActivity(formData: FormData) {
     throw new Error("Unauthorized");
   }
 
-  await prisma.activity.deleteMany({
-    where: { id: activityId, organizationId: organization.id },
+  await prisma.activity.updateMany({
+    where: { id: activityId, organizationId: organization.id, deletedAt: null },
+    data: { deletedAt: new Date() },
   });
 
   revalidatePath(`/app/${orgSlug}/activities`);

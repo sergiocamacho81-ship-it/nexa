@@ -37,9 +37,20 @@ campagnes, et un flux d'activité récente.
 ## Contacts
 
 Des personnes. Chaque contact a un prénom (obligatoire), un nom, un email, un
-téléphone et, éventuellement, une entreprise associée. Cliquez sur un contact pour
-voir toute son activité, ses affaires et ses tâches. Supprimer un contact est
-définitif.
+téléphone, éventuellement une entreprise associée, une langue préférée, et une
+ville/canton (cantons suisses — utiles pour les filtres géographiques dans
+Segments). La création est un court assistant en 2 étapes : d'abord les informations
+de base, puis les détails optionnels. Cliquez sur **Modifier** sur n'importe quel
+contact pour le changer plus tard.
+
+**Importer plusieurs contacts à la fois :** utilisez **Importer un CSV** au-dessus de
+la liste de contacts. La première ligne doit être l'en-tête ; seul `firstName` est
+obligatoire. `company` est associé par nom exact à une entreprise existante (laissé
+vide sans correspondance — cela ne crée jamais d'entreprise à votre place). Vous
+verrez combien de lignes ont été importées et la raison de tout échec.
+
+Supprimer un contact n'est pas immédiatement définitif — voir [Corbeille](#corbeille)
+ci-dessous.
 
 ## Entreprises
 
@@ -82,10 +93,9 @@ pour votre organisation. Chaque envoi (réussi ou échoué) est enregistré avec
 objet, son destinataire et son horodatage, pour garder une trace de ce qui a été
 envoyé et quand.
 
-> L'envoi nécessite que le compte SMTP de l'organisation soit configuré (un
-> administrateur de l'organisation s'en occupe au niveau de la plateforme —
-> consultez le Guide administrateur ou contactez la personne qui a configuré votre
-> instance Nexa si l'envoi ne fonctionne pas).
+> L'envoi nécessite que le compte SMTP propre à l'organisation soit configuré dans
+> Paramètres — consultez le [Guide administrateur](../admin-guide/fr.md) ou
+> contactez un administrateur de l'organisation si l'envoi ne fonctionne pas.
 
 ## Automatisations
 
@@ -104,8 +114,9 @@ ses actions a réussi ou échoué, et pourquoi.
 
 ## Segments
 
-Un filtre enregistré et réutilisable sur vos contacts — par exemple « contacts chez
-Acme Corp avec un email » ou « contacts créés après une date donnée ». Un segment
+Un filtre enregistré et réutilisable sur vos contacts — par entreprise, présence
+d'un email, plage de dates de création, canton suisse ou ville (par exemple
+« contacts chez Acme Corp avec un email » ou « contacts à Genève »). Un segment
 n'est pas une liste figée : il est recalculé à chaque utilisation, donc il reflète
 toujours vos contacts actuels. Les segments existent surtout pour alimenter les
 Campagnes (voir ci-dessous), mais la même logique de filtre est réutilisable partout
@@ -120,14 +131,22 @@ avec l'erreur précise pour chaque échec. Les campagnes sont à usage unique : 
 envoyée, le statut passe de **Brouillon** à **Envoi en cours** à **Envoyée**, et ne
 peut pas être renvoyée en tant que même campagne.
 
+## Corbeille
+
+Supprimer un contact, une entreprise, une affaire, une activité, une tâche, un
+segment, une automatisation ou une campagne ne le supprime pas tout de suite — cela
+passe dans la **Corbeille**, où cela reste **30 jours** et peut être restauré par un
+OWNER ou un ADMIN de l'organisation. Après 30 jours, c'est définitivement perdu. Si
+vous avez supprimé quelque chose par erreur, demandez à un administrateur de le
+restaurer depuis **Corbeille** dans le menu — ou faites-le vous-même si vous avez ce
+rôle.
+
 ## Astuces
 
-- Supprimer quoi que ce soit (un contact, un segment, un membre) est définitif — il
-  n'y a ni annulation ni corbeille.
 - Chaque liste est limitée à votre organisation actuelle ; changer d'organisation
   (via le lien « Ouvrir » dans la liste des organisations) change tout ce que vous
   voyez.
 - Si quelque chose que vous attendez de voir manque, vérifiez que vous êtes dans la
-  bonne organisation et que votre rôle y a accès (consultez le
+  bonne organisation, que votre rôle y a accès (consultez le
   [Guide administrateur](../admin-guide/fr.md) pour savoir ce que chaque rôle peut
-  faire).
+  faire), et que ce n'est pas dans la Corbeille.

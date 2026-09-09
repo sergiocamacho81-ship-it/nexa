@@ -33,7 +33,7 @@ export async function listOrganizationMembersWithEmail(orgSlug: string) {
 
   const t = await getTranslations("Settings");
   const memberships = await prisma.membership.findMany({
-    where: { organizationId: organization.id },
+    where: { organizationId: organization.id, deletedAt: null },
     orderBy: { createdAt: "asc" },
   });
   const emails = await getEmailsByUserId(memberships.map((m) => m.userId));
@@ -50,7 +50,7 @@ export async function getOrganizationSettings(orgSlug: string) {
 
   const t = await getTranslations("Settings");
   const memberships = await prisma.membership.findMany({
-    where: { organizationId: organization.id },
+    where: { organizationId: organization.id, deletedAt: null },
     orderBy: { createdAt: "asc" },
   });
 
@@ -107,7 +107,10 @@ export async function updateOrgSmtp(
   if (!user || !organization) return { error: t("errorOrgNotFound") };
 
   const membership = await prisma.membership.findUnique({
-    where: { userId_organizationId: { userId: user.id, organizationId: organization.id } },
+    where: {
+      userId_organizationId: { userId: user.id, organizationId: organization.id },
+      deletedAt: null,
+    },
   });
   if (!membership || !MANAGER_ROLES.includes(membership.role)) {
     return { error: t("errorOnlyManagersManage") };
@@ -160,7 +163,10 @@ export async function addMember(
   if (!user || !organization) return { error: t("errorOrgNotFound") };
 
   const membership = await prisma.membership.findUnique({
-    where: { userId_organizationId: { userId: user.id, organizationId: organization.id } },
+    where: {
+      userId_organizationId: { userId: user.id, organizationId: organization.id },
+      deletedAt: null,
+    },
   });
   if (!membership || !MANAGER_ROLES.includes(membership.role)) {
     return { error: t("errorOnlyManagersAdd") };
@@ -177,14 +183,26 @@ export async function addMember(
     return { error: t("errorNoAccount") };
   }
 
+  // The DB's unique constraint is on (userId, organizationId) regardless of
+  // deletedAt, so a previously-removed member still occupies that row —
+  // "adding" them back means restoring it, not inserting a new one.
   const existing = await prisma.membership.findUnique({
     where: { userId_organizationId: { userId: targetUser.id, organizationId: organization.id } },
   });
-  if (existing) return { error: t("errorAlreadyMember") };
+  if (existing && existing.deletedAt === null) {
+    return { error: t("errorAlreadyMember") };
+  }
 
-  await prisma.membership.create({
-    data: { userId: targetUser.id, organizationId: organization.id, role },
-  });
+  if (existing) {
+    await prisma.membership.update({
+      where: { id: existing.id },
+      data: { role, deletedAt: null },
+    });
+  } else {
+    await prisma.membership.create({
+      data: { userId: targetUser.id, organizationId: organization.id, role },
+    });
+  }
 
   revalidatePath(`/app/${orgSlug}/settings`);
   return { error: null };
@@ -195,7 +213,7 @@ async function assertCanManageMembers(organizationId: string) {
   const user = await getCurrentUser();
   if (!user) throw new Error("Unauthorized");
   const membership = await prisma.membership.findUnique({
-    where: { userId_organizationId: { userId: user.id, organizationId } },
+    where: { userId_organizationId: { userId: user.id, organizationId }, deletedAt: null },
   });
   if (!membership || !MANAGER_ROLES.includes(membership.role)) {
     throw new Error(t("errorOnlyManagersManage"));
@@ -216,13 +234,13 @@ export async function updateMemberRole(formData: FormData) {
   if (!MEMBERSHIP_ROLES.includes(roleRaw as Role)) throw new Error("Invalid role");
 
   const target = await prisma.membership.findFirst({
-    where: { id: membershipId, organizationId: organization.id },
+    where: { id: membershipId, organizationId: organization.id, deletedAt: null },
   });
   if (!target) throw new Error("Membership not found");
 
   if (target.role === "OWNER" && roleRaw !== "OWNER") {
     const ownerCount = await prisma.membership.count({
-      where: { organizationId: organization.id, role: "OWNER" },
+      where: { organizationId: organization.id, role: "OWNER", deletedAt: null },
     });
     if (ownerCount <= 1) throw new Error(t("errorNeedsOneOwner"));
   }
@@ -241,17 +259,17 @@ export async function removeMember(formData: FormData) {
   await assertCanManageMembers(organization.id);
 
   const target = await prisma.membership.findFirst({
-    where: { id: membershipId, organizationId: organization.id },
+    where: { id: membershipId, organizationId: organization.id, deletedAt: null },
   });
   if (!target) throw new Error("Membership not found");
 
   if (target.role === "OWNER") {
     const ownerCount = await prisma.membership.count({
-      where: { organizationId: organization.id, role: "OWNER" },
+      where: { organizationId: organization.id, role: "OWNER", deletedAt: null },
     });
     if (ownerCount <= 1) throw new Error(t("errorNeedsOneOwner"));
   }
 
-  await prisma.membership.delete({ where: { id: membershipId } });
+  await prisma.membership.update({ where: { id: membershipId }, data: { deletedAt: new Date() } });
   revalidatePath(`/app/${orgSlug}/settings`);
 }

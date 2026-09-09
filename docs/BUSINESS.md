@@ -30,17 +30,18 @@ isolated at the database level (see [ARCHITECTURE.md](./ARCHITECTURE.md) for how
 
 | Module | What it does |
 |---|---|
-| **Contacts** | People — name, email, phone, linked to a company. |
-| **Companies** | Organizations the CRM's users do business with. |
+| **Contacts** | People — name, email, phone, company, preferred language, city/canton. Full create/edit/delete, a 2-step creation wizard, and CSV bulk import. |
+| **Companies** | Organizations the CRM's users do business with. Create/edit/delete. |
 | **Deals** | Sales opportunities with a value and a 6-stage pipeline (Lead → Qualified → Proposal → Negotiation → Won / Lost). |
 | **Activities** | A timeline of calls, emails, meetings, and notes against a contact, company, and/or deal. |
 | **Tasks** | Assignable to-dos with a due date, linked to a contact/company/deal; overdue tasks surface on the dashboard. |
-| **Email** | Send one-off transactional emails to a contact (optionally tied to a deal) via the organization's configured SMTP account; every send is logged. |
+| **Email** | Send one-off transactional emails to a contact (optionally tied to a deal) via the organization's own configured SMTP account; every send is logged. |
 | **Automations** | "When X happens, do Y" rules — e.g. auto-create a task when a contact is created, or send an email when a deal reaches a given stage. Every run is logged with its outcome. |
-| **Segments** | Saved, live-resolved contact filters (by company, whether they have an email, creation date range) — reusable wherever a list of contacts is needed. |
+| **Segments** | Saved, live-resolved contact filters — company, email presence, creation date range, Swiss canton, city — reusable wherever a list of contacts is needed. |
 | **Campaigns** | Bulk email to a segment (or "everyone with an email"); tracks per-recipient send status. |
 | **Dashboard** | At-a-glance counts, pipeline value, overdue tasks, recent activity. |
-| **Settings** | Organization name, members, and roles. |
+| **Trash** | Every delete across every module above is recoverable for 30 days (OWNER/ADMIN restore); an OWNER can delete and restore the organization itself the same way. |
+| **Settings** | Organization name, members and roles, the organization's outbound SMTP account, and organization deletion. |
 
 ## 4. Multi-tenancy & data isolation
 
@@ -77,9 +78,14 @@ would need to be decided and built:
   an organization for free, instantly, with no limits).
 - A public-facing marketing/landing page (today, `/` redirects straight into the
   product).
-- Terms of service / privacy policy, and a defined data-retention and deletion policy.
-- Outbound email deliverability at scale (current SMTP is a single mailbox via
-  Infomaniak, fine for low volume, not a bulk-mail provider).
+- Terms of service / privacy policy. (Data retention is now defined for deleted
+  records — 30 days in a restorable Trash, then gone for good — but there's no
+  written policy document yet, and no equivalent retention/export story for an
+  organization's *active* data.)
+- Outbound email deliverability at scale — each organization now brings its own SMTP
+  account (no platform-wide mailbox to hit shared sending limits), but nothing yet
+  helps a customer without one get set up, and there's no bulk-mail provider
+  integration (e.g. Postmark/SES) for organizations that outgrow a personal mailbox.
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for the technical detail behind all of this,
 and [PLATFORM_ADMIN.md](./PLATFORM_ADMIN.md) for how the live deployment is operated.

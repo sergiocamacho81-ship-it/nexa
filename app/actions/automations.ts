@@ -13,7 +13,7 @@ export async function listAutomations(orgSlug: string) {
   if (!organization) return [];
 
   return prisma.automation.findMany({
-    where: { organizationId: organization.id },
+    where: { organizationId: organization.id, deletedAt: null },
     include: { actions: { orderBy: { order: "asc" } } },
     orderBy: { createdAt: "desc" },
   });
@@ -92,7 +92,7 @@ export async function toggleAutomationEnabled(formData: FormData) {
   }
 
   await prisma.automation.updateMany({
-    where: { id: automationId, organizationId: organization.id },
+    where: { id: automationId, organizationId: organization.id, deletedAt: null },
     data: { enabled },
   });
 
@@ -108,8 +108,9 @@ export async function deleteAutomation(formData: FormData) {
     throw new Error("Unauthorized");
   }
 
-  await prisma.automation.deleteMany({
-    where: { id: automationId, organizationId: organization.id },
+  await prisma.automation.updateMany({
+    where: { id: automationId, organizationId: organization.id, deletedAt: null },
+    data: { deletedAt: new Date() },
   });
 
   revalidatePath(`/app/${orgSlug}/automations`);

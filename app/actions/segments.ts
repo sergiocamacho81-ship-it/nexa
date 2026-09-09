@@ -14,7 +14,7 @@ export async function listSegments(orgSlug: string) {
   if (!organization) return [];
 
   const segments = await prisma.segment.findMany({
-    where: { organizationId: organization.id },
+    where: { organizationId: organization.id, deletedAt: null },
     orderBy: { createdAt: "desc" },
   });
 
@@ -37,7 +37,7 @@ export async function getSegmentContacts(orgSlug: string, segmentId: string) {
   if (!organization) return [];
 
   const segment = await prisma.segment.findFirst({
-    where: { id: segmentId, organizationId: organization.id },
+    where: { id: segmentId, organizationId: organization.id, deletedAt: null },
   });
   if (!segment) return [];
 
@@ -73,7 +73,7 @@ export async function createSegment(
 
   if (companyId) {
     const company = await prisma.company.findFirst({
-      where: { id: companyId, organizationId: organization.id },
+      where: { id: companyId, organizationId: organization.id, deletedAt: null },
     });
     if (!company) return { error: t("errorInvalidCompany") };
   }
@@ -111,8 +111,9 @@ export async function deleteSegment(formData: FormData) {
     throw new Error("Unauthorized");
   }
 
-  await prisma.segment.deleteMany({
-    where: { id: segmentId, organizationId: organization.id },
+  await prisma.segment.updateMany({
+    where: { id: segmentId, organizationId: organization.id, deletedAt: null },
+    data: { deletedAt: new Date() },
   });
 
   revalidatePath(`/app/${orgSlug}/segments`);

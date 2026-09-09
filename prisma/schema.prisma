@@ -25,6 +25,12 @@ model Organization {
   smtpPassword String?  @map("smtp_password")
   smtpFrom     String?  @map("smtp_from")
 
+  // Soft delete: set instead of a hard DELETE so an Owner can restore within
+  // the retention window (see lib/soft-delete.ts). Every list query in the
+  // app filters `deletedAt: null`; nothing purges rows itself — that's a
+  // lazy sweep run when the Trash view is opened (see app/actions/trash.ts).
+  deletedAt DateTime? @map("deleted_at")
+
   memberships    Membership[]
   contacts       Contact[]
   companies      Company[]
@@ -52,6 +58,7 @@ model Membership {
   organizationId String         @map("organization_id") @db.Uuid
   role           MembershipRole @default(MEMBER)
   createdAt      DateTime       @default(now()) @map("created_at")
+  deletedAt      DateTime?      @map("deleted_at")
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
@@ -110,6 +117,7 @@ model Contact {
   canton            SwissCanton?
   createdAt         DateTime         @default(now()) @map("created_at")
   updatedAt         DateTime         @updatedAt @map("updated_at")
+  deletedAt         DateTime?        @map("deleted_at")
 
   organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   company            Company?            @relation(fields: [companyId], references: [id], onDelete: SetNull)
@@ -131,6 +139,7 @@ model Company {
   domain         String?
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   contacts     Contact[]
@@ -161,6 +170,7 @@ model Deal {
   stage          DealStage @default(LEAD)
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
 
   organization  Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   company       Company?       @relation(fields: [companyId], references: [id], onDelete: SetNull)
@@ -192,6 +202,7 @@ model Activity {
   content        String
   occurredAt     DateTime     @default(now()) @map("occurred_at")
   createdAt      DateTime     @default(now()) @map("created_at")
+  deletedAt      DateTime?    @map("deleted_at")
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   contact      Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
@@ -222,6 +233,7 @@ model Task {
   status         TaskStatus @default(PENDING)
   createdAt      DateTime   @default(now()) @map("created_at")
   updatedAt      DateTime   @updatedAt @map("updated_at")
+  deletedAt      DateTime?  @map("deleted_at")
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   contact      Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
@@ -279,6 +291,7 @@ model Automation {
   enabled        Boolean  @default(true)
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
 
   organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   actions      AutomationAction[]
@@ -342,6 +355,7 @@ model Campaign {
   sentAt         DateTime?      @map("sent_at")
   createdAt      DateTime       @default(now()) @map("created_at")
   updatedAt      DateTime       @updatedAt @map("updated_at")
+  deletedAt      DateTime?      @map("deleted_at")
 
   organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   segment      Segment?            @relation(fields: [segmentId], references: [id], onDelete: SetNull)
@@ -387,6 +401,7 @@ model Segment {
   filters        Json     @default("{}")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   campaigns    Campaign[]
