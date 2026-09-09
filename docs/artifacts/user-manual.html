@@ -1,0 +1,772 @@
+<title>Nexa User Manual</title>
+<style>
+  :root {
+    --paper: #f6f3ec;
+    --surface: #ffffff;
+    --ink: #20262b;
+    --ink-soft: #5b6570;
+    --ink-faint: #8b9199;
+    --line: #e2dcce;
+    --line-soft: #ece7db;
+    --accent: #3d6657;
+    --accent-ink: #24443a;
+    --accent-soft: #e3ece7;
+    --accent-2: #b5862b;
+    --accent-2-soft: #f3e9d3;
+    --code-bg: #efebe2;
+    --shadow: 0 1px 2px rgba(32, 38, 43, 0.06), 0 8px 24px rgba(32, 38, 43, 0.05);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #14181b;
+      --surface: #1b2023;
+      --ink: #ece8df;
+      --ink-soft: #a9afa9;
+      --ink-faint: #767d78;
+      --line: #2a322e;
+      --line-soft: #232a26;
+      --accent: #7bb99d;
+      --accent-ink: #bfe3d0;
+      --accent-soft: #1f2e28;
+      --accent-2: #d9a94a;
+      --accent-2-soft: #2c2515;
+      --code-bg: #20211a;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #14181b;
+    --surface: #1b2023;
+    --ink: #ece8df;
+    --ink-soft: #a9afa9;
+    --ink-faint: #767d78;
+    --line: #2a322e;
+    --line-soft: #232a26;
+    --accent: #7bb99d;
+    --accent-ink: #bfe3d0;
+    --accent-soft: #1f2e28;
+    --accent-2: #d9a94a;
+    --accent-2-soft: #2c2515;
+    --code-bg: #20211a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Work Sans", -apple-system, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  h1, h2, h3 {
+    font-family: "Fraunces", Georgia, serif;
+    color: var(--ink);
+    text-wrap: balance;
+    font-weight: 600;
+    margin: 0;
+  }
+  .mono {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+  }
+
+  .shell {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    max-width: 1180px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 32px 24px 32px 32px;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    background: var(--accent);
+    color: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Fraunces", serif;
+    font-weight: 700;
+    font-size: 16px;
+    flex: none;
+  }
+  .brand-text { line-height: 1.15; }
+  .brand-text .name { font-family: "Fraunces", serif; font-weight: 600; font-size: 17px; }
+  .brand-text .kicker {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .lang-switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .lang-btn {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    padding: 5px 9px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .lang-btn:hover { border-color: var(--accent); color: var(--accent-ink); }
+  .lang-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--surface);
+  }
+  .lang-btn:focus-visible, .toc a:focus-visible, .other-doc:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .toc { display: flex; flex-direction: column; gap: 2px; }
+  .toc-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 6px;
+  }
+  .toc a {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    padding: 6px 8px;
+    border-radius: 6px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 14px;
+  }
+  .toc a:hover { background: var(--line-soft); color: var(--ink); }
+  .toc a.active { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+  .toc .num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+    width: 1.4em;
+    flex: none;
+  }
+
+  .other-doc {
+    margin-top: auto;
+    font-size: 13px;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    text-decoration: none;
+    display: block;
+  }
+  .other-doc strong { color: var(--ink); display: block; font-weight: 600; }
+  .other-doc:hover strong { color: var(--accent-ink); }
+
+  /* ---------- Main ---------- */
+  main { padding: 56px 48px 96px; min-width: 0; }
+  .doc-header { max-width: 640px; margin-bottom: 48px; }
+  .doc-kicker {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 5px;
+    margin-bottom: 16px;
+  }
+  .doc-header h1 { font-size: 40px; line-height: 1.15; margin-bottom: 14px; }
+  .doc-header p { color: var(--ink-soft); font-size: 17px; max-width: 56ch; }
+
+  section.chapter {
+    max-width: 640px;
+    padding-top: 40px;
+    margin-top: 40px;
+    border-top: 1px solid var(--line);
+    scroll-margin-top: 24px;
+  }
+  section.chapter:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+  .chapter-head {
+    display: flex;
+    gap: 16px;
+    align-items: baseline;
+    margin-bottom: 16px;
+  }
+  .chapter-num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+    color: var(--accent-2);
+    flex: none;
+  }
+  section.chapter h2 { font-size: 26px; }
+  section.chapter h3 {
+    font-size: 15px;
+    margin-top: 24px;
+    margin-bottom: 8px;
+    color: var(--accent-ink);
+  }
+  section.chapter p { margin: 0 0 14px; }
+  section.chapter p:last-child { margin-bottom: 0; }
+  section.chapter ul, section.chapter ol { margin: 0 0 14px; padding-left: 22px; }
+  section.chapter li { margin-bottom: 6px; }
+  section.chapter li:last-child { margin-bottom: 0; }
+  section.chapter strong { color: var(--ink); font-weight: 600; }
+
+  .pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin: 4px 0 18px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+  }
+  .pipeline .stage {
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+  }
+  .pipeline .stage.won { border-color: var(--accent); color: var(--accent-ink); background: var(--accent-soft); }
+  .pipeline .stage.lost { color: var(--ink-faint); text-decoration: line-through; }
+  .pipeline .arrow { color: var(--ink-faint); }
+
+  .note {
+    display: flex;
+    gap: 10px;
+    background: var(--accent-2-soft);
+    border: 1px solid color-mix(in srgb, var(--accent-2) 35%, transparent);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    margin: 4px 0 14px;
+  }
+  .note .icon { flex: none; color: var(--accent-2); font-family: "IBM Plex Mono", monospace; font-weight: 700; }
+
+  code {
+    font-family: "IBM Plex Mono", monospace;
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  .tip-list {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+  }
+
+  footer.colophon {
+    max-width: 640px;
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--ink-faint);
+  }
+
+  @media (max-width: 860px) {
+    .shell { grid-template-columns: 1fr; }
+    .sidebar { position: relative; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
+    main { padding: 40px 24px 72px; }
+  }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">N</div>
+      <div class="brand-text">
+        <div class="name">Nexa</div>
+        <div class="kicker" data-i18n="kicker">User Manual</div>
+      </div>
+    </div>
+
+    <div class="lang-switch" role="group" aria-label="Language" id="langSwitch"></div>
+
+    <nav class="toc" id="toc" aria-label="Chapters"></nav>
+
+    <a class="other-doc" href="#" id="otherDocLink">
+      <strong data-i18n="otherDocTitle">Looking for the Admin Guide?</strong>
+      <span data-i18n="otherDocHint">Organization settings, members &amp; roles →</span>
+    </a>
+  </aside>
+
+  <main id="main">
+    <div class="doc-header">
+      <span class="doc-kicker" data-i18n="docKicker">Nexa · End users</span>
+      <h1 data-i18n="title">Using Nexa</h1>
+      <p data-i18n="intro">Everything you need for day-to-day work in Nexa: contacts, companies, deals, activities, tasks, email, automations, segments and campaigns.</p>
+    </div>
+    <div id="chapters"></div>
+  </main>
+</div>
+
+<script>
+const LANGS = [
+  { code: "pt", label: "PT", name: "Português" },
+  { code: "en", label: "EN", name: "English" },
+  { code: "fr", label: "FR", name: "Français" },
+  { code: "de", label: "DE", name: "Deutsch" },
+  { code: "it", label: "IT", name: "Italiano" },
+];
+
+const T = {
+en: {
+  kicker: "User Manual", docKicker: "Nexa · End users",
+  title: "Using Nexa",
+  intro: "Everything you need for day-to-day work in Nexa: contacts, companies, deals, activities, tasks, email, automations, segments and campaigns.",
+  otherDocTitle: "Looking for the Admin Guide?",
+  otherDocHint: "Organization settings, members & roles →",
+  chapters: [
+    { id: "signin", h: "Signing in", body: `
+      <p>Go to the app URL and sign in with your email and password. If you don't have an account yet, use <strong>“Don't have an account yet? Sign up”</strong> — you'll get a confirmation email to verify your address before you can sign in.</p>
+      <h3>Forgot your password?</h3>
+      <p>Click <strong>“Forgot your password?”</strong> on the sign-in screen, enter your email, and follow the link you receive. The link expires after a while — if it stops working, just request a new one.</p>
+      <h3>Changing language</h3>
+      <p>Use the language switcher in the top-right corner of the app. Your choice is remembered on this device/browser; it doesn't change the web address.</p>
+    ` },
+    { id: "org", h: "Choosing an organization", body: `
+      <p>If you belong to more than one organization, you'll land on a list after signing in — pick <strong>“Open”</strong> on the one you want to work in. Everything you see and do from then on is scoped to that organization; other organizations' data is never visible to you.</p>
+    ` },
+    { id: "dashboard", h: "Dashboard", body: `
+      <p>The first thing you see inside an organization: counts of contacts and companies, open deal value and count, total won value, your pipeline broken down by stage, pending and overdue tasks, campaign count, and a feed of recent activity.</p>
+    ` },
+    { id: "contacts", h: "Contacts", body: `
+      <p>People. Each contact has a first name (required), last name, email, phone, and optionally a linked company. Click a contact to see their full activity, deals, and tasks. Deleting a contact is permanent.</p>
+    ` },
+    { id: "companies", h: "Companies", body: `
+      <p>Organizations you do business with. A company has a name and an optional website domain. Linking contacts and deals to a company lets you see everything related to that company in one place.</p>
+    ` },
+    { id: "deals", h: "Deals", body: `
+      <p>A sales opportunity: a title, an optional value, and a stage. The pipeline has six stages:</p>
+      <div class="pipeline">
+        <span class="stage">Lead</span><span class="arrow">→</span>
+        <span class="stage">Qualified</span><span class="arrow">→</span>
+        <span class="stage">Proposal</span><span class="arrow">→</span>
+        <span class="stage">Negotiation</span><span class="arrow">→</span>
+        <span class="stage won">Won</span><span class="arrow">/</span><span class="stage lost">Lost</span>
+      </div>
+      <p>Move a deal between stages as it progresses. The Dashboard's pipeline table and open/won totals update automatically. A deal can optionally be linked to a contact and/or a company.</p>
+    ` },
+    { id: "activities", h: "Activities", body: `
+      <p>A log entry against a contact, company, and/or deal: a <strong>Call</strong>, <strong>Email</strong>, <strong>Meeting</strong>, or <strong>Note</strong>, with free-text content and a date/time. Activities are the history of everything that's happened — they don't drive any automation by themselves (automations react to contacts <em>created</em>, deal stages <em>changed</em>, and tasks <em>completed</em>, not to activities being logged).</p>
+    ` },
+    { id: "tasks", h: "Tasks", body: `
+      <p>A to-do with a title, an optional due date, and a status (<strong>Pending</strong> / <strong>Completed</strong>). Tasks can be linked to a contact, company, and/or deal, and assigned to a specific member of the organization. Overdue pending tasks are called out on the Dashboard.</p>
+    ` },
+    { id: "email", h: "Email", body: `
+      <p>Send a one-off email to a contact — optionally tied to a specific deal, so it shows up in that deal's context — through your organization's configured mail account. Every send (successful or failed) is logged with its subject, recipient, and timestamp, so you always have a record of what was sent and when.</p>
+      <div class="note"><span class="icon">i</span><span>Sending requires the organization's SMTP account to be configured. Ask an organization admin if sending isn't working.</span></div>
+    ` },
+    { id: "automations", h: "Automations", body: `
+      <p>“When X happens, do Y” rules that run automatically — no manual step needed once set up.</p>
+      <h3>Triggers</h3>
+      <p>A contact is created · a deal's stage changes · a task is completed.</p>
+      <h3>Actions</h3>
+      <p>An automation can run more than one, in order: create a task · log an activity · send an email.</p>
+      <p>Each automation has a name, is enabled or disabled independently, and keeps a run log — every time it fires you can see whether each of its actions succeeded or failed, and why.</p>
+    ` },
+    { id: "segments", h: "Segments", body: `
+      <p>A saved, reusable filter over your contacts — e.g. “contacts at Acme Corp with an email” or “contacts created after a given date.” A segment isn't a fixed list: it's recalculated every time it's used, so it always reflects your current contacts. Segments exist mainly to feed Campaigns, but the same filter logic is reusable anywhere a targeted contact list is useful.</p>
+    ` },
+    { id: "campaigns", h: "Campaigns", body: `
+      <p>A bulk email sent to a segment — or to “everyone with an email” if you don't pick a segment. A campaign has a subject and a message body; once sent, you'll see how many recipients succeeded and how many failed, with the specific error for any that failed. Campaigns are one-shot: once sent, a campaign's status moves from <strong>Draft</strong> to <strong>Sending</strong> to <strong>Sent</strong> and can't be re-sent as the same campaign.</p>
+    ` },
+    { id: "tips", h: "Tips", body: `
+      <div class="tip-list"><ul>
+        <li>Deleting anything (a contact, a segment, a member) is permanent — there's no undo or trash.</li>
+        <li>Every list is scoped to your current organization; switching organizations changes everything you see.</li>
+        <li>If something you expect to see is missing, check you're in the right organization and that your role has access to it.</li>
+      </ul></div>
+    ` },
+  ],
+},
+pt: {
+  kicker: "Manual do Utilizador", docKicker: "Nexa · Utilizadores",
+  title: "Utilizar o Nexa",
+  intro: "Tudo o que precisas para o trabalho do dia a dia no Nexa: contactos, empresas, negócios, atividades, tarefas, email, automações, segmentos e campanhas.",
+  otherDocTitle: "Procuras o Manual do Administrador?",
+  otherDocHint: "Definições da organização, membros e papéis →",
+  chapters: [
+    { id: "signin", h: "Iniciar sessão", body: `
+      <p>Vai ao endereço da aplicação e inicia sessão com o teu email e password. Se ainda não tens conta, usa <strong>“Ainda não tens conta? Regista-te”</strong> — vais receber um email de confirmação para validares o teu endereço antes de conseguires entrar.</p>
+      <h3>Esqueceste-te da password?</h3>
+      <p>Clica em <strong>“Esqueceste-te da password?”</strong> no ecrã de login, indica o teu email e segue o link que recebes. O link expira ao fim de algum tempo — se deixar de funcionar, pede simplesmente um novo.</p>
+      <h3>Mudar de idioma</h3>
+      <p>Usa o seletor de idioma no canto superior direito da aplicação. A escolha fica guardada neste dispositivo/browser; não muda o endereço web.</p>
+    ` },
+    { id: "org", h: "Escolher uma organização", body: `
+      <p>Se pertences a mais do que uma organização, ao iniciares sessão vês uma lista — escolhe <strong>“Abrir”</strong> na organização em que queres trabalhar. Tudo o que vês e fazes a partir daí está limitado a essa organização; os dados de outras organizações nunca são visíveis.</p>
+    ` },
+    { id: "dashboard", h: "Painel principal", body: `
+      <p>A primeira coisa que vês dentro de uma organização: contagem de contactos e empresas, valor e número de negócios abertos, valor total ganho, o teu pipeline por estágio, tarefas pendentes e atrasadas, número de campanhas, e um feed de atividade recente.</p>
+    ` },
+    { id: "contacts", h: "Contactos", body: `
+      <p>Pessoas. Cada contacto tem nome próprio (obrigatório), apelido, email, telefone e, opcionalmente, uma empresa associada. Clica num contacto para ver toda a sua atividade, negócios e tarefas. Eliminar um contacto é permanente.</p>
+    ` },
+    { id: "companies", h: "Empresas", body: `
+      <p>Organizações com quem fazes negócio. Uma empresa tem um nome e, opcionalmente, um domínio de website. Associar contactos e negócios a uma empresa permite ver tudo o que está relacionado com essa empresa num só sítio.</p>
+    ` },
+    { id: "deals", h: "Negócios", body: `
+      <p>Uma oportunidade de venda: um título, um valor opcional e um estágio. O pipeline tem seis estágios:</p>
+      <div class="pipeline">
+        <span class="stage">Lead</span><span class="arrow">→</span>
+        <span class="stage">Qualificado</span><span class="arrow">→</span>
+        <span class="stage">Proposta</span><span class="arrow">→</span>
+        <span class="stage">Negociação</span><span class="arrow">→</span>
+        <span class="stage won">Ganho</span><span class="arrow">/</span><span class="stage lost">Perdido</span>
+      </div>
+      <p>Move um negócio entre estágios à medida que avança. A tabela de pipeline do painel principal e os totais de aberto/ganho atualizam-se automaticamente. Um negócio pode, opcionalmente, estar associado a um contacto e/ou a uma empresa.</p>
+    ` },
+    { id: "activities", h: "Atividades", body: `
+      <p>Um registo associado a um contacto, empresa e/ou negócio: uma <strong>Chamada</strong>, <strong>Email</strong>, <strong>Reunião</strong> ou <strong>Nota</strong>, com conteúdo livre e data/hora. As atividades são o histórico de tudo o que aconteceu — não disparam automações por si só (as automações reagem a contactos <em>criados</em>, negócios que <em>mudam de estágio</em> e tarefas <em>concluídas</em>, não a atividades registadas).</p>
+    ` },
+    { id: "tasks", h: "Tarefas", body: `
+      <p>Uma tarefa com um título, uma data limite opcional, e um estado (<strong>Pendente</strong> / <strong>Concluída</strong>). Podem estar associadas a um contacto, empresa e/ou negócio, e atribuídas a um membro específico da organização. Tarefas pendentes atrasadas são destacadas no painel principal.</p>
+    ` },
+    { id: "email", h: "Email", body: `
+      <p>Envia um email pontual a um contacto — opcionalmente associado a um negócio específico, para aparecer no contexto desse negócio — através da conta de email configurada para a tua organização. Todos os envios ficam registados com o assunto, destinatário e data/hora, para teres sempre um registo do que foi enviado e quando.</p>
+      <div class="note"><span class="icon">i</span><span>O envio requer que a conta SMTP da organização esteja configurada. Contacta um administrador da organização se o envio não estiver a funcionar.</span></div>
+    ` },
+    { id: "automations", h: "Automações", body: `
+      <p>Regras “quando acontece X, faz Y” que correm automaticamente — sem qualquer passo manual depois de configuradas.</p>
+      <h3>Gatilhos</h3>
+      <p>Um contacto é criado · o estágio de um negócio muda · uma tarefa é concluída.</p>
+      <h3>Ações</h3>
+      <p>Uma automação pode correr mais do que uma, por ordem: criar uma tarefa · registar uma atividade · enviar um email.</p>
+      <p>Cada automação tem um nome, pode ser ativada ou desativada independentemente, e mantém um registo de execuções — sempre que dispara podes ver se cada uma das suas ações teve sucesso ou falhou, e porquê.</p>
+    ` },
+    { id: "segments", h: "Segmentos", body: `
+      <p>Um filtro guardado e reutilizável sobre os teus contactos — por exemplo, “contactos na Acme Corp com email” ou “contactos criados depois de uma data”. Um segmento não é uma lista fixa: é recalculado sempre que é usado, por isso reflete sempre os teus contactos atuais. Os segmentos existem principalmente para alimentar Campanhas, mas a mesma lógica de filtro é reutilizável em qualquer sítio.</p>
+    ` },
+    { id: "campaigns", h: "Campanhas", body: `
+      <p>Um email em massa enviado a um segmento — ou a “todos com email” se não escolheres um segmento. Uma campanha tem um assunto e um corpo de mensagem; depois de enviada, vês quantos destinatários tiveram sucesso e quantos falharam, com o erro específico de cada falha. As campanhas são de disparo único: o estado passa de <strong>Rascunho</strong> a <strong>A enviar</strong> a <strong>Enviada</strong>, e não pode ser reenviada como a mesma campanha.</p>
+    ` },
+    { id: "tips", h: "Dicas", body: `
+      <div class="tip-list"><ul>
+        <li>Eliminar seja o que for (um contacto, um segmento, um membro) é permanente — não há desfazer nem lixo.</li>
+        <li>Todas as listas estão limitadas à tua organização atual; mudar de organização muda tudo o que vês.</li>
+        <li>Se algo que esperas ver estiver em falta, confirma que estás na organização certa e que o teu papel tem acesso a isso.</li>
+      </ul></div>
+    ` },
+  ],
+},
+fr: {
+  kicker: "Guide utilisateur", docKicker: "Nexa · Utilisateurs",
+  title: "Utiliser Nexa",
+  intro: "Tout ce dont vous avez besoin pour le travail quotidien dans Nexa : contacts, entreprises, affaires, activités, tâches, email, automatisations, segments et campagnes.",
+  otherDocTitle: "Vous cherchez le Guide administrateur ?",
+  otherDocHint: "Paramètres de l'organisation, membres et rôles →",
+  chapters: [
+    { id: "signin", h: "Se connecter", body: `
+      <p>Allez sur l'adresse de l'application et connectez-vous avec votre email et votre mot de passe. Si vous n'avez pas encore de compte, utilisez <strong>« Pas encore de compte ? Inscrivez-vous »</strong> — vous recevrez un email de confirmation pour valider votre adresse avant de pouvoir vous connecter.</p>
+      <h3>Mot de passe oublié ?</h3>
+      <p>Cliquez sur <strong>« Mot de passe oublié ? »</strong> sur l'écran de connexion, indiquez votre email et suivez le lien reçu. Le lien expire au bout d'un certain temps — s'il ne fonctionne plus, demandez-en simplement un nouveau.</p>
+      <h3>Changer de langue</h3>
+      <p>Utilisez le sélecteur de langue en haut à droite de l'application. Le choix est mémorisé sur cet appareil/navigateur ; il ne modifie pas l'adresse web.</p>
+    ` },
+    { id: "org", h: "Choisir une organisation", body: `
+      <p>Si vous appartenez à plusieurs organisations, une liste s'affiche après connexion — choisissez <strong>« Ouvrir »</strong> sur celle où vous voulez travailler. Tout ce que vous voyez et faites ensuite est limité à cette organisation ; les données des autres organisations ne sont jamais visibles.</p>
+    ` },
+    { id: "dashboard", h: "Tableau de bord", body: `
+      <p>La première chose que vous voyez dans une organisation : le nombre de contacts et d'entreprises, la valeur et le nombre d'affaires ouvertes, la valeur totale gagnée, votre pipeline par étape, les tâches en attente et en retard, le nombre de campagnes, et un flux d'activité récente.</p>
+    ` },
+    { id: "contacts", h: "Contacts", body: `
+      <p>Des personnes. Chaque contact a un prénom (obligatoire), un nom, un email, un téléphone et, éventuellement, une entreprise associée. Cliquez sur un contact pour voir toute son activité, ses affaires et ses tâches. Supprimer un contact est définitif.</p>
+    ` },
+    { id: "companies", h: "Entreprises", body: `
+      <p>Les organisations avec qui vous travaillez. Une entreprise a un nom et, éventuellement, un domaine de site web. Associer des contacts et des affaires à une entreprise permet de voir tout ce qui la concerne au même endroit.</p>
+    ` },
+    { id: "deals", h: "Affaires", body: `
+      <p>Une opportunité commerciale : un titre, une valeur optionnelle et une étape. Le pipeline compte six étapes :</p>
+      <div class="pipeline">
+        <span class="stage">Prospect</span><span class="arrow">→</span>
+        <span class="stage">Qualifié</span><span class="arrow">→</span>
+        <span class="stage">Proposition</span><span class="arrow">→</span>
+        <span class="stage">Négociation</span><span class="arrow">→</span>
+        <span class="stage won">Gagné</span><span class="arrow">/</span><span class="stage lost">Perdu</span>
+      </div>
+      <p>Faites avancer une affaire d'étape en étape. Le tableau de pipeline du tableau de bord et les totaux ouvert/gagné se mettent à jour automatiquement. Une affaire peut, en option, être liée à un contact et/ou une entreprise.</p>
+    ` },
+    { id: "activities", h: "Activités", body: `
+      <p>Une entrée associée à un contact, une entreprise et/ou une affaire : un <strong>Appel</strong>, <strong>Email</strong>, <strong>Réunion</strong> ou <strong>Note</strong>, avec un contenu libre et une date/heure. Les activités sont l'historique de tout ce qui s'est passé — elles ne déclenchent pas d'automatisation par elles-mêmes (les automatisations réagissent à des contacts <em>créés</em>, des affaires dont l'<em>étape change</em>, et des tâches <em>terminées</em>, pas à des activités enregistrées).</p>
+    ` },
+    { id: "tasks", h: "Tâches", body: `
+      <p>Une tâche avec un titre, une échéance optionnelle, et un statut (<strong>En attente</strong> / <strong>Terminée</strong>). Elle peut être liée à un contact, une entreprise et/ou une affaire, et assignée à un membre précis de l'organisation. Les tâches en attente en retard sont signalées sur le tableau de bord.</p>
+    ` },
+    { id: "email", h: "Email", body: `
+      <p>Envoyez un email ponctuel à un contact — éventuellement lié à une affaire précise — via le compte email configuré pour votre organisation. Chaque envoi est enregistré avec son objet, son destinataire et son horodatage, pour garder une trace de ce qui a été envoyé et quand.</p>
+      <div class="note"><span class="icon">i</span><span>L'envoi nécessite que le compte SMTP de l'organisation soit configuré. Contactez un administrateur de l'organisation si l'envoi ne fonctionne pas.</span></div>
+    ` },
+    { id: "automations", h: "Automatisations", body: `
+      <p>Des règles « quand X se produit, fais Y » qui s'exécutent automatiquement — sans aucune étape manuelle une fois configurées.</p>
+      <h3>Déclencheurs</h3>
+      <p>Un contact est créé · l'étape d'une affaire change · une tâche est terminée.</p>
+      <h3>Actions</h3>
+      <p>Une automatisation peut en exécuter plusieurs, dans l'ordre : créer une tâche · enregistrer une activité · envoyer un email.</p>
+      <p>Chaque automatisation a un nom, peut être activée ou désactivée indépendamment, et conserve un journal d'exécution — à chaque déclenchement, vous voyez si chacune de ses actions a réussi ou échoué, et pourquoi.</p>
+    ` },
+    { id: "segments", h: "Segments", body: `
+      <p>Un filtre enregistré et réutilisable sur vos contacts — par exemple « contacts chez Acme Corp avec un email » ou « contacts créés après une date donnée ». Un segment n'est pas une liste figée : il est recalculé à chaque utilisation, donc il reflète toujours vos contacts actuels. Les segments existent surtout pour alimenter les Campagnes, mais la même logique de filtre est réutilisable partout ailleurs.</p>
+    ` },
+    { id: "campaigns", h: "Campagnes", body: `
+      <p>Un email envoyé en masse à un segment — ou à « tous ceux qui ont un email » si vous ne choisissez pas de segment. Une campagne a un objet et un corps de message ; une fois envoyée, vous voyez combien de destinataires ont réussi et combien ont échoué, avec l'erreur précise pour chaque échec. Les campagnes sont à usage unique : le statut passe de <strong>Brouillon</strong> à <strong>Envoi en cours</strong> à <strong>Envoyée</strong>, et ne peut pas être renvoyée en tant que même campagne.</p>
+    ` },
+    { id: "tips", h: "Astuces", body: `
+      <div class="tip-list"><ul>
+        <li>Supprimer quoi que ce soit (un contact, un segment, un membre) est définitif — il n'y a ni annulation ni corbeille.</li>
+        <li>Chaque liste est limitée à votre organisation actuelle ; changer d'organisation change tout ce que vous voyez.</li>
+        <li>Si quelque chose que vous attendez de voir manque, vérifiez que vous êtes dans la bonne organisation et que votre rôle y a accès.</li>
+      </ul></div>
+    ` },
+  ],
+},
+de: {
+  kicker: "Benutzerhandbuch", docKicker: "Nexa · Benutzer",
+  title: "Nexa verwenden",
+  intro: "Alles, was du für die tägliche Arbeit in Nexa brauchst: Kontakte, Unternehmen, Deals, Aktivitäten, Aufgaben, E-Mail, Automatisierungen, Segmente und Kampagnen.",
+  otherDocTitle: "Suchst du das Administratorhandbuch?",
+  otherDocHint: "Organisationseinstellungen, Mitglieder & Rollen →",
+  chapters: [
+    { id: "signin", h: "Anmelden", body: `
+      <p>Rufe die App-Adresse auf und melde dich mit E-Mail und Passwort an. Falls du noch kein Konto hast, nutze <strong>„Noch kein Konto? Registrieren“</strong> — du erhältst eine Bestätigungs-E-Mail, um deine Adresse zu verifizieren, bevor du dich anmelden kannst.</p>
+      <h3>Passwort vergessen?</h3>
+      <p>Klicke auf dem Anmeldebildschirm auf <strong>„Passwort vergessen?“</strong>, gib deine E-Mail-Adresse ein und folge dem erhaltenen Link. Der Link läuft nach einiger Zeit ab — funktioniert er nicht mehr, fordere einfach einen neuen an.</p>
+      <h3>Sprache ändern</h3>
+      <p>Nutze den Sprachwähler oben rechts in der App. Die Auswahl wird für dieses Gerät/diesen Browser gespeichert und ändert nicht die Webadresse.</p>
+    ` },
+    { id: "org", h: "Eine Organisation auswählen", body: `
+      <p>Gehörst du zu mehr als einer Organisation, siehst du nach der Anmeldung eine Liste — wähle <strong>„Öffnen“</strong> bei der, in der du arbeiten möchtest. Alles, was du danach siehst und tust, ist auf diese Organisation beschränkt; Daten anderer Organisationen sind nie sichtbar.</p>
+    ` },
+    { id: "dashboard", h: "Dashboard", body: `
+      <p>Das Erste, was du in einer Organisation siehst: Anzahl der Kontakte und Unternehmen, Wert und Anzahl offener Deals, gesamter gewonnener Wert, deine Pipeline nach Phase, ausstehende und überfällige Aufgaben, Anzahl der Kampagnen, sowie ein Feed der letzten Aktivitäten.</p>
+    ` },
+    { id: "contacts", h: "Kontakte", body: `
+      <p>Personen. Jeder Kontakt hat einen Vornamen (Pflichtfeld), Nachname, E-Mail, Telefon und optional ein verknüpftes Unternehmen. Klicke auf einen Kontakt, um dessen gesamte Aktivität, Deals und Aufgaben zu sehen. Das Löschen eines Kontakts ist endgültig.</p>
+    ` },
+    { id: "companies", h: "Unternehmen", body: `
+      <p>Organisationen, mit denen du Geschäfte machst. Ein Unternehmen hat einen Namen und optional eine Website-Domain. Wenn du Kontakte und Deals mit einem Unternehmen verknüpfst, siehst du alles Zugehörige an einem Ort.</p>
+    ` },
+    { id: "deals", h: "Deals", body: `
+      <p>Eine Verkaufschance: ein Titel, ein optionaler Wert und eine Phase. Die Pipeline hat sechs Phasen:</p>
+      <div class="pipeline">
+        <span class="stage">Lead</span><span class="arrow">→</span>
+        <span class="stage">Qualifiziert</span><span class="arrow">→</span>
+        <span class="stage">Angebot</span><span class="arrow">→</span>
+        <span class="stage">Verhandlung</span><span class="arrow">→</span>
+        <span class="stage won">Gewonnen</span><span class="arrow">/</span><span class="stage lost">Verloren</span>
+      </div>
+      <p>Bewege einen Deal zwischen den Phasen, während er voranschreitet. Die Pipeline-Tabelle im Dashboard sowie die Summen für offen/gewonnen aktualisieren sich automatisch. Ein Deal kann optional mit einem Kontakt und/oder einem Unternehmen verknüpft werden.</p>
+    ` },
+    { id: "activities", h: "Aktivitäten", body: `
+      <p>Ein Eintrag zu einem Kontakt, Unternehmen und/oder Deal: ein <strong>Anruf</strong>, eine <strong>E-Mail</strong>, eine <strong>Besprechung</strong> oder eine <strong>Notiz</strong>, mit Freitext-Inhalt und Datum/Uhrzeit. Aktivitäten sind das Protokoll von allem, was passiert ist — sie lösen selbst keine Automatisierung aus (Automatisierungen reagieren auf <em>erstellte</em> Kontakte, <em>geänderte</em> Deal-Phasen und <em>erledigte</em> Aufgaben, nicht auf erfasste Aktivitäten).</p>
+    ` },
+    { id: "tasks", h: "Aufgaben", body: `
+      <p>Eine Aufgabe mit Titel, optionalem Fälligkeitsdatum und Status (<strong>Ausstehend</strong> / <strong>Erledigt</strong>). Sie kann mit einem Kontakt, Unternehmen und/oder Deal verknüpft und einem bestimmten Mitglied der Organisation zugewiesen werden. Überfällige, ausstehende Aufgaben werden im Dashboard hervorgehoben.</p>
+    ` },
+    { id: "email", h: "E-Mail", body: `
+      <p>Sende eine einmalige E-Mail an einen Kontakt — optional mit einem bestimmten Deal verknüpft — über das für deine Organisation konfigurierte E-Mail-Konto. Jeder Versand wird mit Betreff, Empfänger und Zeitstempel protokolliert, sodass du immer nachvollziehen kannst, was wann versendet wurde.</p>
+      <div class="note"><span class="icon">i</span><span>Für den Versand muss das SMTP-Konto der Organisation konfiguriert sein. Wende dich an einen Organisations-Admin, falls der Versand nicht funktioniert.</span></div>
+    ` },
+    { id: "automations", h: "Automatisierungen", body: `
+      <p>Regeln nach dem Muster „wenn X passiert, tue Y“, die automatisch ausgeführt werden — kein manueller Schritt nötig, sobald sie eingerichtet sind.</p>
+      <h3>Auslöser</h3>
+      <p>Ein Kontakt wird erstellt · die Phase eines Deals ändert sich · eine Aufgabe wird erledigt.</p>
+      <h3>Aktionen</h3>
+      <p>Eine Automatisierung kann mehrere davon der Reihe nach ausführen: eine Aufgabe erstellen · eine Aktivität erfassen · eine E-Mail senden.</p>
+      <p>Jede Automatisierung hat einen Namen, kann unabhängig aktiviert oder deaktiviert werden und führt ein Ausführungsprotokoll — bei jeder Auslösung siehst du, ob jede ihrer Aktionen erfolgreich war, und warum.</p>
+    ` },
+    { id: "segments", h: "Segmente", body: `
+      <p>Ein gespeicherter, wiederverwendbarer Filter über deine Kontakte — z. B. „Kontakte bei Acme Corp mit E-Mail“ oder „Kontakte, die nach einem bestimmten Datum erstellt wurden“. Ein Segment ist keine feste Liste: Es wird bei jeder Verwendung neu berechnet. Segmente dienen hauptsächlich dazu, Kampagnen zu speisen, aber dieselbe Filterlogik ist überall nützlich.</p>
+    ` },
+    { id: "campaigns", h: "Kampagnen", body: `
+      <p>Eine Massen-E-Mail an ein Segment — oder an „alle mit E-Mail-Adresse“, wenn du kein Segment auswählst. Eine Kampagne hat einen Betreff und einen Nachrichtentext; nach dem Versand siehst du, wie viele Empfänger erfolgreich waren und wie viele fehlgeschlagen sind. Kampagnen sind einmalig: Der Status wechselt von <strong>Entwurf</strong> zu <strong>Wird gesendet</strong> zu <strong>Gesendet</strong>.</p>
+    ` },
+    { id: "tips", h: "Tipps", body: `
+      <div class="tip-list"><ul>
+        <li>Das Löschen von irgendetwas ist endgültig — es gibt weder Rückgängig noch einen Papierkorb.</li>
+        <li>Jede Liste ist auf deine aktuelle Organisation beschränkt; der Wechsel der Organisation ändert alles, was du siehst.</li>
+        <li>Fehlt etwas, das du erwartest, prüfe, ob du in der richtigen Organisation bist und ob deine Rolle darauf Zugriff hat.</li>
+      </ul></div>
+    ` },
+  ],
+},
+it: {
+  kicker: "Guida utente", docKicker: "Nexa · Utenti",
+  title: "Usare Nexa",
+  intro: "Tutto ciò che serve per il lavoro quotidiano in Nexa: contatti, aziende, trattative, attività, attività da svolgere, email, automazioni, segmenti e campagne.",
+  otherDocTitle: "Cerchi la Guida amministratore?",
+  otherDocHint: "Impostazioni dell'organizzazione, membri e ruoli →",
+  chapters: [
+    { id: "signin", h: "Accedere", body: `
+      <p>Vai all'indirizzo dell'app e accedi con la tua email e password. Se non hai ancora un account, usa <strong>“Non hai ancora un account? Registrati”</strong> — riceverai un'email di conferma per verificare il tuo indirizzo prima di poter accedere.</p>
+      <h3>Password dimenticata?</h3>
+      <p>Clicca su <strong>“Password dimenticata?”</strong> nella schermata di accesso, inserisci la tua email e segui il link ricevuto. Il link scade dopo un po' di tempo — se smette di funzionare, richiedine semplicemente uno nuovo.</p>
+      <h3>Cambiare lingua</h3>
+      <p>Usa il selettore di lingua in alto a destra nell'app. La scelta viene ricordata su questo dispositivo/browser e non cambia l'indirizzo web.</p>
+    ` },
+    { id: "org", h: "Scegliere un'organizzazione", body: `
+      <p>Se appartieni a più di un'organizzazione, dopo l'accesso vedrai un elenco — scegli <strong>“Apri”</strong> su quella in cui vuoi lavorare. Tutto ciò che vedi e fai da quel momento è limitato a quell'organizzazione; i dati delle altre organizzazioni non sono mai visibili.</p>
+    ` },
+    { id: "dashboard", h: "Dashboard", body: `
+      <p>La prima cosa che vedi dentro un'organizzazione: conteggio di contatti e aziende, valore e numero di trattative aperte, valore totale vinto, la tua pipeline per fase, attività da svolgere in sospeso e scadute, numero di campagne, e un feed delle attività recenti.</p>
+    ` },
+    { id: "contacts", h: "Contatti", body: `
+      <p>Persone. Ogni contatto ha un nome (obbligatorio), cognome, email, telefono e, facoltativamente, un'azienda collegata. Clicca su un contatto per vedere tutta la sua attività, le trattative e le attività da svolgere. Eliminare un contatto è permanente.</p>
+    ` },
+    { id: "companies", h: "Aziende", body: `
+      <p>Organizzazioni con cui fai affari. Un'azienda ha un nome e, facoltativamente, un dominio del sito web. Collegare contatti e trattative a un'azienda permette di vedere tutto ciò che la riguarda in un unico posto.</p>
+    ` },
+    { id: "deals", h: "Trattative", body: `
+      <p>Un'opportunità di vendita: un titolo, un valore facoltativo e una fase. La pipeline ha sei fasi:</p>
+      <div class="pipeline">
+        <span class="stage">Lead</span><span class="arrow">→</span>
+        <span class="stage">Qualificato</span><span class="arrow">→</span>
+        <span class="stage">Proposta</span><span class="arrow">→</span>
+        <span class="stage">Negoziazione</span><span class="arrow">→</span>
+        <span class="stage won">Vinto</span><span class="arrow">/</span><span class="stage lost">Perso</span>
+      </div>
+      <p>Sposta una trattativa tra le fasi man mano che avanza. La tabella della pipeline nella dashboard e i totali aperto/vinto si aggiornano automaticamente. Una trattativa può, facoltativamente, essere collegata a un contatto e/o un'azienda.</p>
+    ` },
+    { id: "activities", h: "Attività", body: `
+      <p>Una voce collegata a un contatto, azienda e/o trattativa: una <strong>Chiamata</strong>, <strong>Email</strong>, <strong>Riunione</strong> o <strong>Nota</strong>, con contenuto libero e data/ora. Le attività sono la cronologia di tutto ciò che è accaduto — non avviano automazioni da sole (le automazioni reagiscono a contatti <em>creati</em>, trattative che <em>cambiano fase</em>, e attività da svolgere <em>completate</em>, non alle attività registrate).</p>
+    ` },
+    { id: "tasks", h: "Attività da svolgere", body: `
+      <p>Un'attività da svolgere con un titolo, una scadenza facoltativa, e uno stato (<strong>In sospeso</strong> / <strong>Completata</strong>). Può essere collegata a un contatto, azienda e/o trattativa, e assegnata a un membro specifico dell'organizzazione. Le attività da svolgere scadute e in sospeso vengono segnalate nella dashboard.</p>
+    ` },
+    { id: "email", h: "Email", body: `
+      <p>Invia un'email singola a un contatto — facoltativamente collegata a una trattativa specifica — tramite l'account email configurato per la tua organizzazione. Ogni invio viene registrato con oggetto, destinatario e data/ora, così hai sempre traccia di cosa è stato inviato e quando.</p>
+      <div class="note"><span class="icon">i</span><span>L'invio richiede che l'account SMTP dell'organizzazione sia configurato. Contatta un amministratore dell'organizzazione se l'invio non funziona.</span></div>
+    ` },
+    { id: "automations", h: "Automazioni", body: `
+      <p>Regole “quando succede X, fai Y” che vengono eseguite automaticamente — nessun passaggio manuale una volta configurate.</p>
+      <h3>Trigger</h3>
+      <p>Un contatto viene creato · la fase di una trattativa cambia · un'attività da svolgere viene completata.</p>
+      <h3>Azioni</h3>
+      <p>Un'automazione può eseguirne più di una, in ordine: crea un'attività da svolgere · registra un'attività · invia un'email.</p>
+      <p>Ogni automazione ha un nome, può essere attivata o disattivata indipendentemente, e mantiene un registro delle esecuzioni — ogni volta che si attiva puoi vedere se ciascuna delle sue azioni è riuscita o fallita, e perché.</p>
+    ` },
+    { id: "segments", h: "Segmenti", body: `
+      <p>Un filtro salvato e riutilizzabile sui tuoi contatti — ad esempio “contatti presso Acme Corp con email” o “contatti creati dopo una certa data”. Un segmento non è un elenco fisso: viene ricalcolato ogni volta che viene usato. I segmenti esistono principalmente per alimentare le Campagne, ma la stessa logica di filtro è riutilizzabile ovunque.</p>
+    ` },
+    { id: "campaigns", h: "Campagne", body: `
+      <p>Un'email inviata in massa a un segmento — o a “tutti quelli con un'email” se non scegli un segmento. Una campagna ha un oggetto e un corpo del messaggio; una volta inviata, vedi quanti destinatari hanno avuto successo e quanti sono falliti, con l'errore specifico per ogni fallimento. Le campagne sono a invio unico: lo stato passa da <strong>Bozza</strong> a <strong>Invio in corso</strong> a <strong>Inviata</strong>.</p>
+    ` },
+    { id: "tips", h: "Consigli", body: `
+      <div class="tip-list"><ul>
+        <li>Eliminare qualsiasi cosa è permanente — non c'è annullamento né cestino.</li>
+        <li>Ogni elenco è limitato alla tua organizzazione attuale; cambiare organizzazione cambia tutto ciò che vedi.</li>
+        <li>Se manca qualcosa che ti aspetti di vedere, verifica di essere nell'organizzazione giusta e che il tuo ruolo vi abbia accesso.</li>
+      </ul></div>
+    ` },
+  ],
+},
+};
+
+let current = "en";
+
+function render(lang) {
+  const t = T[lang];
+  current = lang;
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    if (t[key]) el.innerHTML = t[key];
+  });
+
+  const toc = document.getElementById("toc");
+  toc.innerHTML = '<div class="toc-label">' + (lang === "en" ? "Chapters" : lang === "pt" ? "Capítulos" : lang === "fr" ? "Chapitres" : lang === "de" ? "Kapitel" : "Capitoli") + '</div>' +
+    t.chapters.map((c, i) => `<a href="#${c.id}"><span class="num">${String(i + 1).padStart(2, "0")}</span>${c.h}</a>`).join("");
+
+  const chapters = document.getElementById("chapters");
+  chapters.innerHTML = t.chapters.map((c, i) => `
+    <section class="chapter" id="${c.id}">
+      <div class="chapter-head">
+        <span class="chapter-num">${String(i + 1).padStart(2, "0")}</span>
+        <h2>${c.h}</h2>
+      </div>
+      ${c.body}
+    </section>
+  `).join("") + `
+    <footer class="colophon">Nexa &middot; ${t.docKicker}</footer>
+  `;
+
+  try { localStorage.setItem("nexa-doc-lang", lang); } catch (e) {}
+  updateActiveLangBtn();
+  updateActiveTocLink();
+}
+
+function updateActiveLangBtn() {
+  document.querySelectorAll(".lang-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.lang === current);
+    b.setAttribute("aria-pressed", b.dataset.lang === current ? "true" : "false");
+  });
+}
+
+function updateActiveTocLink() {
+  const links = Array.from(document.querySelectorAll(".toc a"));
+  const sections = links.map(l => document.getElementById(l.getAttribute("href").slice(1)));
+  let activeIdx = 0;
+  sections.forEach((s, i) => {
+    if (s && s.getBoundingClientRect().top - 80 <= 0) activeIdx = i;
+  });
+  links.forEach((l, i) => l.classList.toggle("active", i === activeIdx));
+}
+
+const langSwitch = document.getElementById("langSwitch");
+langSwitch.innerHTML = LANGS.map(l => `<button class="lang-btn" data-lang="${l.code}" title="${l.name}">${l.label}</button>`).join("");
+langSwitch.addEventListener("click", e => {
+  const btn = e.target.closest(".lang-btn");
+  if (btn) render(btn.dataset.lang);
+});
+
+document.addEventListener("scroll", () => { window.requestAnimationFrame(updateActiveTocLink); }, { passive: true });
+
+let initial = "en";
+try {
+  const saved = localStorage.getItem("nexa-doc-lang");
+  if (saved && T[saved]) initial = saved;
+  else {
+    const nav = (navigator.language || "en").slice(0, 2);
+    if (T[nav]) initial = nav;
+  }
+} catch (e) {}
+render(initial);
+</script>

@@ -1,3 +1,16 @@
+# Nexa
+
+Multi-tenant CRM and automation platform, by Vingelis. Live at
+https://nexa-sigma-woad.vercel.app.
+
+## Documentation
+
+- [docs/BUSINESS.md](docs/BUSINESS.md) — what Nexa is, who it's for
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — technical architecture
+- [docs/PLATFORM_ADMIN.md](docs/PLATFORM_ADMIN.md) — deploying and operating the platform
+- [docs/user-guide/](docs/user-guide/) — end-user manual (pt, en, fr, de, it)
+- [docs/admin-guide/](docs/admin-guide/) — organization admin manual (pt, en, fr, de, it)
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

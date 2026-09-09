@@ -1,0 +1,520 @@
+<title>Nexa Admin Guide</title>
+<style>
+  :root {
+    --paper: #f6f3ec;
+    --surface: #ffffff;
+    --ink: #20262b;
+    --ink-soft: #5b6570;
+    --ink-faint: #8b9199;
+    --line: #e2dcce;
+    --line-soft: #ece7db;
+    --accent: #6a4a8f;
+    --accent-ink: #4b2f6b;
+    --accent-soft: #eae3f2;
+    --accent-2: #b5862b;
+    --accent-2-soft: #f3e9d3;
+    --code-bg: #efebe2;
+    --shadow: 0 1px 2px rgba(32, 38, 43, 0.06), 0 8px 24px rgba(32, 38, 43, 0.05);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #14181b;
+      --surface: #1b2023;
+      --ink: #ece8df;
+      --ink-soft: #a9afa9;
+      --ink-faint: #767d78;
+      --line: #2a322e;
+      --line-soft: #232a26;
+      --accent: #b79bdc;
+      --accent-ink: #d9c8f0;
+      --accent-soft: #2a2333;
+      --accent-2: #d9a94a;
+      --accent-2-soft: #2c2515;
+      --code-bg: #20211a;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #14181b;
+    --surface: #1b2023;
+    --ink: #ece8df;
+    --ink-soft: #a9afa9;
+    --ink-faint: #767d78;
+    --line: #2a322e;
+    --line-soft: #232a26;
+    --accent: #b79bdc;
+    --accent-ink: #d9c8f0;
+    --accent-soft: #2a2333;
+    --accent-2: #d9a94a;
+    --accent-2-soft: #2c2515;
+    --code-bg: #20211a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Work Sans", -apple-system, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  h1, h2, h3 {
+    font-family: "Fraunces", Georgia, serif;
+    color: var(--ink);
+    text-wrap: balance;
+    font-weight: 600;
+    margin: 0;
+  }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+  .shell {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    max-width: 1180px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 32px 24px 32px 32px;
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark {
+    width: 30px; height: 30px; border-radius: 7px;
+    background: var(--accent); color: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Fraunces", serif; font-weight: 700; font-size: 16px; flex: none;
+  }
+  .brand-text { line-height: 1.15; }
+  .brand-text .name { font-family: "Fraunces", serif; font-weight: 600; font-size: 17px; }
+  .brand-text .kicker { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); }
+
+  .lang-switch { display: flex; flex-wrap: wrap; gap: 6px; }
+  .lang-btn {
+    font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.02em;
+    padding: 5px 9px; border-radius: 6px; border: 1px solid var(--line);
+    background: var(--surface); color: var(--ink-soft); cursor: pointer;
+  }
+  .lang-btn:hover { border-color: var(--accent); color: var(--accent-ink); }
+  .lang-btn.active { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+  .lang-btn:focus-visible, .toc a:focus-visible, .other-doc:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+
+  .toc { display: flex; flex-direction: column; gap: 2px; }
+  .toc-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+  .toc a { display: flex; gap: 10px; align-items: baseline; padding: 6px 8px; border-radius: 6px; color: var(--ink-soft); text-decoration: none; font-size: 14px; }
+  .toc a:hover { background: var(--line-soft); color: var(--ink); }
+  .toc a.active { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+  .toc .num { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-faint); width: 1.4em; flex: none; }
+
+  .other-doc {
+    margin-top: auto; font-size: 13px; color: var(--ink-soft);
+    border-top: 1px solid var(--line); padding-top: 16px; text-decoration: none; display: block;
+  }
+  .other-doc strong { color: var(--ink); display: block; font-weight: 600; }
+  .other-doc:hover strong { color: var(--accent-ink); }
+
+  main { padding: 56px 48px 96px; min-width: 0; }
+  .doc-header { max-width: 640px; margin-bottom: 48px; }
+  .doc-kicker {
+    font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent-ink); background: var(--accent-soft); display: inline-block; padding: 4px 10px; border-radius: 5px; margin-bottom: 16px;
+  }
+  .doc-header h1 { font-size: 40px; line-height: 1.15; margin-bottom: 14px; }
+  .doc-header p { color: var(--ink-soft); font-size: 17px; max-width: 56ch; }
+
+  section.chapter { max-width: 640px; padding-top: 40px; margin-top: 40px; border-top: 1px solid var(--line); scroll-margin-top: 24px; }
+  section.chapter:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+  .chapter-head { display: flex; gap: 16px; align-items: baseline; margin-bottom: 16px; }
+  .chapter-num { font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--accent-2); flex: none; }
+  section.chapter h2 { font-size: 26px; }
+  section.chapter p { margin: 0 0 14px; }
+  section.chapter p:last-child { margin-bottom: 0; }
+  section.chapter ul { margin: 0 0 14px; padding-left: 22px; }
+  section.chapter li { margin-bottom: 6px; }
+  section.chapter strong { color: var(--ink); font-weight: 600; }
+
+  .role-table { width: 100%; border-collapse: collapse; margin: 4px 0 14px; font-size: 14.5px; }
+  .role-table th, .role-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .role-table th { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); font-weight: 500; }
+  .role-table td:first-child { font-weight: 600; white-space: nowrap; }
+  .role-pill {
+    display: inline-block; font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.02em;
+    padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-ink);
+  }
+
+  .steps { list-style: none; margin: 4px 0 14px; padding: 0; display: flex; flex-direction: column; gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); box-shadow: var(--shadow); }
+  .steps li { display: flex; gap: 14px; padding: 12px 16px; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+  .steps li:last-child { border-bottom: none; }
+  .steps .n { font-family: "IBM Plex Mono", monospace; color: var(--accent-2); flex: none; width: 1.2em; }
+
+  .note {
+    display: flex; gap: 10px; background: var(--accent-2-soft);
+    border: 1px solid color-mix(in srgb, var(--accent-2) 35%, transparent);
+    border-radius: 10px; padding: 12px 14px; font-size: 14.5px; color: var(--ink-soft); margin: 4px 0 14px;
+  }
+  .note .icon { flex: none; color: var(--accent-2); font-family: "IBM Plex Mono", monospace; font-weight: 700; }
+  .warn { border-color: color-mix(in srgb, var(--accent) 35%, transparent); background: var(--accent-soft); }
+  .warn .icon { color: var(--accent-ink); }
+
+  footer.colophon { max-width: 640px; margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink-faint); }
+
+  @media (max-width: 860px) {
+    .shell { grid-template-columns: 1fr; }
+    .sidebar { position: relative; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
+    main { padding: 40px 24px 72px; }
+  }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">N</div>
+      <div class="brand-text">
+        <div class="name">Nexa</div>
+        <div class="kicker" data-i18n="kicker">Admin Guide</div>
+      </div>
+    </div>
+    <div class="lang-switch" role="group" aria-label="Language" id="langSwitch"></div>
+    <nav class="toc" id="toc" aria-label="Chapters"></nav>
+    <a class="other-doc" href="#" id="otherDocLink">
+      <strong data-i18n="otherDocTitle">Looking for the User Manual?</strong>
+      <span data-i18n="otherDocHint">Contacts, deals, automations &amp; more →</span>
+    </a>
+  </aside>
+
+  <main id="main">
+    <div class="doc-header">
+      <span class="doc-kicker" data-i18n="docKicker">Nexa · Organization admins</span>
+      <h1 data-i18n="title">Administering your organization</h1>
+      <p data-i18n="intro">How to manage your Nexa organization itself — its name, its members, and their roles — from the in-app Settings page.</p>
+    </div>
+    <div id="chapters"></div>
+  </main>
+</div>
+
+<script>
+const LANGS = [
+  { code: "pt", label: "PT", name: "Português" },
+  { code: "en", label: "EN", name: "English" },
+  { code: "fr", label: "FR", name: "Français" },
+  { code: "de", label: "DE", name: "Deutsch" },
+  { code: "it", label: "IT", name: "Italiano" },
+];
+
+const T = {
+en: {
+  kicker: "Admin Guide", docKicker: "Nexa · Organization admins",
+  title: "Administering your organization",
+  intro: "How to manage your Nexa organization itself — its name, its members, and their roles — from the in-app Settings page.",
+  otherDocTitle: "Looking for the User Manual?",
+  otherDocHint: "Contacts, deals, automations & more →",
+  roleTh: ["Role", "Can do"],
+  chapters: [
+    { id: "roles", h: "Roles", body: `
+      <p>Every person in an organization holds exactly one role <strong>in that organization</strong> — someone in two organizations can hold a different role in each.</p>
+      <table class="role-table"><tr><th>Role</th><th>Can do</th></tr>
+        <tr><td><span class="role-pill">Member</span></td><td>Everything in the User Manual: contacts, companies, deals, activities, tasks, email, automations, segments, campaigns. Cannot open Settings.</td></tr>
+        <tr><td><span class="role-pill">Admin</span></td><td>Everything a Member can, plus: rename the organization, add/remove members, change members' roles.</td></tr>
+        <tr><td><span class="role-pill">Owner</span></td><td>Everything an Admin can. The only difference from Admin today is the “at least one Owner” protection below.</td></tr>
+      </table>
+    ` },
+    { id: "rename", h: "Renaming the organization", body: `
+      <p>Settings → the name field at the top → change it → <strong>Save</strong>. Takes effect immediately everywhere the organization name is shown.</p>
+    ` },
+    { id: "add", h: "Adding a member", body: `
+      <ol class="steps">
+        <li><span class="n">1</span>Open <strong>Settings → Add member</strong></li>
+        <li><span class="n">2</span>Enter their email address</li>
+        <li><span class="n">3</span>Pick a role (defaults to Member)</li>
+        <li><span class="n">4</span>Click <strong>Add</strong></li>
+      </ol>
+      <div class="note"><span class="icon">i</span><span><strong>The person must already have a Nexa account.</strong> There is currently no email invitation — if they haven't signed up yet, ask them to create an account first, then add them by that email. Trying to add someone with no account returns an error saying so.</span></div>
+    ` },
+    { id: "role-change", h: "Changing a member's role", body: `
+      <p>Settings → find the member's row → use the role dropdown next to their name → pick the new role. Takes effect immediately — no confirmation step, no save button.</p>
+    ` },
+    { id: "remove", h: "Removing a member", body: `
+      <p>Settings → find the member's row → <strong>Remove</strong>. This removes their access to this organization only; it does not delete their Nexa account or affect any other organization they belong to.</p>
+      <div class="note warn"><span class="icon">!</span><span>Removal is immediate and there's no undo — if you remove someone by mistake, you'll need to add them back.</span></div>
+    ` },
+    { id: "owner-rule", h: "The “at least one Owner” rule", body: `
+      <p>An organization can never end up with zero Owners: you cannot demote the last Owner to Admin/Member, and you cannot remove the last Owner. If you need to hand over ownership, first promote someone else to Owner, then change your own role or remove yourself.</p>
+    ` },
+    { id: "not-covered", h: "What Settings doesn't cover", body: `
+      <ul>
+        <li><strong>SMTP / outbound email configuration</strong> — set once at the platform level for the whole deployment, not per organization, and not exposed in the UI. Contact whoever operates your Nexa deployment if email sending isn't working.</li>
+        <li><strong>Billing / plan limits</strong> — none exist yet; every organization has full, unlimited access to every module.</li>
+        <li><strong>Deleting the organization itself</strong> — not available from the UI today.</li>
+      </ul>
+    ` },
+  ],
+},
+pt: {
+  kicker: "Manual do Administrador", docKicker: "Nexa · Administradores de organização",
+  title: "Administrar a tua organização",
+  intro: "Como gerir a tua organização no Nexa — o seu nome, os seus membros e os seus papéis — a partir da página Definições dentro da aplicação.",
+  otherDocTitle: "Procuras o Manual do Utilizador?",
+  otherDocHint: "Contactos, negócios, automações e mais →",
+  chapters: [
+    { id: "roles", h: "Papéis", body: `
+      <p>Cada pessoa numa organização tem exatamente um papel <strong>nessa organização</strong> — alguém em duas organizações pode ter um papel diferente em cada uma.</p>
+      <table class="role-table"><tr><th>Papel</th><th>Pode fazer</th></tr>
+        <tr><td><span class="role-pill">Member</span></td><td>Tudo o que está no Manual do Utilizador: contactos, empresas, negócios, atividades, tarefas, email, automações, segmentos, campanhas. Não pode abrir Definições.</td></tr>
+        <tr><td><span class="role-pill">Admin</span></td><td>Tudo o que um Member pode, mais: renomear a organização, adicionar/remover membros, mudar o papel dos membros.</td></tr>
+        <tr><td><span class="role-pill">Owner</span></td><td>Tudo o que um Admin pode. A única diferença face a Admin hoje é a proteção “pelo menos um Owner” abaixo.</td></tr>
+      </table>
+    ` },
+    { id: "rename", h: "Renomear a organização", body: `
+      <p>Definições → o campo do nome no topo → altera → <strong>Guardar</strong>. Tem efeito imediato em todos os sítios onde o nome da organização é mostrado.</p>
+    ` },
+    { id: "add", h: "Adicionar um membro", body: `
+      <ol class="steps">
+        <li><span class="n">1</span>Abre <strong>Definições → Adicionar membro</strong></li>
+        <li><span class="n">2</span>Indica o email da pessoa</li>
+        <li><span class="n">3</span>Escolhe um papel (por defeito Member)</li>
+        <li><span class="n">4</span>Clica em <strong>Adicionar</strong></li>
+      </ol>
+      <div class="note"><span class="icon">i</span><span><strong>A pessoa já precisa de ter conta no Nexa.</strong> Atualmente não há convite por email — se ainda não se registou, pede-lhe para criar conta primeiro, e depois adiciona-a por esse email. Tentar adicionar alguém sem conta devolve um erro a indicar isso.</span></div>
+    ` },
+    { id: "role-change", h: "Mudar o papel de um membro", body: `
+      <p>Definições → encontra a linha do membro → usa o menu do papel junto ao nome → escolhe o novo papel. Tem efeito imediato — sem passo de confirmação, sem botão de guardar.</p>
+    ` },
+    { id: "remove", h: "Remover um membro", body: `
+      <p>Definições → encontra a linha do membro → <strong>Remover</strong>. Isto remove apenas o acesso a esta organização; não elimina a conta Nexa da pessoa nem afeta qualquer outra organização a que pertença.</p>
+      <div class="note warn"><span class="icon">!</span><span>A remoção é imediata e não há desfazer — se removeres alguém por engano, terás de o adicionar de novo.</span></div>
+    ` },
+    { id: "owner-rule", h: "A regra “pelo menos um Owner”", body: `
+      <p>Uma organização nunca pode ficar com zero Owners: não podes despromover o último Owner para Admin/Member, nem podes remover o último Owner. Se precisares de passar a posse, promove primeiro outra pessoa a Owner, e só depois muda o teu próprio papel ou remove-te.</p>
+    ` },
+    { id: "not-covered", h: "O que as Definições não cobrem", body: `
+      <ul>
+        <li><strong>Configuração SMTP / envio de email</strong> — definida uma vez ao nível da plataforma, não por organização, e não exposta na interface. Contacta quem opera a tua instância do Nexa se o envio não estiver a funcionar.</li>
+        <li><strong>Faturação / limites de plano</strong> — ainda não existem; todas as organizações têm acesso total e ilimitado a todos os módulos.</li>
+        <li><strong>Eliminar a própria organização</strong> — não disponível na interface por agora.</li>
+      </ul>
+    ` },
+  ],
+},
+fr: {
+  kicker: "Guide administrateur", docKicker: "Nexa · Administrateurs d'organisation",
+  title: "Administrer votre organisation",
+  intro: "Comment gérer votre organisation Nexa elle-même — son nom, ses membres et leurs rôles — depuis la page Paramètres de l'application.",
+  otherDocTitle: "Vous cherchez le Guide utilisateur ?",
+  otherDocHint: "Contacts, affaires, automatisations et plus →",
+  chapters: [
+    { id: "roles", h: "Rôles", body: `
+      <p>Chaque personne dans une organisation détient exactement un rôle <strong>dans cette organisation</strong> — quelqu'un présent dans deux organisations peut avoir un rôle différent dans chacune.</p>
+      <table class="role-table"><tr><th>Rôle</th><th>Peut faire</th></tr>
+        <tr><td><span class="role-pill">Membre</span></td><td>Tout ce qui est dans le Guide utilisateur : contacts, entreprises, affaires, activités, tâches, email, automatisations, segments, campagnes. Ne peut pas ouvrir les Paramètres.</td></tr>
+        <tr><td><span class="role-pill">Admin</span></td><td>Tout ce qu'un Membre peut faire, plus : renommer l'organisation, ajouter/retirer des membres, changer leur rôle.</td></tr>
+        <tr><td><span class="role-pill">Propriétaire</span></td><td>Tout ce qu'un Admin peut faire. La seule différence avec Admin aujourd'hui est la protection « au moins un Propriétaire » ci-dessous.</td></tr>
+      </table>
+    ` },
+    { id: "rename", h: "Renommer l'organisation", body: `
+      <p>Paramètres → le champ du nom en haut → modifiez-le → <strong>Enregistrer</strong>. Effet immédiat partout où le nom de l'organisation est affiché.</p>
+    ` },
+    { id: "add", h: "Ajouter un membre", body: `
+      <ol class="steps">
+        <li><span class="n">1</span>Ouvrez <strong>Paramètres → Ajouter un membre</strong></li>
+        <li><span class="n">2</span>Indiquez son adresse email</li>
+        <li><span class="n">3</span>Choisissez un rôle (par défaut Membre)</li>
+        <li><span class="n">4</span>Cliquez sur <strong>Ajouter</strong></li>
+      </ol>
+      <div class="note"><span class="icon">i</span><span><strong>La personne doit déjà avoir un compte Nexa.</strong> Il n'y a actuellement pas d'invitation par email — si elle ne s'est pas encore inscrite, demandez-lui de créer un compte d'abord, puis ajoutez-la avec cet email. Essayer d'ajouter quelqu'un sans compte renvoie une erreur l'indiquant.</span></div>
+    ` },
+    { id: "role-change", h: "Changer le rôle d'un membre", body: `
+      <p>Paramètres → trouvez la ligne du membre → utilisez le menu déroulant du rôle à côté de son nom → choisissez le nouveau rôle. Effet immédiat — aucune étape de confirmation, aucun bouton d'enregistrement.</p>
+    ` },
+    { id: "remove", h: "Retirer un membre", body: `
+      <p>Paramètres → trouvez la ligne du membre → <strong>Supprimer</strong>. Cela retire uniquement son accès à cette organisation ; cela ne supprime pas son compte Nexa et n'affecte aucune autre organisation à laquelle il appartient.</p>
+      <div class="note warn"><span class="icon">!</span><span>Le retrait est immédiat et sans annulation possible — si vous retirez quelqu'un par erreur, vous devrez l'ajouter à nouveau.</span></div>
+    ` },
+    { id: "owner-rule", h: "La règle « au moins un Propriétaire »", body: `
+      <p>Une organisation ne peut jamais se retrouver sans Propriétaire : vous ne pouvez pas rétrograder le dernier Propriétaire, ni le retirer. Si vous devez transmettre la propriété, promouvez d'abord quelqu'un d'autre au rôle de Propriétaire, puis changez votre propre rôle ou retirez-vous.</p>
+    ` },
+    { id: "not-covered", h: "Ce que les Paramètres ne couvrent pas", body: `
+      <ul>
+        <li><strong>Configuration SMTP / envoi d'email</strong> — définie une fois au niveau de la plateforme, pas par organisation, et non accessible dans l'interface. Contactez la personne qui exploite votre instance Nexa si l'envoi ne fonctionne pas.</li>
+        <li><strong>Facturation / limites de plan</strong> — n'existent pas encore ; chaque organisation a un accès complet et illimité à tous les modules.</li>
+        <li><strong>Supprimer l'organisation elle-même</strong> — non disponible dans l'interface pour l'instant.</li>
+      </ul>
+    ` },
+  ],
+},
+de: {
+  kicker: "Administratorhandbuch", docKicker: "Nexa · Organisations-Administratoren",
+  title: "Deine Organisation verwalten",
+  intro: "Wie du deine Nexa-Organisation selbst verwaltest — ihren Namen, ihre Mitglieder und deren Rollen — über die App-Seite Einstellungen.",
+  otherDocTitle: "Suchst du das Benutzerhandbuch?",
+  otherDocHint: "Kontakte, Deals, Automatisierungen & mehr →",
+  chapters: [
+    { id: "roles", h: "Rollen", body: `
+      <p>Jede Person in einer Organisation hat genau eine Rolle <strong>in dieser Organisation</strong> — jemand in zwei Organisationen kann in jeder eine andere Rolle haben.</p>
+      <table class="role-table"><tr><th>Rolle</th><th>Kann</th></tr>
+        <tr><td><span class="role-pill">Mitglied</span></td><td>Alles aus dem Benutzerhandbuch: Kontakte, Unternehmen, Deals, Aktivitäten, Aufgaben, E-Mail, Automatisierungen, Segmente, Kampagnen. Kann Einstellungen nicht öffnen.</td></tr>
+        <tr><td><span class="role-pill">Admin</span></td><td>Alles, was ein Mitglied kann, plus: Organisation umbenennen, Mitglieder hinzufügen/entfernen, Rollen ändern.</td></tr>
+        <tr><td><span class="role-pill">Owner</span></td><td>Alles, was ein Admin kann. Der einzige Unterschied ist der unten beschriebene „mindestens ein Owner“-Schutz.</td></tr>
+      </table>
+    ` },
+    { id: "rename", h: "Organisation umbenennen", body: `
+      <p>Einstellungen → das Namensfeld oben → ändern → <strong>Speichern</strong>. Wirkt sich sofort überall aus, wo der Organisationsname angezeigt wird.</p>
+    ` },
+    { id: "add", h: "Mitglied hinzufügen", body: `
+      <ol class="steps">
+        <li><span class="n">1</span>Öffne <strong>Einstellungen → Mitglied hinzufügen</strong></li>
+        <li><span class="n">2</span>Gib die E-Mail-Adresse ein</li>
+        <li><span class="n">3</span>Wähle eine Rolle (Standard: Mitglied)</li>
+        <li><span class="n">4</span>Klicke auf <strong>Hinzufügen</strong></li>
+      </ol>
+      <div class="note"><span class="icon">i</span><span><strong>Die Person muss bereits ein Nexa-Konto haben.</strong> Derzeit gibt es keine E-Mail-Einladung — falls sie sich noch nicht registriert hat, bitte sie, zuerst ein Konto zu erstellen, und füge sie dann mit dieser E-Mail-Adresse hinzu.</span></div>
+    ` },
+    { id: "role-change", h: "Rolle eines Mitglieds ändern", body: `
+      <p>Einstellungen → die Zeile des Mitglieds finden → das Rollen-Dropdown neben dem Namen nutzen → die neue Rolle wählen. Wirkt sich sofort aus — kein Bestätigungsschritt, keine Speichern-Schaltfläche.</p>
+    ` },
+    { id: "remove", h: "Mitglied entfernen", body: `
+      <p>Einstellungen → die Zeile des Mitglieds finden → <strong>Entfernen</strong>. Dies entfernt nur den Zugriff auf diese Organisation; das Nexa-Konto der Person wird nicht gelöscht.</p>
+      <div class="note warn"><span class="icon">!</span><span>Das Entfernen erfolgt sofort und ist nicht rückgängig zu machen — entfernst du jemanden versehentlich, musst du ihn erneut hinzufügen.</span></div>
+    ` },
+    { id: "owner-rule", h: "Die „mindestens ein Owner“-Regel", body: `
+      <p>Eine Organisation kann nie ohne Owner dastehen: Du kannst den letzten Owner nicht degradieren oder entfernen. Musst du die Eigentümerschaft übertragen, befördere zuerst eine andere Person zum Owner und ändere dann erst deine eigene Rolle.</p>
+    ` },
+    { id: "not-covered", h: "Was Einstellungen nicht abdeckt", body: `
+      <ul>
+        <li><strong>SMTP- / E-Mail-Versandkonfiguration</strong> — einmalig auf Plattformebene festgelegt, nicht pro Organisation, nicht in der Oberfläche einsehbar.</li>
+        <li><strong>Abrechnung / Plan-Limits</strong> — gibt es noch nicht; jede Organisation hat vollen, unbegrenzten Zugriff.</li>
+        <li><strong>Die Organisation selbst löschen</strong> — derzeit nicht über die Oberfläche verfügbar.</li>
+      </ul>
+    ` },
+  ],
+},
+it: {
+  kicker: "Guida amministratore", docKicker: "Nexa · Amministratori di organizzazione",
+  title: "Amministrare la tua organizzazione",
+  intro: "Come gestire la tua organizzazione Nexa stessa — il suo nome, i suoi membri e i loro ruoli — dalla pagina Impostazioni dell'app.",
+  otherDocTitle: "Cerchi la Guida utente?",
+  otherDocHint: "Contatti, trattative, automazioni e altro →",
+  chapters: [
+    { id: "roles", h: "Ruoli", body: `
+      <p>Ogni persona in un'organizzazione ha esattamente un ruolo <strong>in quell'organizzazione</strong> — qualcuno presente in due organizzazioni può avere un ruolo diverso in ciascuna.</p>
+      <table class="role-table"><tr><th>Ruolo</th><th>Può fare</th></tr>
+        <tr><td><span class="role-pill">Membro</span></td><td>Tutto ciò che è nella Guida utente: contatti, aziende, trattative, attività, attività da svolgere, email, automazioni, segmenti, campagne. Non può aprire Impostazioni.</td></tr>
+        <tr><td><span class="role-pill">Admin</span></td><td>Tutto ciò che può fare un Membro, più: rinominare l'organizzazione, aggiungere/rimuovere membri, cambiare i ruoli.</td></tr>
+        <tr><td><span class="role-pill">Owner</span></td><td>Tutto ciò che può fare un Admin. L'unica differenza è la protezione “almeno un Owner” descritta sotto.</td></tr>
+      </table>
+    ` },
+    { id: "rename", h: "Rinominare l'organizzazione", body: `
+      <p>Impostazioni → il campo del nome in alto → modificalo → <strong>Salva</strong>. Ha effetto immediato ovunque venga mostrato il nome dell'organizzazione.</p>
+    ` },
+    { id: "add", h: "Aggiungere un membro", body: `
+      <ol class="steps">
+        <li><span class="n">1</span>Apri <strong>Impostazioni → Aggiungi membro</strong></li>
+        <li><span class="n">2</span>Inserisci la sua email</li>
+        <li><span class="n">3</span>Scegli un ruolo (predefinito Membro)</li>
+        <li><span class="n">4</span>Clicca su <strong>Aggiungi</strong></li>
+      </ol>
+      <div class="note"><span class="icon">i</span><span><strong>La persona deve già avere un account Nexa.</strong> Al momento non esiste un invito via email — se non si è ancora registrata, chiedile di creare prima un account, poi aggiungila con quella email.</span></div>
+    ` },
+    { id: "role-change", h: "Cambiare il ruolo di un membro", body: `
+      <p>Impostazioni → trova la riga del membro → usa il menu a tendina del ruolo accanto al nome → scegli il nuovo ruolo. Ha effetto immediato — nessun passaggio di conferma, nessun pulsante di salvataggio.</p>
+    ` },
+    { id: "remove", h: "Rimuovere un membro", body: `
+      <p>Impostazioni → trova la riga del membro → <strong>Rimuovi</strong>. Questo rimuove solo l'accesso a questa organizzazione; non elimina l'account Nexa della persona.</p>
+      <div class="note warn"><span class="icon">!</span><span>La rimozione è immediata e non è annullabile — se rimuovi qualcuno per errore, dovrai aggiungerlo di nuovo.</span></div>
+    ` },
+    { id: "owner-rule", h: "La regola “almeno un Owner”", body: `
+      <p>Un'organizzazione non può mai restare senza Owner: non puoi retrocedere o rimuovere l'ultimo Owner. Se devi trasferire la proprietà, promuovi prima qualcun altro a Owner, poi cambia il tuo ruolo.</p>
+    ` },
+    { id: "not-covered", h: "Cosa le Impostazioni non coprono", body: `
+      <ul>
+        <li><strong>Configurazione SMTP / invio email</strong> — impostata una volta a livello di piattaforma, non per organizzazione, non esposta nell'interfaccia.</li>
+        <li><strong>Fatturazione / limiti di piano</strong> — non esistono ancora; ogni organizzazione ha accesso completo e illimitato.</li>
+        <li><strong>Eliminare l'organizzazione stessa</strong> — non disponibile dall'interfaccia per ora.</li>
+      </ul>
+    ` },
+  ],
+},
+};
+
+let current = "en";
+
+function render(lang) {
+  const t = T[lang];
+  current = lang;
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    if (t[key]) el.innerHTML = t[key];
+  });
+
+  const toc = document.getElementById("toc");
+  toc.innerHTML = '<div class="toc-label">' + (lang === "en" ? "Chapters" : lang === "pt" ? "Capítulos" : lang === "fr" ? "Chapitres" : lang === "de" ? "Kapitel" : "Capitoli") + '</div>' +
+    t.chapters.map((c, i) => `<a href="#${c.id}"><span class="num">${String(i + 1).padStart(2, "0")}</span>${c.h}</a>`).join("");
+
+  const chapters = document.getElementById("chapters");
+  chapters.innerHTML = t.chapters.map((c, i) => `
+    <section class="chapter" id="${c.id}">
+      <div class="chapter-head">
+        <span class="chapter-num">${String(i + 1).padStart(2, "0")}</span>
+        <h2>${c.h}</h2>
+      </div>
+      ${c.body}
+    </section>
+  `).join("") + `<footer class="colophon">Nexa &middot; ${t.docKicker}</footer>`;
+
+  try { localStorage.setItem("nexa-doc-lang", lang); } catch (e) {}
+  updateActiveLangBtn();
+  updateActiveTocLink();
+}
+
+function updateActiveLangBtn() {
+  document.querySelectorAll(".lang-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.lang === current);
+    b.setAttribute("aria-pressed", b.dataset.lang === current ? "true" : "false");
+  });
+}
+
+function updateActiveTocLink() {
+  const links = Array.from(document.querySelectorAll(".toc a"));
+  const sections = links.map(l => document.getElementById(l.getAttribute("href").slice(1)));
+  let activeIdx = 0;
+  sections.forEach((s, i) => { if (s && s.getBoundingClientRect().top - 80 <= 0) activeIdx = i; });
+  links.forEach((l, i) => l.classList.toggle("active", i === activeIdx));
+}
+
+const langSwitch = document.getElementById("langSwitch");
+langSwitch.innerHTML = LANGS.map(l => `<button class="lang-btn" data-lang="${l.code}" title="${l.name}">${l.label}</button>`).join("");
+langSwitch.addEventListener("click", e => {
+  const btn = e.target.closest(".lang-btn");
+  if (btn) render(btn.dataset.lang);
+});
+
+document.addEventListener("scroll", () => { window.requestAnimationFrame(updateActiveTocLink); }, { passive: true });
+
+let initial = "en";
+try {
+  const saved = localStorage.getItem("nexa-doc-lang");
+  if (saved && T[saved]) initial = saved;
+  else {
+    const nav = (navigator.language || "en").slice(0, 2);
+    if (T[nav]) initial = nav;
+  }
+} catch (e) {}
+render(initial);
+</script>
