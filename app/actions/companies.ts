@@ -49,6 +49,41 @@ export async function createCompany(
   return { error: null };
 }
 
+export async function updateCompany(
+  _prevState: CreateCompanyState,
+  formData: FormData,
+): Promise<CreateCompanyState> {
+  const t = await getTranslations("Companies");
+  const orgSlug = String(formData.get("orgSlug") ?? "");
+  const companyId = String(formData.get("companyId") ?? "");
+  const organization = await getOrgForCurrentUser(orgSlug);
+  if (!organization) {
+    return { error: t("errorOrgNotFound") };
+  }
+
+  const existing = await prisma.company.findFirst({
+    where: { id: companyId, organizationId: organization.id },
+  });
+  if (!existing) {
+    return { error: t("errorOrgNotFound") };
+  }
+
+  const name = String(formData.get("name") ?? "").trim();
+  const domain = String(formData.get("domain") ?? "").trim();
+
+  if (!name) {
+    return { error: t("errorNameRequired") };
+  }
+
+  await prisma.company.update({
+    where: { id: companyId },
+    data: { name, domain: domain || null },
+  });
+
+  revalidatePath(`/app/${orgSlug}/companies`);
+  return { error: null };
+}
+
 export async function deleteCompany(formData: FormData) {
   const orgSlug = String(formData.get("orgSlug") ?? "");
   const companyId = String(formData.get("companyId") ?? "");

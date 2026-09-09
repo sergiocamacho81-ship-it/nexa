@@ -18,7 +18,10 @@ export default async function SegmentsPage({
     notFound();
   }
 
-  const t = await getTranslations("Segments");
+  const [t, tCantons] = await Promise.all([
+    getTranslations("Segments"),
+    getTranslations("Cantons"),
+  ]);
   const [segments, companies] = await Promise.all([listSegments(orgSlug), listCompanies(orgSlug)]);
 
   return (
@@ -46,7 +49,7 @@ export default async function SegmentsPage({
                   </span>
                 </div>
                 {segment.description && <p className="card-body">{segment.description}</p>}
-                <p className="card-meta">{describeSegmentFilters(segment.filters, t)}</p>
+                <p className="card-meta">{describeSegmentFilters(segment.filters, t, tCantons)}</p>
                 <div>
                   <DeleteSegmentButton orgSlug={orgSlug} segmentId={segment.id} />
                 </div>

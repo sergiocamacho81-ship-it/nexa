@@ -3,7 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { getOrgForCurrentUser, listContacts } from "@/app/actions/contacts";
 import { listCompanies } from "@/app/actions/companies";
 import { CreateContactForm } from "./create-contact-form";
-import { DeleteContactButton } from "./delete-contact-button";
+import { ContactRow } from "./contact-row";
+import { ImportContactsButton } from "./import-contacts-button";
 
 export default async function ContactsPage({
   params,
@@ -27,7 +28,12 @@ export default async function ContactsPage({
       </section>
 
       <section>
-        <h6 className="text-muted mb-3">{t("heading", { count: contacts.length })}</h6>
+        <div className="flex items-center justify-between mb-3">
+          <h6 className="text-muted" style={{ margin: 0 }}>
+            {t("heading", { count: contacts.length })}
+          </h6>
+          <ImportContactsButton orgSlug={orgSlug} />
+        </div>
         {contacts.length === 0 ? (
           <p className="text-muted text-sm">{t("none")}</p>
         ) : (
@@ -43,17 +49,7 @@ export default async function ContactsPage({
             </thead>
             <tbody>
               {contacts.map((contact) => (
-                <tr key={contact.id}>
-                  <td>
-                    {contact.firstName} {contact.lastName ?? ""}
-                  </td>
-                  <td className="text-muted">{contact.company?.name ?? "—"}</td>
-                  <td className="text-muted">{contact.email ?? "—"}</td>
-                  <td className="text-muted">{contact.phone ?? "—"}</td>
-                  <td>
-                    <DeleteContactButton orgSlug={orgSlug} contactId={contact.id} />
-                  </td>
-                </tr>
+                <ContactRow key={contact.id} orgSlug={orgSlug} contact={contact} companies={companies} />
               ))}
             </tbody>
           </table>

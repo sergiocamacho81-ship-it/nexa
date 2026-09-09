@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { listCompanies } from "@/app/actions/companies";
 import { CreateCompanyForm } from "./create-company-form";
-import { DeleteCompanyButton } from "./delete-company-button";
+import { CompanyRow } from "./company-row";
 
 export default async function CompaniesPage({
   params,
@@ -41,13 +41,7 @@ export default async function CompaniesPage({
             </thead>
             <tbody>
               {companies.map((company) => (
-                <tr key={company.id}>
-                  <td>{company.name}</td>
-                  <td className="text-muted">{company.domain ?? "—"}</td>
-                  <td>
-                    <DeleteCompanyButton orgSlug={orgSlug} companyId={company.id} />
-                  </td>
-                </tr>
+                <CompanyRow key={company.id} orgSlug={orgSlug} company={company} />
               ))}
             </tbody>
           </table>

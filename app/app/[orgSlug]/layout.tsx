@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
+import { OrgNav } from "./org-nav";
 
 export default async function OrgLayout({
   children,
@@ -17,23 +17,22 @@ export default async function OrgLayout({
   }
   const t = await getTranslations("Nav");
 
+  const items = [
+    { href: `/app/${orgSlug}/contacts`, label: t("contacts") },
+    { href: `/app/${orgSlug}/companies`, label: t("companies") },
+    { href: `/app/${orgSlug}/deals`, label: t("deals") },
+    { href: `/app/${orgSlug}/activities`, label: t("activities") },
+    { href: `/app/${orgSlug}/tasks`, label: t("tasks") },
+    { href: `/app/${orgSlug}/email`, label: t("email") },
+    { href: `/app/${orgSlug}/automations`, label: t("automations") },
+    { href: `/app/${orgSlug}/campaigns`, label: t("campaigns") },
+    { href: `/app/${orgSlug}/segments`, label: t("segments") },
+    { href: `/app/${orgSlug}/settings`, label: t("settings") },
+  ];
+
   return (
     <div className="flex flex-1 flex-col">
-      <nav className="nav" style={{ borderBottomWidth: "1px" }}>
-        <Link href={`/app/${orgSlug}`} className="nav-brand" style={{ fontSize: "14px" }}>
-          {organization.name}
-        </Link>
-        <Link href={`/app/${orgSlug}/contacts`}>{t("contacts")}</Link>
-        <Link href={`/app/${orgSlug}/companies`}>{t("companies")}</Link>
-        <Link href={`/app/${orgSlug}/deals`}>{t("deals")}</Link>
-        <Link href={`/app/${orgSlug}/activities`}>{t("activities")}</Link>
-        <Link href={`/app/${orgSlug}/tasks`}>{t("tasks")}</Link>
-        <Link href={`/app/${orgSlug}/email`}>{t("email")}</Link>
-        <Link href={`/app/${orgSlug}/automations`}>{t("automations")}</Link>
-        <Link href={`/app/${orgSlug}/campaigns`}>{t("campaigns")}</Link>
-        <Link href={`/app/${orgSlug}/segments`}>{t("segments")}</Link>
-        <Link href={`/app/${orgSlug}/settings`}>{t("settings")}</Link>
-      </nav>
+      <OrgNav orgSlug={orgSlug} orgName={organization.name} items={items} />
       <div className="flex flex-1 flex-col">{children}</div>
     </div>
   );

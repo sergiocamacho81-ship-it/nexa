@@ -48,16 +48,56 @@ model Membership {
   @@map("memberships")
 }
 
+enum ContactLanguage {
+  pt
+  en
+  fr
+  de
+  it
+}
+
+enum SwissCanton {
+  AG
+  AI
+  AR
+  BE
+  BL
+  BS
+  FR
+  GE
+  GL
+  GR
+  JU
+  LU
+  NE
+  NW
+  OW
+  SG
+  SH
+  SO
+  SZ
+  TG
+  TI
+  UR
+  VD
+  VS
+  ZG
+  ZH
+}
+
 model Contact {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @map("organization_id") @db.Uuid
-  companyId      String?  @map("company_id") @db.Uuid
-  firstName      String   @map("first_name")
-  lastName       String?  @map("last_name")
-  email          String?
-  phone          String?
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  id                String           @id @default(uuid()) @db.Uuid
+  organizationId    String           @map("organization_id") @db.Uuid
+  companyId         String?          @map("company_id") @db.Uuid
+  firstName         String           @map("first_name")
+  lastName          String?          @map("last_name")
+  email             String?
+  phone             String?
+  preferredLanguage ContactLanguage? @map("preferred_language")
+  city              String?
+  canton            SwissCanton?
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
 
   organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   company            Company?            @relation(fields: [companyId], references: [id], onDelete: SetNull)

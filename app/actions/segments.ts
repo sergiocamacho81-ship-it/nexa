@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { buildContactWhere, parseSegmentFilters, type SegmentFilters } from "@/lib/segments/filters";
+import { SWISS_CANTONS } from "@/lib/swiss-cantons";
 
 // Takes orgSlug (not organizationId) and re-verifies membership itself — see
 // note in app/actions/contacts.ts listContacts.
@@ -63,6 +64,8 @@ export async function createSegment(
   const hasEmailRaw = String(formData.get("hasEmail") ?? "");
   const createdAfter = String(formData.get("createdAfter") ?? "").trim();
   const createdBefore = String(formData.get("createdBefore") ?? "").trim();
+  const cantonRaw = String(formData.get("canton") ?? "").trim();
+  const city = String(formData.get("city") ?? "").trim();
 
   if (!name) {
     return { error: t("errorNameRequired") };
@@ -81,6 +84,10 @@ export async function createSegment(
   if (hasEmailRaw === "false") filters.hasEmail = false;
   if (createdAfter) filters.createdAfter = createdAfter;
   if (createdBefore) filters.createdBefore = createdBefore;
+  if (SWISS_CANTONS.includes(cantonRaw as (typeof SWISS_CANTONS)[number])) {
+    filters.canton = cantonRaw as (typeof SWISS_CANTONS)[number];
+  }
+  if (city) filters.city = city;
 
   await prisma.segment.create({
     data: {

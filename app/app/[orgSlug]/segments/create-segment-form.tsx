@@ -3,11 +3,13 @@
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { createSegment } from "@/app/actions/segments";
+import { SWISS_CANTONS } from "@/lib/swiss-cantons";
 
 type Company = { id: string; name: string };
 
 export function CreateSegmentForm({ orgSlug, companies }: { orgSlug: string; companies: Company[] }) {
   const t = useTranslations("Segments");
+  const tCantons = useTranslations("Cantons");
   const [state, action, isPending] = useActionState(createSegment, { error: null });
 
   return (
@@ -48,6 +50,21 @@ export function CreateSegmentForm({ orgSlug, companies }: { orgSlug: string; com
         <div className="field">
           <label htmlFor="createdBefore">{t("createdBefore")}</label>
           <input id="createdBefore" name="createdBefore" type="date" className="input" />
+        </div>
+        <div className="field">
+          <label htmlFor="canton">{t("canton")}</label>
+          <select id="canton" name="canton" className="input" defaultValue="">
+            <option value="">{t("anyCanton")}</option>
+            {SWISS_CANTONS.map((canton) => (
+              <option key={canton} value={canton}>
+                {tCantons(canton)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="field">
+          <label htmlFor="city">{t("city")}</label>
+          <input id="city" name="city" type="text" placeholder={t("cityPlaceholder")} className="input" />
         </div>
       </div>
 
