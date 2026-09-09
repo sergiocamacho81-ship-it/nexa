@@ -1,0 +1,13 @@
+-- Addendum a rls_policies_fase1.sql — aplicado diretamente (autorizado em chat).
+--
+-- A FK memberships.user_id -> auth.users.id impedia o `prisma migrate dev` de
+-- funcionar: para a representar, o Prisma precisa do schema `auth` na sua
+-- lista de schemas geridos, o que o leva a tratar TODO o schema `auth`
+-- (sessions, identities, tokens, etc.) como algo que também gere — e como as
+-- migrations do Prisma nunca criaram essas tabelas, ele interpreta isso como
+-- "drift" e sugere um `prisma migrate reset`, que apagaria o schema `auth`
+-- inteiro (contas de utilizador reais incluídas).
+--
+-- RLS e is_org_member() não dependem desta FK — a integridade fica garantida
+-- na prática porque memberships.user_id só é escrito a partir de auth.uid().
+alter table public.memberships drop constraint memberships_user_id_fkey;
