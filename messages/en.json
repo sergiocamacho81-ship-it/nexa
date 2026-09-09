@@ -33,7 +33,14 @@
     "errorEmailExists": "An account with this email already exists.",
     "errorWeakPassword": "Password is too weak. Use at least 6 characters.",
     "errorEmailNotConfirmed": "Please confirm your email before signing in.",
-    "errorRateLimit": "Too many attempts. Please try again in a moment."
+    "errorRateLimit": "Too many attempts. Please try again in a moment.",
+    "forgotPassword": "Forgot your password?",
+    "forgotPasswordTitle": "Reset your password",
+    "forgotPasswordHint": "Enter your email and we'll send you a link to reset your password.",
+    "sendResetLink": "Send reset link",
+    "sendingResetLink": "Sending...",
+    "resetLinkSent": "If an account exists for that email, we've sent a password reset link.",
+    "backToLogin": "Back to sign in"
   },
   "Organizations": {
     "yourOrganizations": "Your organizations",
@@ -339,5 +346,19 @@
   },
   "LocaleSwitcher": {
     "label": "Language"
+  },
+  "ResetPassword": {
+    "title": "Set a new password",
+    "hint": "Choose a new password for your account.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "errorPasswordMismatch": "Passwords don't match.",
+    "errorPasswordTooShort": "Password must be at least 6 characters.",
+    "errorUpdateFailed": "Couldn't update your password. Try requesting a new reset link.",
+    "submit": "Update password",
+    "submitting": "Updating...",
+    "invalidLink": "This link is invalid or has expired. Request a new one.",
+    "requestNewLink": "Request a new link",
+    "success": "Password updated! Redirecting..."
   }
 }

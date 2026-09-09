@@ -33,7 +33,14 @@
     "errorEmailExists": "Un compte avec cet email existe déjà.",
     "errorWeakPassword": "Mot de passe trop faible. Utilisez au moins 6 caractères.",
     "errorEmailNotConfirmed": "Veuillez confirmer votre email avant de vous connecter.",
-    "errorRateLimit": "Trop de tentatives. Réessayez dans un instant."
+    "errorRateLimit": "Trop de tentatives. Réessayez dans un instant.",
+    "forgotPassword": "Mot de passe oublié ?",
+    "forgotPasswordTitle": "Réinitialiser le mot de passe",
+    "forgotPasswordHint": "Indique ton email et nous t'enverrons un lien pour réinitialiser ton mot de passe.",
+    "sendResetLink": "Envoyer le lien de réinitialisation",
+    "sendingResetLink": "Envoi en cours...",
+    "resetLinkSent": "Si un compte existe avec cet email, nous avons envoyé un lien de réinitialisation.",
+    "backToLogin": "Retour à la connexion"
   },
   "Organizations": {
     "yourOrganizations": "Vos organisations",
@@ -339,5 +346,19 @@
   },
   "LocaleSwitcher": {
     "label": "Langue"
+  },
+  "ResetPassword": {
+    "title": "Définir un nouveau mot de passe",
+    "hint": "Choisis un nouveau mot de passe pour ton compte.",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "errorPasswordMismatch": "Les mots de passe ne correspondent pas.",
+    "errorPasswordTooShort": "Le mot de passe doit contenir au moins 6 caractères.",
+    "errorUpdateFailed": "Impossible de mettre à jour le mot de passe. Demande un nouveau lien.",
+    "submit": "Mettre à jour le mot de passe",
+    "submitting": "Mise à jour...",
+    "invalidLink": "Ce lien est invalide ou a expiré. Demande-en un nouveau.",
+    "requestNewLink": "Demander un nouveau lien",
+    "success": "Mot de passe mis à jour ! Redirection..."
   }
 }

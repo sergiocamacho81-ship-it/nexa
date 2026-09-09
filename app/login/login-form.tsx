@@ -54,6 +54,12 @@ export function LoginForm() {
           />
         </div>
 
+        {mode === "signin" && (
+          <a href="/forgot-password" className="text-sm text-muted">
+            {t("forgotPassword")}
+          </a>
+        )}
+
         {error && <p className="text-sm" style={{ color: "var(--color-accent-700)" }}>{error}</p>}
 
         <button type="submit" disabled={isPending} className="btn btn-primary btn-block">

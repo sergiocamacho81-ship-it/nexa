@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 
@@ -70,4 +71,64 @@ export async function signOut(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/login");
+}
+
+export type PasswordResetRequestState = { error: string | null; success?: boolean };
+
+export async function requestPasswordReset(
+  _prevState: PasswordResetRequestState,
+  formData: FormData,
+): Promise<PasswordResetRequestState> {
+  const email = String(formData.get("email") ?? "").trim();
+  const t = await getTranslations("Auth");
+  if (!email) {
+    return { error: t("errorRequiredFields") };
+  }
+
+  const headersList = await headers();
+  const host = headersList.get("x-forwarded-host") ?? headersList.get("host");
+  const protocol = headersList.get("x-forwarded-proto") ?? "https";
+  const origin = `${protocol}://${host}`;
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/reset-password`,
+  });
+
+  if (error) {
+    return { error: await translateAuthError(error.code, error.message) };
+  }
+
+  return { error: null, success: true };
+}
+
+export type UpdatePasswordState = { error: string | null };
+
+// Called from /reset-password once the browser client has picked up the
+// recovery session from the email link's URL fragment (see
+// reset-password-form.tsx) — that session is cookie-based via @supabase/ssr,
+// so it's already visible to this Server Action by the time the form submits.
+export async function updatePassword(
+  _prevState: UpdatePasswordState,
+  formData: FormData,
+): Promise<UpdatePasswordState> {
+  const password = String(formData.get("password") ?? "");
+  const confirmPassword = String(formData.get("confirmPassword") ?? "");
+  const t = await getTranslations("ResetPassword");
+
+  if (password.length < 6) {
+    return { error: t("errorPasswordTooShort") };
+  }
+  if (password !== confirmPassword) {
+    return { error: t("errorPasswordMismatch") };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) {
+    return { error: t("errorUpdateFailed") };
+  }
+
+  redirect("/app");
 }

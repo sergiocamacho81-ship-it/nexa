@@ -33,7 +33,14 @@
     "errorEmailExists": "Es existiert bereits ein Konto mit dieser E-Mail.",
     "errorWeakPassword": "Passwort zu schwach. Mindestens 6 Zeichen verwenden.",
     "errorEmailNotConfirmed": "Bitte bestätige deine E-Mail, bevor du dich anmeldest.",
-    "errorRateLimit": "Zu viele Versuche. Bitte versuche es gleich noch einmal."
+    "errorRateLimit": "Zu viele Versuche. Bitte versuche es gleich noch einmal.",
+    "forgotPassword": "Passwort vergessen?",
+    "forgotPasswordTitle": "Passwort zurücksetzen",
+    "forgotPasswordHint": "Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen des Passworts.",
+    "sendResetLink": "Reset-Link senden",
+    "sendingResetLink": "Wird gesendet...",
+    "resetLinkSent": "Falls ein Konto mit dieser E-Mail existiert, haben wir einen Link zum Zurücksetzen gesendet.",
+    "backToLogin": "Zurück zur Anmeldung"
   },
   "Organizations": {
     "yourOrganizations": "Deine Organisationen",
@@ -339,5 +346,19 @@
   },
   "LocaleSwitcher": {
     "label": "Sprache"
+  },
+  "ResetPassword": {
+    "title": "Neues Passwort festlegen",
+    "hint": "Wähle ein neues Passwort für dein Konto.",
+    "newPassword": "Neues Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "errorPasswordMismatch": "Die Passwörter stimmen nicht überein.",
+    "errorPasswordTooShort": "Das Passwort muss mindestens 6 Zeichen lang sein.",
+    "errorUpdateFailed": "Passwort konnte nicht aktualisiert werden. Fordere einen neuen Link an.",
+    "submit": "Passwort aktualisieren",
+    "submitting": "Wird aktualisiert...",
+    "invalidLink": "Dieser Link ist ungültig oder abgelaufen. Fordere einen neuen an.",
+    "requestNewLink": "Neuen Link anfordern",
+    "success": "Passwort aktualisiert! Weiterleitung..."
   }
 }

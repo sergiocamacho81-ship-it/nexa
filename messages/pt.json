@@ -33,7 +33,14 @@
     "errorEmailExists": "Já existe uma conta com este email.",
     "errorWeakPassword": "Password demasiado fraca. Usa pelo menos 6 caracteres.",
     "errorEmailNotConfirmed": "Confirma o teu email antes de entrares.",
-    "errorRateLimit": "Demasiadas tentativas. Tenta novamente daqui a pouco."
+    "errorRateLimit": "Demasiadas tentativas. Tenta novamente daqui a pouco.",
+    "forgotPassword": "Esqueceste-te da password?",
+    "forgotPasswordTitle": "Repor a password",
+    "forgotPasswordHint": "Indica o teu email e enviamos-te um link para repores a password.",
+    "sendResetLink": "Enviar link de reposição",
+    "sendingResetLink": "A enviar...",
+    "resetLinkSent": "Se existir uma conta com esse email, enviámos um link para repor a password.",
+    "backToLogin": "Voltar ao login"
   },
   "Organizations": {
     "yourOrganizations": "As tuas organizações",
@@ -339,5 +346,19 @@
   },
   "LocaleSwitcher": {
     "label": "Idioma"
+  },
+  "ResetPassword": {
+    "title": "Definir nova password",
+    "hint": "Escolhe uma nova password para a tua conta.",
+    "newPassword": "Nova password",
+    "confirmPassword": "Confirmar password",
+    "errorPasswordMismatch": "As passwords não coincidem.",
+    "errorPasswordTooShort": "A password deve ter pelo menos 6 caracteres.",
+    "errorUpdateFailed": "Não foi possível atualizar a password. Tenta pedir um novo link.",
+    "submit": "Atualizar password",
+    "submitting": "A atualizar...",
+    "invalidLink": "Este link é inválido ou expirou. Pede um novo.",
+    "requestNewLink": "Pedir novo link",
+    "success": "Password atualizada! A redirecionar..."
   }
 }
