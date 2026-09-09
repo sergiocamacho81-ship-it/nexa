@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { sendCampaign } from "@/app/actions/campaigns";
 
 export function SendCampaignButton({
@@ -10,6 +11,7 @@ export function SendCampaignButton({
   orgSlug: string;
   campaignId: string;
 }) {
+  const t = useTranslations("Campaigns");
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -24,7 +26,7 @@ export function SendCampaignButton({
         startTransition(() => sendCampaign(formData));
       }}
     >
-      {isPending ? "A enviar..." : "Enviar agora"}
+      {isPending ? t("sending") : t("sendNow")}
     </button>
   );
 }

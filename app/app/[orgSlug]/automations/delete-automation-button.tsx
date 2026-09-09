@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { deleteAutomation } from "@/app/actions/automations";
 
 export function DeleteAutomationButton({
@@ -10,6 +11,7 @@ export function DeleteAutomationButton({
   orgSlug: string;
   automationId: string;
 }) {
+  const t = useTranslations("Automations");
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -24,7 +26,7 @@ export function DeleteAutomationButton({
         startTransition(() => deleteAutomation(formData));
       }}
     >
-      Remover
+      {t("remove")}
     </button>
   );
 }

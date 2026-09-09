@@ -1,9 +1,11 @@
 "use client";
 
 import { useActionState } from "react";
+import { useTranslations } from "next-intl";
 import { createOrganization } from "@/app/actions/organizations";
 
 export function CreateOrganizationForm() {
+  const t = useTranslations("Organizations");
   const [state, action, isPending] = useActionState(createOrganization, {
     error: null,
   });
@@ -14,12 +16,12 @@ export function CreateOrganizationForm() {
         <input
           name="name"
           type="text"
-          placeholder="Nome da organização"
+          placeholder={t("namePlaceholder")}
           required
           className="input flex-1"
         />
         <button type="submit" disabled={isPending} className="btn btn-primary">
-          {isPending ? "A criar..." : "Criar"}
+          {isPending ? t("creating") : t("create")}
         </button>
       </div>
       {state.error && (

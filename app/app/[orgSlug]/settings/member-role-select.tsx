@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { updateMemberRole } from "@/app/actions/settings";
-import { MEMBERSHIP_ROLES, MEMBERSHIP_ROLE_LABELS } from "@/lib/membership-roles";
+import { MEMBERSHIP_ROLES } from "@/lib/membership-roles";
 
 export function MemberRoleSelect({
   orgSlug,
@@ -13,6 +14,8 @@ export function MemberRoleSelect({
   membershipId: string;
   currentRole: (typeof MEMBERSHIP_ROLES)[number];
 }) {
+  const t = useTranslations("Settings");
+  const tRoles = useTranslations("MembershipRoles");
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -35,14 +38,14 @@ export function MemberRoleSelect({
               await updateMemberRole(formData);
             } catch (err) {
               e.target.value = currentRole;
-              setError(err instanceof Error ? err.message : "Erro desconhecido.");
+              setError(err instanceof Error ? err.message : t("errorUnknown"));
             }
           });
         }}
       >
         {MEMBERSHIP_ROLES.map((role) => (
           <option key={role} value={role}>
-            {MEMBERSHIP_ROLE_LABELS[role]}
+            {tRoles(role)}
           </option>
         ))}
       </select>

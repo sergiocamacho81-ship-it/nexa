@@ -1,8 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
+import { useTranslations } from "next-intl";
 import { createActivity } from "@/app/actions/activities";
-import { ACTIVITY_TYPES, ACTIVITY_TYPE_LABELS } from "@/lib/activity-types";
+import { ACTIVITY_TYPES } from "@/lib/activity-types";
 
 type Company = { id: string; name: string };
 type Contact = { id: string; firstName: string; lastName: string | null };
@@ -19,6 +20,8 @@ export function CreateActivityForm({
   companies: Company[];
   deals: Deal[];
 }) {
+  const t = useTranslations("Activities");
+  const tTypes = useTranslations("ActivityTypes");
   const [state, action, isPending] = useActionState(createActivity, { error: null });
 
   return (
@@ -26,19 +29,19 @@ export function CreateActivityForm({
       <input type="hidden" name="orgSlug" value={orgSlug} />
       <div className="grid grid-cols-2 gap-2">
         <div className="field">
-          <label htmlFor="type">Tipo</label>
+          <label htmlFor="type">{t("type")}</label>
           <select id="type" name="type" className="input" defaultValue="NOTE">
             {ACTIVITY_TYPES.map((type) => (
               <option key={type} value={type}>
-                {ACTIVITY_TYPE_LABELS[type]}
+                {tTypes(type)}
               </option>
             ))}
           </select>
         </div>
         <div className="field">
-          <label htmlFor="contactId">Contacto</label>
+          <label htmlFor="contactId">{t("contact")}</label>
           <select id="contactId" name="contactId" className="input" defaultValue="">
-            <option value="">— Nenhum —</option>
+            <option value="">{t("noContact")}</option>
             {contacts.map((contact) => (
               <option key={contact.id} value={contact.id}>
                 {contact.firstName} {contact.lastName ?? ""}
@@ -47,9 +50,9 @@ export function CreateActivityForm({
           </select>
         </div>
         <div className="field">
-          <label htmlFor="companyId">Empresa</label>
+          <label htmlFor="companyId">{t("company")}</label>
           <select id="companyId" name="companyId" className="input" defaultValue="">
-            <option value="">— Nenhuma —</option>
+            <option value="">{t("noCompany")}</option>
             {companies.map((company) => (
               <option key={company.id} value={company.id}>
                 {company.name}
@@ -58,9 +61,9 @@ export function CreateActivityForm({
           </select>
         </div>
         <div className="field">
-          <label htmlFor="dealId">Negócio</label>
+          <label htmlFor="dealId">{t("deal")}</label>
           <select id="dealId" name="dealId" className="input" defaultValue="">
-            <option value="">— Nenhum —</option>
+            <option value="">{t("noDeal")}</option>
             {deals.map((deal) => (
               <option key={deal.id} value={deal.id}>
                 {deal.title}
@@ -71,7 +74,7 @@ export function CreateActivityForm({
       </div>
 
       <div className="field">
-        <label htmlFor="content">Descrição</label>
+        <label htmlFor="content">{t("description")}</label>
         <textarea id="content" name="content" required className="input" rows={3} />
       </div>
 
@@ -87,7 +90,7 @@ export function CreateActivityForm({
         className="btn btn-primary"
         style={{ alignSelf: "flex-start" }}
       >
-        {isPending ? "A registar..." : "Registar atividade"}
+        {isPending ? t("registering") : t("register")}
       </button>
     </form>
   );

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/app/actions/organizations";
 import { runAutomationsForTrigger } from "@/lib/automation/engine";
@@ -45,10 +46,11 @@ export async function createContact(
   _prevState: CreateContactState,
   formData: FormData,
 ): Promise<CreateContactState> {
+  const t = await getTranslations("Contacts");
   const orgSlug = String(formData.get("orgSlug") ?? "");
   const organization = await getOrgForCurrentUser(orgSlug);
   if (!organization) {
-    return { error: "Organização não encontrada." };
+    return { error: t("errorOrgNotFound") };
   }
 
   const firstName = String(formData.get("firstName") ?? "").trim();
@@ -58,7 +60,7 @@ export async function createContact(
   const companyId = String(formData.get("companyId") ?? "").trim();
 
   if (!firstName) {
-    return { error: "O primeiro nome é obrigatório." };
+    return { error: t("errorFirstNameRequired") };
   }
 
   if (companyId) {
@@ -66,7 +68,7 @@ export async function createContact(
       where: { id: companyId, organizationId: organization.id },
     });
     if (!company) {
-      return { error: "Empresa inválida." };
+      return { error: t("errorInvalidCompany") };
     }
   }
 

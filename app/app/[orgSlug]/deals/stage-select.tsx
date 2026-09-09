@@ -1,8 +1,9 @@
 "use client";
 
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { updateDealStage } from "@/app/actions/deals";
-import { DEAL_STAGES, DEAL_STAGE_LABELS } from "@/lib/deal-stages";
+import { DEAL_STAGES } from "@/lib/deal-stages";
 
 export function StageSelect({
   orgSlug,
@@ -13,6 +14,7 @@ export function StageSelect({
   dealId: string;
   currentStage: (typeof DEAL_STAGES)[number];
 }) {
+  const tStages = useTranslations("DealStages");
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -31,7 +33,7 @@ export function StageSelect({
     >
       {DEAL_STAGES.map((stage) => (
         <option key={stage} value={stage}>
-          {DEAL_STAGE_LABELS[stage]}
+          {tStages(stage)}
         </option>
       ))}
     </select>

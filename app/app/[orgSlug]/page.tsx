@@ -1,11 +1,8 @@
 import { notFound } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { prisma } from "@/lib/prisma";
-import { DEAL_STAGES, DEAL_STAGE_LABELS } from "@/lib/deal-stages";
-import { ACTIVITY_TYPE_LABELS } from "@/lib/activity-types";
-
-const currency = (n: number) =>
-  n.toLocaleString("pt-PT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+import { DEAL_STAGES } from "@/lib/deal-stages";
 
 export default async function DashboardPage({
   params,
@@ -17,6 +14,15 @@ export default async function DashboardPage({
   if (!organization) {
     notFound();
   }
+  const [t, tStages, tActivity, locale] = await Promise.all([
+    getTranslations("Dashboard"),
+    getTranslations("DealStages"),
+    getTranslations("ActivityTypes"),
+    getLocale(),
+  ]);
+
+  const currency = (n: number) =>
+    n.toLocaleString(locale, { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
 
   const [
     contactsCount,
@@ -64,26 +70,26 @@ export default async function DashboardPage({
     <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-6 py-12">
       <section className="grid grid-cols-4 gap-3">
         <div className="card elev-sm">
-          <span className="card-kicker">Contactos</span>
+          <span className="card-kicker">{t("contacts")}</span>
           <p className="card-title" style={{ fontSize: "28px" }}>
             {contactsCount}
           </p>
         </div>
         <div className="card elev-sm">
-          <span className="card-kicker">Empresas</span>
+          <span className="card-kicker">{t("companies")}</span>
           <p className="card-title" style={{ fontSize: "28px" }}>
             {companiesCount}
           </p>
         </div>
         <div className="card elev-sm">
-          <span className="card-kicker">Negócios abertos</span>
+          <span className="card-kicker">{t("openDeals")}</span>
           <p className="card-title" style={{ fontSize: "28px" }}>
             {openDealsCount}
           </p>
           <span className="card-meta">{currency(openDealsValue)}</span>
         </div>
         <div className="card elev-sm">
-          <span className="card-kicker">Ganho (total)</span>
+          <span className="card-kicker">{t("wonTotal")}</span>
           <p className="card-title" style={{ fontSize: "28px" }}>
             {currency(wonValue)}
           </p>
@@ -91,13 +97,13 @@ export default async function DashboardPage({
       </section>
 
       <section>
-        <h6 className="text-muted mb-3">Pipeline por estágio</h6>
+        <h6 className="text-muted mb-3">{t("pipelineByStage")}</h6>
         <table className="table">
           <thead>
             <tr>
-              <th>Estágio</th>
-              <th>Negócios</th>
-              <th>Valor</th>
+              <th>{t("stage")}</th>
+              <th>{t("deals")}</th>
+              <th>{t("value")}</th>
             </tr>
           </thead>
           <tbody>
@@ -105,7 +111,7 @@ export default async function DashboardPage({
               const row = stageMap.get(stage);
               return (
                 <tr key={stage}>
-                  <td>{DEAL_STAGE_LABELS[stage]}</td>
+                  <td>{tStages(stage)}</td>
                   <td className="text-muted">{row?._count._all ?? 0}</td>
                   <td className="text-muted">{currency(Number(row?._sum.value ?? 0))}</td>
                 </tr>
@@ -117,18 +123,18 @@ export default async function DashboardPage({
 
       <section className="grid grid-cols-2 gap-3">
         <div className="card elev-sm">
-          <span className="card-kicker">Tarefas pendentes</span>
+          <span className="card-kicker">{t("tasksPending")}</span>
           <p className="card-title" style={{ fontSize: "28px" }}>
             {tasksPending}
           </p>
           {tasksOverdue > 0 && (
             <span className="card-meta" style={{ color: "var(--color-accent-700)" }}>
-              {tasksOverdue} em atraso
+              {t("tasksOverdue", { count: tasksOverdue })}
             </span>
           )}
         </div>
         <div className="card elev-sm">
-          <span className="card-kicker">Campanhas</span>
+          <span className="card-kicker">{t("campaigns")}</span>
           <p className="card-title" style={{ fontSize: "28px" }}>
             {campaignsCount}
           </p>
@@ -136,17 +142,17 @@ export default async function DashboardPage({
       </section>
 
       <section>
-        <h6 className="text-muted mb-3">Atividade recente</h6>
+        <h6 className="text-muted mb-3">{t("recentActivity")}</h6>
         {recentActivities.length === 0 ? (
-          <p className="text-muted text-sm">Ainda não há atividades registadas.</p>
+          <p className="text-muted text-sm">{t("noActivity")}</p>
         ) : (
           <div className="flex flex-col gap-2">
             {recentActivities.map((activity) => (
               <div key={activity.id} className="card elev-sm">
                 <div className="flex items-center justify-between">
-                  <span className="tag tag-accent">{ACTIVITY_TYPE_LABELS[activity.type]}</span>
+                  <span className="tag tag-accent">{tActivity(activity.type)}</span>
                   <span className="card-meta">
-                    {new Intl.DateTimeFormat("pt-PT", { dateStyle: "short", timeStyle: "short" }).format(
+                    {new Intl.DateTimeFormat(locale, { dateStyle: "short", timeStyle: "short" }).format(
                       activity.occurredAt,
                     )}
                   </span>

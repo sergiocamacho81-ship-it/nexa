@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getOrgForCurrentUser, listContacts } from "@/app/actions/contacts";
 import { listCompanies } from "@/app/actions/companies";
 import { CreateContactForm } from "./create-contact-form";
@@ -14,28 +15,29 @@ export default async function ContactsPage({
   if (!organization) {
     notFound();
   }
+  const t = await getTranslations("Contacts");
 
   const [contacts, companies] = await Promise.all([listContacts(orgSlug), listCompanies(orgSlug)]);
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-12">
       <section>
-        <h6 className="text-muted mb-3">Novo contacto</h6>
+        <h6 className="text-muted mb-3">{t("newContact")}</h6>
         <CreateContactForm orgSlug={orgSlug} companies={companies} />
       </section>
 
       <section>
-        <h6 className="text-muted mb-3">Contactos ({contacts.length})</h6>
+        <h6 className="text-muted mb-3">{t("heading", { count: contacts.length })}</h6>
         {contacts.length === 0 ? (
-          <p className="text-muted text-sm">Ainda não há contactos nesta organização.</p>
+          <p className="text-muted text-sm">{t("none")}</p>
         ) : (
           <table className="table">
             <thead>
               <tr>
-                <th>Nome</th>
-                <th>Empresa</th>
-                <th>Email</th>
-                <th>Telefone</th>
+                <th>{t("tableName")}</th>
+                <th>{t("tableCompany")}</th>
+                <th>{t("tableEmail")}</th>
+                <th>{t("tablePhone")}</th>
                 <th></th>
               </tr>
             </thead>

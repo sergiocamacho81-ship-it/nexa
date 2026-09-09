@@ -3,9 +3,11 @@
 import { useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { signIn, signUp } from "@/app/actions/auth";
 
 export function LoginForm() {
+  const t = useTranslations("Auth");
   const searchParams = useSearchParams();
   const checkEmail = searchParams.get("checkEmail") === "1";
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -25,25 +27,23 @@ export function LoginForm() {
 
   return (
     <div className="card elev-md w-full max-w-sm">
-      <Image src="/logo-mark.svg" alt="Vingelis" width={40} height={40} />
+      <Image src="/logo-mark.svg" alt={t("brand")} width={40} height={40} />
       <div>
         <h1 className="mb-0">Nexa</h1>
         <p className="text-muted text-sm">
-          {mode === "signin" ? "Entra na tua conta" : "Cria uma conta"}
+          {mode === "signin" ? t("signInTitle") : t("signUpTitle")}
         </p>
       </div>
 
-      {checkEmail && (
-        <p className="tag tag-accent">Verifica o teu email para confirmares a conta.</p>
-      )}
+      {checkEmail && <p className="tag tag-accent">{t("checkEmail")}</p>}
 
       <form action={handleSubmit} className="flex flex-col gap-3">
         <div className="field">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">{t("email")}</label>
           <input id="email" name="email" type="email" required className="input" />
         </div>
         <div className="field">
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password">{t("password")}</label>
           <input
             id="password"
             name="password"
@@ -57,7 +57,7 @@ export function LoginForm() {
         {error && <p className="text-sm" style={{ color: "var(--color-accent-700)" }}>{error}</p>}
 
         <button type="submit" disabled={isPending} className="btn btn-primary btn-block">
-          {isPending ? "Aguarda..." : mode === "signin" ? "Entrar" : "Criar conta"}
+          {isPending ? t("pending") : mode === "signin" ? t("signInButton") : t("signUpButton")}
         </button>
       </form>
 
@@ -66,7 +66,7 @@ export function LoginForm() {
         onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
         className="btn btn-ghost"
       >
-        {mode === "signin" ? "Ainda não tens conta? Regista-te" : "Já tens conta? Entra"}
+        {mode === "signin" ? t("toggleToSignUp") : t("toggleToSignIn")}
       </button>
     </div>
   );

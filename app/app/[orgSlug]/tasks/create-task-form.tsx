@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useTranslations } from "next-intl";
 import { createTask } from "@/app/actions/tasks";
 
 type Company = { id: string; name: string };
@@ -21,6 +22,7 @@ export function CreateTaskForm({
   deals: Deal[];
   members: Member[];
 }) {
+  const t = useTranslations("Tasks");
   const [state, action, isPending] = useActionState(createTask, { error: null });
 
   return (
@@ -28,17 +30,17 @@ export function CreateTaskForm({
       <input type="hidden" name="orgSlug" value={orgSlug} />
       <div className="grid grid-cols-2 gap-2">
         <div className="field">
-          <label htmlFor="title">Título</label>
+          <label htmlFor="title">{t("title")}</label>
           <input id="title" name="title" type="text" required className="input" />
         </div>
         <div className="field">
-          <label htmlFor="dueDate">Prazo</label>
+          <label htmlFor="dueDate">{t("dueDate")}</label>
           <input id="dueDate" name="dueDate" type="date" className="input" />
         </div>
         <div className="field">
-          <label htmlFor="contactId">Contacto</label>
+          <label htmlFor="contactId">{t("contact")}</label>
           <select id="contactId" name="contactId" className="input" defaultValue="">
-            <option value="">— Nenhum —</option>
+            <option value="">{t("noContact")}</option>
             {contacts.map((contact) => (
               <option key={contact.id} value={contact.id}>
                 {contact.firstName} {contact.lastName ?? ""}
@@ -47,9 +49,9 @@ export function CreateTaskForm({
           </select>
         </div>
         <div className="field">
-          <label htmlFor="companyId">Empresa</label>
+          <label htmlFor="companyId">{t("company")}</label>
           <select id="companyId" name="companyId" className="input" defaultValue="">
-            <option value="">— Nenhuma —</option>
+            <option value="">{t("noCompany")}</option>
             {companies.map((company) => (
               <option key={company.id} value={company.id}>
                 {company.name}
@@ -58,9 +60,9 @@ export function CreateTaskForm({
           </select>
         </div>
         <div className="field">
-          <label htmlFor="dealId">Negócio</label>
+          <label htmlFor="dealId">{t("deal")}</label>
           <select id="dealId" name="dealId" className="input" defaultValue="">
-            <option value="">— Nenhum —</option>
+            <option value="">{t("noDeal")}</option>
             {deals.map((deal) => (
               <option key={deal.id} value={deal.id}>
                 {deal.title}
@@ -69,9 +71,9 @@ export function CreateTaskForm({
           </select>
         </div>
         <div className="field">
-          <label htmlFor="assigneeId">Responsável</label>
+          <label htmlFor="assigneeId">{t("assignee")}</label>
           <select id="assigneeId" name="assigneeId" className="input" defaultValue="">
-            <option value="">Eu</option>
+            <option value="">{t("me")}</option>
             {members.map((member) => (
               <option key={member.userId} value={member.userId}>
                 {member.email}
@@ -93,7 +95,7 @@ export function CreateTaskForm({
         className="btn btn-primary"
         style={{ alignSelf: "flex-start" }}
       >
-        {isPending ? "A criar..." : "Adicionar tarefa"}
+        {isPending ? t("adding") : t("add")}
       </button>
     </form>
   );

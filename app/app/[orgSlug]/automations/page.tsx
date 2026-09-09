@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { listAutomations, listAutomationRuns } from "@/app/actions/automations";
-import { TRIGGER_TYPE_LABELS, ACTION_TYPE_LABELS, type TriggerType, type ActionType } from "@/lib/automation/types";
+import { triggerMessageKey, type ActionType } from "@/lib/automation/types";
 import { CreateAutomationForm } from "./create-automation-form";
 import { AutomationToggle } from "./automation-toggle";
 import { DeleteAutomationButton } from "./delete-automation-button";
@@ -16,6 +17,12 @@ export default async function AutomationsPage({
   if (!organization) {
     notFound();
   }
+  const [t, tTriggers, tActions, locale] = await Promise.all([
+    getTranslations("Automations"),
+    getTranslations("TriggerTypes"),
+    getTranslations("ActionTypes"),
+    getLocale(),
+  ]);
 
   const [automations, runs] = await Promise.all([
     listAutomations(orgSlug),
@@ -25,14 +32,14 @@ export default async function AutomationsPage({
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-12">
       <section>
-        <h6 className="text-muted mb-3">Nova automação</h6>
+        <h6 className="text-muted mb-3">{t("newAutomation")}</h6>
         <CreateAutomationForm orgSlug={orgSlug} />
       </section>
 
       <section>
-        <h6 className="text-muted mb-3">Automações ({automations.length})</h6>
+        <h6 className="text-muted mb-3">{t("heading", { count: automations.length })}</h6>
         {automations.length === 0 ? (
-          <p className="text-muted text-sm">Ainda não há automações nesta organização.</p>
+          <p className="text-muted text-sm">{t("none")}</p>
         ) : (
           <div className="flex flex-col gap-2">
             {automations.map((automation) => (
@@ -46,11 +53,11 @@ export default async function AutomationsPage({
                   />
                 </div>
                 <p className="card-meta">
-                  Quando: {TRIGGER_TYPE_LABELS[automation.triggerType as TriggerType] ?? automation.triggerType}
+                  {t("whenLabel", { trigger: tTriggers(triggerMessageKey(automation.triggerType)) })}
                 </p>
                 {automation.actions.map((act) => (
                   <p className="card-meta" key={act.id}>
-                    Faz: {ACTION_TYPE_LABELS[act.actionType as ActionType] ?? act.actionType}
+                    {t("doLabel", { action: tActions(act.actionType as ActionType) })}
                   </p>
                 ))}
                 <div>
@@ -63,17 +70,17 @@ export default async function AutomationsPage({
       </section>
 
       <section>
-        <h6 className="text-muted mb-3">Execuções recentes ({runs.length})</h6>
+        <h6 className="text-muted mb-3">{t("runsHeading", { count: runs.length })}</h6>
         {runs.length === 0 ? (
-          <p className="text-muted text-sm">Ainda não houve execuções.</p>
+          <p className="text-muted text-sm">{t("none_runs")}</p>
         ) : (
           <table className="table">
             <thead>
               <tr>
-                <th>Automação</th>
-                <th>Estado</th>
-                <th>Quando</th>
-                <th>Erro</th>
+                <th>{t("runsTableAutomation")}</th>
+                <th>{t("runsTableStatus")}</th>
+                <th>{t("runsTableWhen")}</th>
+                <th>{t("runsTableError")}</th>
               </tr>
             </thead>
             <tbody>
@@ -82,11 +89,11 @@ export default async function AutomationsPage({
                   <td>{run.automation.name}</td>
                   <td>
                     <span className={run.status === "SUCCESS" ? "tag tag-accent" : "tag tag-outline"}>
-                      {run.status === "SUCCESS" ? "Sucesso" : "Falhou"}
+                      {run.status === "SUCCESS" ? t("success") : t("failed")}
                     </span>
                   </td>
                   <td className="text-muted">
-                    {new Intl.DateTimeFormat("pt-PT", { dateStyle: "short", timeStyle: "short" }).format(
+                    {new Intl.DateTimeFormat(locale, { dateStyle: "short", timeStyle: "short" }).format(
                       run.ranAt,
                     )}
                   </td>

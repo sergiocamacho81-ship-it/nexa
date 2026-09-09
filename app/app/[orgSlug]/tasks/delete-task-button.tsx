@@ -1,9 +1,11 @@
 "use client";
 
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { deleteTask } from "@/app/actions/tasks";
 
 export function DeleteTaskButton({ orgSlug, taskId }: { orgSlug: string; taskId: string }) {
+  const t = useTranslations("Tasks");
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -18,7 +20,7 @@ export function DeleteTaskButton({ orgSlug, taskId }: { orgSlug: string; taskId:
         startTransition(() => deleteTask(formData));
       }}
     >
-      Remover
+      {t("remove")}
     </button>
   );
 }

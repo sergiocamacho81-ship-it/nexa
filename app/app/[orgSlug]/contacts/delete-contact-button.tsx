@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { deleteContact } from "@/app/actions/contacts";
 
 export function DeleteContactButton({
@@ -10,6 +11,7 @@ export function DeleteContactButton({
   orgSlug: string;
   contactId: string;
 }) {
+  const t = useTranslations("Contacts");
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -24,7 +26,7 @@ export function DeleteContactButton({
         startTransition(() => deleteContact(formData));
       }}
     >
-      Remover
+      {t("remove")}
     </button>
   );
 }

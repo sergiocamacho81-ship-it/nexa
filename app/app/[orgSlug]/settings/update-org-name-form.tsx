@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useTranslations } from "next-intl";
 import { updateOrganizationName } from "@/app/actions/settings";
 
 export function UpdateOrgNameForm({
@@ -12,6 +13,7 @@ export function UpdateOrgNameForm({
   currentName: string;
   disabled: boolean;
 }) {
+  const t = useTranslations("Settings");
   const [state, action, isPending] = useActionState(updateOrganizationName, { error: null });
 
   return (
@@ -27,7 +29,7 @@ export function UpdateOrgNameForm({
           className="input flex-1"
         />
         <button type="submit" disabled={isPending || disabled} className="btn btn-primary">
-          {isPending ? "A guardar..." : "Guardar"}
+          {isPending ? t("saving") : t("save")}
         </button>
       </div>
       {state.error && (

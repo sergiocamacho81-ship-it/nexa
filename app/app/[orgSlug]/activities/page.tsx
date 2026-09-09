@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { listCompanies } from "@/app/actions/companies";
 import { listActivities } from "@/app/actions/activities";
-import { ACTIVITY_TYPE_LABELS } from "@/lib/activity-types";
 import { prisma } from "@/lib/prisma";
 import { CreateActivityForm } from "./create-activity-form";
 import { DeleteActivityButton } from "./delete-activity-button";
@@ -17,6 +17,11 @@ export default async function ActivitiesPage({
   if (!organization) {
     notFound();
   }
+  const [t, tTypes, locale] = await Promise.all([
+    getTranslations("Activities"),
+    getTranslations("ActivityTypes"),
+    getLocale(),
+  ]);
 
   const [activities, companies, deals, contacts] = await Promise.all([
     listActivities(orgSlug),
@@ -36,7 +41,7 @@ export default async function ActivitiesPage({
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-12">
       <section>
-        <h6 className="text-muted mb-3">Nova atividade</h6>
+        <h6 className="text-muted mb-3">{t("newActivity")}</h6>
         <CreateActivityForm
           orgSlug={orgSlug}
           contacts={contacts}
@@ -46,17 +51,17 @@ export default async function ActivitiesPage({
       </section>
 
       <section>
-        <h6 className="text-muted mb-3">Histórico ({activities.length})</h6>
+        <h6 className="text-muted mb-3">{t("heading", { count: activities.length })}</h6>
         {activities.length === 0 ? (
-          <p className="text-muted text-sm">Ainda não há atividades registadas.</p>
+          <p className="text-muted text-sm">{t("none")}</p>
         ) : (
           <div className="flex flex-col gap-2">
             {activities.map((activity) => (
               <div key={activity.id} className="card elev-sm">
                 <div className="flex items-center justify-between">
-                  <span className="tag tag-accent">{ACTIVITY_TYPE_LABELS[activity.type]}</span>
+                  <span className="tag tag-accent">{tTypes(activity.type)}</span>
                   <span className="card-meta">
-                    {new Intl.DateTimeFormat("pt-PT", {
+                    {new Intl.DateTimeFormat(locale, {
                       dateStyle: "short",
                       timeStyle: "short",
                     }).format(activity.occurredAt)}

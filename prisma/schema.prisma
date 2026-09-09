@@ -23,6 +23,7 @@ model Organization {
   automations    Automation[]
   automationRuns AutomationRun[]
   campaigns      Campaign[]
+  segments       Segment[]
 
   @@map("organizations")
 }
@@ -281,6 +282,7 @@ enum CampaignStatus {
 model Campaign {
   id             String         @id @default(uuid()) @db.Uuid
   organizationId String         @map("organization_id") @db.Uuid
+  segmentId      String?        @map("segment_id") @db.Uuid
   name           String
   subject        String
   body           String
@@ -290,9 +292,11 @@ model Campaign {
   updatedAt      DateTime       @updatedAt @map("updated_at")
 
   organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  segment      Segment?            @relation(fields: [segmentId], references: [id], onDelete: SetNull)
   recipients   CampaignRecipient[]
 
   @@index([organizationId])
+  @@index([segmentId])
   @@map("campaigns")
 }
 
@@ -317,4 +321,24 @@ model CampaignRecipient {
   @@index([campaignId])
   @@index([contactId])
   @@map("campaign_recipients")
+}
+
+// A Segment is a saved filter over Contacts, resolved live (not a static
+// snapshot) whenever it's used — e.g. picking recipients for a Campaign.
+// `filters` is a small structured shape (see lib/segments/filters.ts), not a
+// free-form query language: companyId, hasEmail, createdAfter/Before.
+model Segment {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  name           String
+  description    String?
+  filters        Json     @default("{}")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  campaigns    Campaign[]
+
+  @@index([organizationId])
+  @@map("segments")
 }

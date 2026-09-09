@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { listCompanies } from "@/app/actions/companies";
 import { CreateCompanyForm } from "./create-company-form";
@@ -14,26 +15,27 @@ export default async function CompaniesPage({
   if (!organization) {
     notFound();
   }
+  const t = await getTranslations("Companies");
 
   const companies = await listCompanies(orgSlug);
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-12">
       <section>
-        <h6 className="text-muted mb-3">Nova empresa</h6>
+        <h6 className="text-muted mb-3">{t("newCompany")}</h6>
         <CreateCompanyForm orgSlug={orgSlug} />
       </section>
 
       <section>
-        <h6 className="text-muted mb-3">Empresas ({companies.length})</h6>
+        <h6 className="text-muted mb-3">{t("heading", { count: companies.length })}</h6>
         {companies.length === 0 ? (
-          <p className="text-muted text-sm">Ainda não há empresas nesta organização.</p>
+          <p className="text-muted text-sm">{t("none")}</p>
         ) : (
           <table className="table">
             <thead>
               <tr>
-                <th>Nome</th>
-                <th>Domínio</th>
+                <th>{t("tableName")}</th>
+                <th>{t("tableDomain")}</th>
                 <th></th>
               </tr>
             </thead>

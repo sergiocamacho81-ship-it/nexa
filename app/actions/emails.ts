@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { getSmtpTransport, getSmtpFromAddress } from "@/lib/smtp";
@@ -28,10 +29,11 @@ export async function sendEmail(
   _prevState: SendEmailState,
   formData: FormData,
 ): Promise<SendEmailState> {
+  const t = await getTranslations("Email");
   const orgSlug = String(formData.get("orgSlug") ?? "");
   const organization = await getOrgForCurrentUser(orgSlug);
   if (!organization) {
-    return { error: "Organização não encontrada." };
+    return { error: t("errorOrgNotFound") };
   }
 
   const toAddress = String(formData.get("toAddress") ?? "").trim();
@@ -41,30 +43,27 @@ export async function sendEmail(
   const dealId = String(formData.get("dealId") ?? "").trim();
 
   if (!toAddress || !subject || !body) {
-    return { error: "Destinatário, assunto e corpo são obrigatórios." };
+    return { error: t("errorRequiredFields") };
   }
 
   if (contactId) {
     const contact = await prisma.contact.findFirst({
       where: { id: contactId, organizationId: organization.id },
     });
-    if (!contact) return { error: "Contacto inválido." };
+    if (!contact) return { error: t("errorInvalidContact") };
   }
   if (dealId) {
     const deal = await prisma.deal.findFirst({
       where: { id: dealId, organizationId: organization.id },
     });
-    if (!deal) return { error: "Negócio inválido." };
+    if (!deal) return { error: t("errorInvalidDeal") };
   }
 
   const transport = getSmtpTransport();
   const fromAddress = getSmtpFromAddress();
 
   if (!transport || !fromAddress) {
-    return {
-      error:
-        "SMTP não configurado (SMTP_HOST/PORT/USER/PASSWORD em falta no .env.local). O email não foi enviado.",
-    };
+    return { error: t("errorSmtpNotConfigured") };
   }
 
   let status: "SENT" | "FAILED" = "SENT";
@@ -80,7 +79,7 @@ export async function sendEmail(
     });
   } catch (err) {
     status = "FAILED";
-    error = err instanceof Error ? err.message : "Erro desconhecido ao enviar email.";
+    error = err instanceof Error ? err.message : "Unknown error while sending the email.";
   }
 
   await prisma.emailMessage.create({

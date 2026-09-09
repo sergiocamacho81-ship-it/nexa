@@ -1,14 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getCurrentUser } from "@/app/actions/organizations";
 import { signOut } from "@/app/actions/auth";
+import { LocaleSwitcher } from "@/app/locale-switcher";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
   if (!user) {
     redirect("/login");
   }
+  const t = await getTranslations("Nav");
 
   return (
     <div className="flex flex-1 flex-col">
@@ -18,9 +21,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           Nexa
         </Link>
         <span className="text-muted text-sm">{user.email}</span>
+        <LocaleSwitcher />
         <form action={signOut}>
           <button type="submit" className="btn btn-secondary">
-            Sair
+            {t("signOut")}
           </button>
         </form>
       </nav>

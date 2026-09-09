@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 
@@ -56,14 +57,16 @@ export async function createOrganization(
     throw new Error("Unauthorized");
   }
 
+  const t = await getTranslations("Organizations");
+
   const name = String(formData.get("name") ?? "").trim();
   if (!name) {
-    return { error: "O nome da organizacao e obrigatorio." };
+    return { error: t("errorNameRequired") };
   }
 
   const baseSlug = slugify(name);
   if (!baseSlug) {
-    return { error: "Nome invalido para gerar um slug." };
+    return { error: t("errorInvalidSlug") };
   }
 
   let slug = baseSlug;

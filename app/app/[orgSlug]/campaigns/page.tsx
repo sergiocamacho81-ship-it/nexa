@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { listCampaigns } from "@/app/actions/campaigns";
+import { listSegments } from "@/app/actions/segments";
 import { CreateCampaignForm } from "./create-campaign-form";
 import { SendCampaignButton } from "./send-campaign-button";
 import { DeleteCampaignButton } from "./delete-campaign-button";
-
-const STATUS_LABELS = { DRAFT: "Rascunho", SENDING: "A enviar...", SENT: "Enviada" };
 
 export default async function CampaignsPage({
   params,
@@ -17,23 +17,29 @@ export default async function CampaignsPage({
   if (!organization) {
     notFound();
   }
+  const t = await getTranslations("Campaigns");
+  const statusLabels = {
+    DRAFT: t("statusDraft"),
+    SENDING: t("statusSending"),
+    SENT: t("statusSent"),
+  };
 
-  const campaigns = await listCampaigns(orgSlug);
+  const [campaigns, segments] = await Promise.all([listCampaigns(orgSlug), listSegments(orgSlug)]);
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-12">
       <section>
-        <h6 className="text-muted mb-3">Nova campanha</h6>
+        <h6 className="text-muted mb-3">{t("newCampaign")}</h6>
         <p className="text-muted text-sm" style={{ marginTop: "-8px", marginBottom: "8px" }}>
-          Enviada a todos os contactos da organização com email registado.
+          {t("hint")}
         </p>
-        <CreateCampaignForm orgSlug={orgSlug} />
+        <CreateCampaignForm orgSlug={orgSlug} segments={segments} />
       </section>
 
       <section>
-        <h6 className="text-muted mb-3">Campanhas ({campaigns.length})</h6>
+        <h6 className="text-muted mb-3">{t("heading", { count: campaigns.length })}</h6>
         {campaigns.length === 0 ? (
-          <p className="text-muted text-sm">Ainda não há campanhas nesta organização.</p>
+          <p className="text-muted text-sm">{t("none")}</p>
         ) : (
           <div className="flex flex-col gap-2">
             {campaigns.map((campaign) => {
@@ -46,13 +52,16 @@ export default async function CampaignsPage({
                     <span
                       className={campaign.status === "SENT" ? "tag tag-accent" : "tag tag-neutral"}
                     >
-                      {STATUS_LABELS[campaign.status]}
+                      {statusLabels[campaign.status]}
                     </span>
                   </div>
                   <p className="card-meta">{campaign.subject}</p>
+                  {campaign.segment && (
+                    <p className="card-meta">{t("segmentLabel", { name: campaign.segment.name })}</p>
+                  )}
                   <p className="card-meta">
-                    {campaign.recipients.length} destinatário(s) — {sent} enviado(s)
-                    {failed > 0 ? `, ${failed} falhou/falharam` : ""}
+                    {t("recipientsSummary", { count: campaign.recipients.length, sent })}
+                    {failed > 0 ? t("recipientsFailedSuffix", { count: failed }) : ""}
                   </p>
                   <div className="flex gap-2">
                     {campaign.status === "DRAFT" && (

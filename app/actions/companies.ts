@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 
@@ -22,17 +23,18 @@ export async function createCompany(
   _prevState: CreateCompanyState,
   formData: FormData,
 ): Promise<CreateCompanyState> {
+  const t = await getTranslations("Companies");
   const orgSlug = String(formData.get("orgSlug") ?? "");
   const organization = await getOrgForCurrentUser(orgSlug);
   if (!organization) {
-    return { error: "Organização não encontrada." };
+    return { error: t("errorOrgNotFound") };
   }
 
   const name = String(formData.get("name") ?? "").trim();
   const domain = String(formData.get("domain") ?? "").trim();
 
   if (!name) {
-    return { error: "O nome da empresa é obrigatório." };
+    return { error: t("errorNameRequired") };
   }
 
   await prisma.company.create({

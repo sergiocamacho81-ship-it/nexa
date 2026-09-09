@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { listCompanies } from "@/app/actions/companies";
 import { listTasks } from "@/app/actions/tasks";
@@ -17,6 +18,7 @@ export default async function TasksPage({
   if (!organization) {
     notFound();
   }
+  const t = await getTranslations("Tasks");
 
   const [tasks, companies, deals, contacts, members] = await Promise.all([
     listTasks(orgSlug),
@@ -38,7 +40,7 @@ export default async function TasksPage({
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-12">
       <section>
-        <h6 className="text-muted mb-3">Nova tarefa</h6>
+        <h6 className="text-muted mb-3">{t("newTask")}</h6>
         <CreateTaskForm
           orgSlug={orgSlug}
           contacts={contacts}
@@ -49,9 +51,9 @@ export default async function TasksPage({
       </section>
 
       <section>
-        <h6 className="text-muted mb-3">Tarefas ({tasks.length})</h6>
+        <h6 className="text-muted mb-3">{t("heading", { count: tasks.length })}</h6>
         {tasks.length === 0 ? (
-          <p className="text-muted text-sm">Ainda não há tarefas nesta organização.</p>
+          <p className="text-muted text-sm">{t("none")}</p>
         ) : (
           <div className="flex flex-col gap-2">
             {tasks.map((task) => (

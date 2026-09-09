@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client";
+import { getLocale, getTranslations } from "next-intl/server";
 import { TaskCheckbox } from "./task-checkbox";
 import { DeleteTaskButton } from "./delete-task-button";
 
@@ -10,7 +11,7 @@ type TaskWithRelations = Prisma.TaskGetPayload<{
   };
 }>;
 
-export function TaskRow({
+export async function TaskRow({
   task,
   orgSlug,
   assigneeEmail,
@@ -20,6 +21,7 @@ export function TaskRow({
   assigneeEmail?: string;
 }) {
   const isCompleted = task.status === "COMPLETED";
+  const [t, locale] = await Promise.all([getTranslations("Tasks"), getLocale()]);
 
   return (
     <div className="card elev-sm" style={{ flexDirection: "row", alignItems: "center", gap: "12px" }}>
@@ -33,7 +35,7 @@ export function TaskRow({
         </p>
         <div className="card-meta flex-wrap">
           {task.dueDate && (
-            <span>{new Intl.DateTimeFormat("pt-PT", { dateStyle: "short" }).format(task.dueDate)}</span>
+            <span>{new Intl.DateTimeFormat(locale, { dateStyle: "short" }).format(task.dueDate)}</span>
           )}
           {task.contact && (
             <span>
@@ -42,7 +44,7 @@ export function TaskRow({
           )}
           {task.company && <span>{task.company.name}</span>}
           {task.deal && <span>{task.deal.title}</span>}
-          {assigneeEmail && <span>Responsável: {assigneeEmail}</span>}
+          {assigneeEmail && <span>{t("assigneeLabel", { email: assigneeEmail })}</span>}
         </div>
       </div>
       <DeleteTaskButton orgSlug={orgSlug} taskId={task.id} />

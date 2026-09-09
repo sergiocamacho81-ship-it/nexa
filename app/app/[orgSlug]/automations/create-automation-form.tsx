@@ -1,17 +1,21 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { useTranslations } from "next-intl";
 import { createAutomation } from "@/app/actions/automations";
 import {
   TRIGGER_TYPES,
-  TRIGGER_TYPE_LABELS,
   ACTION_TYPES,
-  ACTION_TYPE_LABELS,
   ACTION_TYPE_FIELDS,
+  triggerMessageKey,
   type ActionType,
 } from "@/lib/automation/types";
 
 export function CreateAutomationForm({ orgSlug }: { orgSlug: string }) {
+  const t = useTranslations("Automations");
+  const tTriggers = useTranslations("TriggerTypes");
+  const tActions = useTranslations("ActionTypes");
+  const tFields = useTranslations("ActionFields");
   const [state, action, isPending] = useActionState(createAutomation, { error: null });
   const [actionType, setActionType] = useState<ActionType>("create_task");
   const fields = ACTION_TYPE_FIELDS[actionType];
@@ -21,21 +25,21 @@ export function CreateAutomationForm({ orgSlug }: { orgSlug: string }) {
       <input type="hidden" name="orgSlug" value={orgSlug} />
       <div className="grid grid-cols-2 gap-2">
         <div className="field">
-          <label htmlFor="name">Nome</label>
+          <label htmlFor="name">{t("name")}</label>
           <input id="name" name="name" type="text" required className="input" />
         </div>
         <div className="field">
-          <label htmlFor="triggerType">Quando (trigger)</label>
+          <label htmlFor="triggerType">{t("trigger")}</label>
           <select id="triggerType" name="triggerType" className="input" defaultValue={TRIGGER_TYPES[0]}>
             {TRIGGER_TYPES.map((trigger) => (
               <option key={trigger} value={trigger}>
-                {TRIGGER_TYPE_LABELS[trigger]}
+                {tTriggers(triggerMessageKey(trigger))}
               </option>
             ))}
           </select>
         </div>
         <div className="field">
-          <label htmlFor="actionType">Fazer (ação)</label>
+          <label htmlFor="actionType">{t("action")}</label>
           <select
             id="actionType"
             name="actionType"
@@ -45,7 +49,7 @@ export function CreateAutomationForm({ orgSlug }: { orgSlug: string }) {
           >
             {ACTION_TYPES.map((type) => (
               <option key={type} value={type}>
-                {ACTION_TYPE_LABELS[type]}
+                {tActions(type)}
               </option>
             ))}
           </select>
@@ -54,7 +58,7 @@ export function CreateAutomationForm({ orgSlug }: { orgSlug: string }) {
 
       {fields.map((field, index) => (
         <div className="field" key={field.key}>
-          <label htmlFor={`config-${field.key}`}>{field.label}</label>
+          <label htmlFor={`config-${field.key}`}>{tFields(field.messageKey)}</label>
           <input type="hidden" name={index === 0 ? "configKey" : "configKey2"} value={field.key} />
           {field.type === "textarea" ? (
             <textarea
@@ -86,7 +90,7 @@ export function CreateAutomationForm({ orgSlug }: { orgSlug: string }) {
         className="btn btn-primary"
         style={{ alignSelf: "flex-start" }}
       >
-        {isPending ? "A criar..." : "Criar automação"}
+        {isPending ? t("creating") : t("create")}
       </button>
     </form>
   );

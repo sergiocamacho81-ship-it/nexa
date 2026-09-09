@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { getCurrentUser } from "@/app/actions/organizations";
@@ -29,15 +30,16 @@ export async function createTask(
   _prevState: CreateTaskState,
   formData: FormData,
 ): Promise<CreateTaskState> {
+  const t = await getTranslations("Tasks");
   const orgSlug = String(formData.get("orgSlug") ?? "");
   const organization = await getOrgForCurrentUser(orgSlug);
   if (!organization) {
-    return { error: "Organização não encontrada." };
+    return { error: t("errorOrgNotFound") };
   }
 
   const user = await getCurrentUser();
   if (!user) {
-    return { error: "Unauthorized" };
+    return { error: t("errorUnauthorized") };
   }
 
   const title = String(formData.get("title") ?? "").trim();
@@ -48,26 +50,26 @@ export async function createTask(
   const assigneeIdRaw = String(formData.get("assigneeId") ?? "").trim();
 
   if (!title) {
-    return { error: "O título da tarefa é obrigatório." };
+    return { error: t("errorTitleRequired") };
   }
 
   if (contactId) {
     const contact = await prisma.contact.findFirst({
       where: { id: contactId, organizationId: organization.id },
     });
-    if (!contact) return { error: "Contacto inválido." };
+    if (!contact) return { error: t("errorInvalidContact") };
   }
   if (companyId) {
     const company = await prisma.company.findFirst({
       where: { id: companyId, organizationId: organization.id },
     });
-    if (!company) return { error: "Empresa inválida." };
+    if (!company) return { error: t("errorInvalidCompany") };
   }
   if (dealId) {
     const deal = await prisma.deal.findFirst({
       where: { id: dealId, organizationId: organization.id },
     });
-    if (!deal) return { error: "Negócio inválido." };
+    if (!deal) return { error: t("errorInvalidDeal") };
   }
 
   let assigneeId = user.id;
@@ -75,7 +77,7 @@ export async function createTask(
     const assigneeMembership = await prisma.membership.findUnique({
       where: { userId_organizationId: { userId: assigneeIdRaw, organizationId: organization.id } },
     });
-    if (!assigneeMembership) return { error: "Responsável inválido." };
+    if (!assigneeMembership) return { error: t("errorInvalidAssignee") };
     assigneeId = assigneeIdRaw;
   }
 

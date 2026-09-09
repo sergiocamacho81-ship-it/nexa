@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { toggleAutomationEnabled } from "@/app/actions/automations";
 
 export function AutomationToggle({
@@ -12,6 +13,7 @@ export function AutomationToggle({
   automationId: string;
   enabled: boolean;
 }) {
+  const t = useTranslations("Automations");
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -29,7 +31,7 @@ export function AutomationToggle({
         }}
         style={{ width: "16px", height: "16px", accentColor: "var(--color-accent)" }}
       />
-      {enabled ? "Ativa" : "Desativada"}
+      {enabled ? t("active") : t("inactive")}
     </label>
   );
 }

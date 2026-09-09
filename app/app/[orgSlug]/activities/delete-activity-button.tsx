@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { deleteActivity } from "@/app/actions/activities";
 
 export function DeleteActivityButton({
@@ -10,6 +11,7 @@ export function DeleteActivityButton({
   orgSlug: string;
   activityId: string;
 }) {
+  const t = useTranslations("Activities");
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -25,7 +27,7 @@ export function DeleteActivityButton({
         startTransition(() => deleteActivity(formData));
       }}
     >
-      Remover
+      {t("remove")}
     </button>
   );
 }

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { ACTIVITY_TYPES } from "@/lib/activity-types";
@@ -28,10 +29,11 @@ export async function createActivity(
   _prevState: CreateActivityState,
   formData: FormData,
 ): Promise<CreateActivityState> {
+  const t = await getTranslations("Activities");
   const orgSlug = String(formData.get("orgSlug") ?? "");
   const organization = await getOrgForCurrentUser(orgSlug);
   if (!organization) {
-    return { error: "Organização não encontrada." };
+    return { error: t("errorOrgNotFound") };
   }
 
   const typeRaw = String(formData.get("type") ?? "NOTE");
@@ -41,7 +43,7 @@ export async function createActivity(
   const dealId = String(formData.get("dealId") ?? "").trim();
 
   if (!content) {
-    return { error: "A descrição é obrigatória." };
+    return { error: t("errorContentRequired") };
   }
 
   const type = ACTIVITY_TYPES.includes(typeRaw as (typeof ACTIVITY_TYPES)[number])
@@ -52,19 +54,19 @@ export async function createActivity(
     const contact = await prisma.contact.findFirst({
       where: { id: contactId, organizationId: organization.id },
     });
-    if (!contact) return { error: "Contacto inválido." };
+    if (!contact) return { error: t("errorInvalidContact") };
   }
   if (companyId) {
     const company = await prisma.company.findFirst({
       where: { id: companyId, organizationId: organization.id },
     });
-    if (!company) return { error: "Empresa inválida." };
+    if (!company) return { error: t("errorInvalidCompany") };
   }
   if (dealId) {
     const deal = await prisma.deal.findFirst({
       where: { id: dealId, organizationId: organization.id },
     });
-    if (!deal) return { error: "Negócio inválido." };
+    if (!deal) return { error: t("errorInvalidDeal") };
   }
 
   await prisma.activity.create({

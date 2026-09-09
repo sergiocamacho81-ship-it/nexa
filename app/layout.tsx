@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 import "./globals.css";
 
 const archivo = Archivo({
@@ -8,15 +10,19 @@ const archivo = Archivo({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Nexa",
-  description: "Nexa — CRM e automação, por Vingelis.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("App");
+  return { title: t("title"), description: t("description") };
+}
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getLocale();
+
   return (
-    <html lang="pt" className={`${archivo.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang={locale} className={`${archivo.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col">
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+      </body>
     </html>
   );
 }

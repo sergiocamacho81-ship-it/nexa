@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { listEmailMessages } from "@/app/actions/emails";
 import { prisma } from "@/lib/prisma";
@@ -14,6 +15,7 @@ export default async function EmailPage({
   if (!organization) {
     notFound();
   }
+  const [t, locale] = await Promise.all([getTranslations("Email"), getLocale()]);
 
   const [messages, contacts, deals] = await Promise.all([
     listEmailMessages(orgSlug),
@@ -32,14 +34,14 @@ export default async function EmailPage({
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-12">
       <section>
-        <h6 className="text-muted mb-3">Novo email</h6>
+        <h6 className="text-muted mb-3">{t("newEmail")}</h6>
         <SendEmailForm orgSlug={orgSlug} contacts={contacts} deals={deals} />
       </section>
 
       <section>
-        <h6 className="text-muted mb-3">Enviados ({messages.length})</h6>
+        <h6 className="text-muted mb-3">{t("heading", { count: messages.length })}</h6>
         {messages.length === 0 ? (
-          <p className="text-muted text-sm">Ainda não foram enviados emails.</p>
+          <p className="text-muted text-sm">{t("none")}</p>
         ) : (
           <div className="flex flex-col gap-2">
             {messages.map((message) => (
@@ -48,17 +50,17 @@ export default async function EmailPage({
                   <span
                     className={message.status === "SENT" ? "tag tag-accent" : "tag tag-outline"}
                   >
-                    {message.status === "SENT" ? "Enviado" : "Falhou"}
+                    {message.status === "SENT" ? t("sent") : t("failed")}
                   </span>
                   <span className="card-meta">
-                    {new Intl.DateTimeFormat("pt-PT", {
+                    {new Intl.DateTimeFormat(locale, {
                       dateStyle: "short",
                       timeStyle: "short",
                     }).format(message.sentAt)}
                   </span>
                 </div>
                 <p className="card-title">{message.subject}</p>
-                <p className="card-meta">Para: {message.toAddress}</p>
+                <p className="card-meta">{t("to_", { address: message.toAddress })}</p>
                 <p className="card-body">{message.body}</p>
                 {message.error && (
                   <p className="text-sm" style={{ color: "var(--color-accent-700)" }}>

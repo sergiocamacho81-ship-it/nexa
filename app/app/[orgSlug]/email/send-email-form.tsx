@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useTranslations } from "next-intl";
 import { sendEmail } from "@/app/actions/emails";
 
 type Contact = { id: string; firstName: string; lastName: string | null; email: string | null };
@@ -15,6 +16,7 @@ export function SendEmailForm({
   contacts: Contact[];
   deals: Deal[];
 }) {
+  const t = useTranslations("Email");
   const [state, action, isPending] = useActionState(sendEmail, { error: null });
 
   return (
@@ -22,11 +24,11 @@ export function SendEmailForm({
       <input type="hidden" name="orgSlug" value={orgSlug} />
       <div className="grid grid-cols-2 gap-2">
         <div className="field">
-          <label htmlFor="toAddress">Para</label>
+          <label htmlFor="toAddress">{t("to")}</label>
           <input id="toAddress" name="toAddress" type="email" required className="input" />
         </div>
         <div className="field">
-          <label htmlFor="contactId">Contacto</label>
+          <label htmlFor="contactId">{t("contact")}</label>
           <select
             id="contactId"
             name="contactId"
@@ -40,7 +42,7 @@ export function SendEmailForm({
               if (toField && email) toField.value = email;
             }}
           >
-            <option value="">— Nenhum —</option>
+            <option value="">{t("noContact")}</option>
             {contacts.map((contact) => (
               <option key={contact.id} value={contact.id} data-email={contact.email ?? ""}>
                 {contact.firstName} {contact.lastName ?? ""}
@@ -49,9 +51,9 @@ export function SendEmailForm({
           </select>
         </div>
         <div className="field">
-          <label htmlFor="dealId">Negócio</label>
+          <label htmlFor="dealId">{t("deal")}</label>
           <select id="dealId" name="dealId" className="input" defaultValue="">
-            <option value="">— Nenhum —</option>
+            <option value="">{t("noDeal")}</option>
             {deals.map((deal) => (
               <option key={deal.id} value={deal.id}>
                 {deal.title}
@@ -60,13 +62,13 @@ export function SendEmailForm({
           </select>
         </div>
         <div className="field">
-          <label htmlFor="subject">Assunto</label>
+          <label htmlFor="subject">{t("subject")}</label>
           <input id="subject" name="subject" type="text" required className="input" />
         </div>
       </div>
 
       <div className="field">
-        <label htmlFor="body">Mensagem</label>
+        <label htmlFor="body">{t("message")}</label>
         <textarea id="body" name="body" required className="input" rows={5} />
       </div>
 
@@ -82,7 +84,7 @@ export function SendEmailForm({
         className="btn btn-primary"
         style={{ alignSelf: "flex-start" }}
       >
-        {isPending ? "A enviar..." : "Enviar email"}
+        {isPending ? t("sending") : t("send")}
       </button>
     </form>
   );

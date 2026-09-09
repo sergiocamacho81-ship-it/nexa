@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { TRIGGER_TYPES, ACTION_TYPES } from "@/lib/automation/types";
@@ -36,10 +37,11 @@ export async function createAutomation(
   _prevState: CreateAutomationState,
   formData: FormData,
 ): Promise<CreateAutomationState> {
+  const t = await getTranslations("Automations");
   const orgSlug = String(formData.get("orgSlug") ?? "");
   const organization = await getOrgForCurrentUser(orgSlug);
   if (!organization) {
-    return { error: "Organização não encontrada." };
+    return { error: t("errorOrgNotFound") };
   }
 
   const name = String(formData.get("name") ?? "").trim();
@@ -51,13 +53,13 @@ export async function createAutomation(
   const configValue2 = String(formData.get("configValue2") ?? "").trim();
 
   if (!name) {
-    return { error: "O nome da automação é obrigatório." };
+    return { error: t("errorNameRequired") };
   }
   if (!TRIGGER_TYPES.includes(triggerType as (typeof TRIGGER_TYPES)[number])) {
-    return { error: "Trigger inválido." };
+    return { error: t("errorInvalidTrigger") };
   }
   if (!ACTION_TYPES.includes(actionType as (typeof ACTION_TYPES)[number])) {
-    return { error: "Ação inválida." };
+    return { error: t("errorInvalidAction") };
   }
 
   const actionConfig: Record<string, string> = {};

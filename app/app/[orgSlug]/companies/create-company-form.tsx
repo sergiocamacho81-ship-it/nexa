@@ -1,9 +1,11 @@
 "use client";
 
 import { useActionState } from "react";
+import { useTranslations } from "next-intl";
 import { createCompany } from "@/app/actions/companies";
 
 export function CreateCompanyForm({ orgSlug }: { orgSlug: string }) {
+  const t = useTranslations("Companies");
   const [state, action, isPending] = useActionState(createCompany, { error: null });
 
   return (
@@ -11,12 +13,12 @@ export function CreateCompanyForm({ orgSlug }: { orgSlug: string }) {
       <input type="hidden" name="orgSlug" value={orgSlug} />
       <div className="grid grid-cols-2 gap-2">
         <div className="field">
-          <label htmlFor="name">Nome</label>
+          <label htmlFor="name">{t("name")}</label>
           <input id="name" name="name" type="text" required className="input" />
         </div>
         <div className="field">
-          <label htmlFor="domain">Domínio</label>
-          <input id="domain" name="domain" type="text" placeholder="acme.com" className="input" />
+          <label htmlFor="domain">{t("domain")}</label>
+          <input id="domain" name="domain" type="text" placeholder={t("domainPlaceholder")} className="input" />
         </div>
       </div>
 
@@ -32,7 +34,7 @@ export function CreateCompanyForm({ orgSlug }: { orgSlug: string }) {
         className="btn btn-primary"
         style={{ alignSelf: "flex-start" }}
       >
-        {isPending ? "A criar..." : "Adicionar empresa"}
+        {isPending ? t("adding") : t("add")}
       </button>
     </form>
   );

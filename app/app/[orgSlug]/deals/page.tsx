@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { listCompanies } from "@/app/actions/companies";
 import { listDeals } from "@/app/actions/deals";
-import { DEAL_STAGES, DEAL_STAGE_LABELS } from "@/lib/deal-stages";
+import { DEAL_STAGES } from "@/lib/deal-stages";
 import { prisma } from "@/lib/prisma";
 import { CreateDealForm } from "./create-deal-form";
 import { DealCard } from "./deal-card";
@@ -17,6 +18,10 @@ export default async function DealsPage({
   if (!organization) {
     notFound();
   }
+  const [t, tStages] = await Promise.all([
+    getTranslations("Deals"),
+    getTranslations("DealStages"),
+  ]);
 
   const [deals, companies, contacts] = await Promise.all([
     listDeals(orgSlug),
@@ -31,12 +36,12 @@ export default async function DealsPage({
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-6 py-12">
       <section>
-        <h6 className="text-muted mb-3">Novo negócio</h6>
+        <h6 className="text-muted mb-3">{t("newDeal")}</h6>
         <CreateDealForm orgSlug={orgSlug} companies={companies} contacts={contacts} />
       </section>
 
       <section>
-        <h6 className="text-muted mb-3">Pipeline ({deals.length})</h6>
+        <h6 className="text-muted mb-3">{t("pipelineHeading", { count: deals.length })}</h6>
         <div
           className="grid gap-3"
           style={{ gridTemplateColumns: `repeat(${DEAL_STAGES.length}, minmax(180px, 1fr))`, overflowX: "auto" }}
@@ -46,7 +51,7 @@ export default async function DealsPage({
             return (
               <div key={stage} className="flex flex-col gap-2">
                 <h6 className="text-muted">
-                  {DEAL_STAGE_LABELS[stage]} ({stageDeals.length})
+                  {tStages(stage)} ({stageDeals.length})
                 </h6>
                 <div className="flex flex-col gap-2">
                   {stageDeals.map((deal) => (
