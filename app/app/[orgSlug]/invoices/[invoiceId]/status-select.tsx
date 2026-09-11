@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { updateInvoiceStatus } from "@/app/actions/invoices";
-import { INVOICE_STATUSES } from "@/lib/invoice-statuses";
+import { ALLOWED_STATUS_TRANSITIONS, type InvoiceStatus } from "@/lib/invoice-statuses";
 
 export function StatusSelect({
   orgSlug,
@@ -12,10 +12,18 @@ export function StatusSelect({
 }: {
   orgSlug: string;
   invoiceId: string;
-  currentStatus: (typeof INVOICE_STATUSES)[number];
+  currentStatus: InvoiceStatus;
 }) {
   const tStatuses = useTranslations("InvoiceStatuses");
   const [isPending, startTransition] = useTransition();
+
+  // Only offer the current status plus its legal next steps — matches the
+  // server-side guard in updateInvoiceStatus, so the dropdown never lets
+  // someone pick a transition that will just be rejected.
+  const selectableStatuses: InvoiceStatus[] = [
+    currentStatus,
+    ...ALLOWED_STATUS_TRANSITIONS[currentStatus],
+  ];
 
   return (
     <select
@@ -30,7 +38,7 @@ export function StatusSelect({
         startTransition(() => updateInvoiceStatus(formData));
       }}
     >
-      {INVOICE_STATUSES.map((status) => (
+      {selectableStatuses.map((status) => (
         <option key={status} value={status}>
           {tStatuses(status)}
         </option>

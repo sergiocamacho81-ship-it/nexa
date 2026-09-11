@@ -1,7 +1,7 @@
 {
   "App": {
-    "title": "Nexa",
-    "description": "Nexa — CRM e automação, por Vingelis."
+    "title": "Continuo",
+    "description": "Continuo — CRM e automação, por Vingelis."
   },
   "Nav": {
     "contacts": "Contactos",
@@ -382,7 +382,7 @@
     "you": "(tu)",
     "remove": "Remover",
     "addMemberHeading": "Adicionar membro",
-    "addMemberHint": "A pessoa precisa de já ter conta no Nexa (registada em /login) — ainda não há convites por email.",
+    "addMemberHint": "A pessoa precisa de já ter conta no Continuo (registada em /login) — ainda não há convites por email.",
     "emailPlaceholder": "email@exemplo.com",
     "add": "Adicionar",
     "adding": "A adicionar...",
@@ -391,7 +391,7 @@
     "errorOnlyManagersAdd": "Só OWNER/ADMIN podem adicionar membros.",
     "errorEmailRequired": "O email é obrigatório.",
     "errorNoUsersFound": "Erro ao consultar utilizadores.",
-    "errorNoAccount": "Não existe nenhuma conta Nexa com esse email. A pessoa tem de se registar primeiro em /login.",
+    "errorNoAccount": "Não existe nenhuma conta Continuo com esse email. A pessoa tem de se registar primeiro em /login.",
     "errorAlreadyMember": "Essa pessoa já é membro desta organização.",
     "errorOnlyManagersManage": "Só OWNER/ADMIN podem gerir membros.",
     "errorNeedsOneOwner": "A organização precisa de pelo menos um OWNER.",
@@ -476,6 +476,7 @@
     "typeContact": "Contacto",
     "typeCompany": "Empresa",
     "typeDeal": "Negócio",
+    "typeJob": "Trabalho",
     "typeActivity": "Atividade",
     "typeTask": "Tarefa",
     "typeSegment": "Segmento",

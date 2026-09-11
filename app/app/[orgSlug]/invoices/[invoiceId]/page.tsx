@@ -37,13 +37,13 @@ export default async function InvoiceDetailPage({
   const currencyFormatter = new Intl.NumberFormat(locale, { style: "currency", currency: "CHF" });
   const dateFormatter = new Intl.DateTimeFormat(locale, { dateStyle: "medium" });
 
-  const subtotal = invoice.lineItems.reduce(
-    (sum, item) => sum + Number(item.quantity) * Number(item.unitPrice),
-    0,
-  );
+  // Subtotal/VAT/total are server-computed and persisted (see
+  // recalculateInvoiceTotals in app/actions/invoices.ts) — read directly,
+  // never re-derived from line items here.
+  const subtotal = Number(invoice.subtotal);
+  const vat = Number(invoice.vatAmount);
+  const total = Number(invoice.total);
   const vatRate = invoice.vatRate === null ? null : Number(invoice.vatRate);
-  const vat = vatRate === null ? 0 : subtotal * (vatRate / 100);
-  const total = subtotal + vat;
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-12">
@@ -68,15 +68,15 @@ export default async function InvoiceDetailPage({
           </div>
         </section>
 
-        {invoice.deal && (
+        {invoice.job && (
           <section>
-            <p className="card-meta">{t("job")}: {invoice.deal.title}</p>
-            {invoice.deal.contact && (
+            <p className="card-meta">{t("job")}: {invoice.job.title}</p>
+            {invoice.job.contact && (
               <p className="card-meta">
-                {t("contact")}: {invoice.deal.contact.firstName} {invoice.deal.contact.lastName ?? ""}
+                {t("contact")}: {invoice.job.contact.firstName} {invoice.job.contact.lastName ?? ""}
               </p>
             )}
-            {invoice.deal.company && <p className="card-meta">{invoice.deal.company.name}</p>}
+            {invoice.job.company && <p className="card-meta">{invoice.job.company.name}</p>}
           </section>
         )}
 

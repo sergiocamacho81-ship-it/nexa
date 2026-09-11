@@ -1,7 +1,7 @@
 {
   "App": {
-    "title": "Nexa",
-    "description": "Nexa — CRM und Automatisierung von Vingelis."
+    "title": "Continuo",
+    "description": "Continuo — CRM und Automatisierung von Vingelis."
   },
   "Nav": {
     "contacts": "Kontakte",
@@ -382,7 +382,7 @@
     "you": "(du)",
     "remove": "Entfernen",
     "addMemberHeading": "Mitglied hinzufügen",
-    "addMemberHint": "Die Person muss bereits ein Nexa-Konto haben (Registrierung unter /login) — Einladungen per E-Mail gibt es noch nicht.",
+    "addMemberHint": "Die Person muss bereits ein Continuo-Konto haben (Registrierung unter /login) — Einladungen per E-Mail gibt es noch nicht.",
     "emailPlaceholder": "email@beispiel.com",
     "add": "Hinzufügen",
     "adding": "Wird hinzugefügt...",
@@ -391,7 +391,7 @@
     "errorOnlyManagersAdd": "Nur OWNER/ADMIN können Mitglieder hinzufügen.",
     "errorEmailRequired": "Die E-Mail ist erforderlich.",
     "errorNoUsersFound": "Fehler bei der Suche nach Benutzern.",
-    "errorNoAccount": "Es existiert kein Nexa-Konto mit dieser E-Mail. Die Person muss sich zuerst unter /login registrieren.",
+    "errorNoAccount": "Es existiert kein Continuo-Konto mit dieser E-Mail. Die Person muss sich zuerst unter /login registrieren.",
     "errorAlreadyMember": "Diese Person ist bereits Mitglied dieser Organisation.",
     "errorOnlyManagersManage": "Nur OWNER/ADMIN können Mitglieder verwalten.",
     "errorNeedsOneOwner": "Die Organisation benötigt mindestens einen OWNER.",
@@ -476,6 +476,7 @@
     "typeContact": "Kontakt",
     "typeCompany": "Unternehmen",
     "typeDeal": "Deal",
+    "typeJob": "Auftrag",
     "typeActivity": "Aktivität",
     "typeTask": "Aufgabe",
     "typeSegment": "Segment",

@@ -9,6 +9,7 @@ const TYPE_LABEL_KEY = {
   contact: "typeContact",
   company: "typeCompany",
   deal: "typeDeal",
+  job: "typeJob",
   activity: "typeActivity",
   task: "typeTask",
   segment: "typeSegment",

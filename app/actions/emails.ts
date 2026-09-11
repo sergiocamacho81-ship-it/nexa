@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { getSmtpTransport, getSmtpFromAddress } from "@/lib/smtp";
 import { renderEmailHtml } from "@/lib/email-template";
+import { logError } from "@/lib/log";
 
 // Takes orgSlug (not organizationId) and re-verifies membership itself — see
 // note in app/actions/contacts.ts listContacts.
@@ -80,6 +81,7 @@ export async function sendEmail(
   } catch (err) {
     status = "FAILED";
     error = err instanceof Error ? err.message : "Unknown error while sending the email.";
+    logError("email.sendEmail", err, { organizationId: organization.id });
   }
 
   await prisma.emailMessage.create({

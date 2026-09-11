@@ -2,6 +2,7 @@ export const TRASH_TYPES = [
   "contact",
   "company",
   "deal",
+  "job",
   "activity",
   "task",
   "segment",

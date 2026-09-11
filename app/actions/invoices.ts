@@ -3,9 +3,37 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
-import { INVOICE_STATUSES } from "@/lib/invoice-statuses";
+import { INVOICE_STATUSES, isAllowedStatusTransition, type InvoiceStatus } from "@/lib/invoice-statuses";
+import { computeInvoiceTotals } from "@/lib/invoice-totals";
+
+// Recomputes and persists subtotal/vatAmount/total from the invoice's current
+// line items. Called inside the same transaction as every line-item
+// add/remove so the stored total is never out of sync with its line items —
+// callers must never derive a total by re-summing line items themselves
+// (the previous approach: float conversion on every page render, no stored
+// source of truth). The actual arithmetic lives in computeInvoiceTotals
+// (lib/invoice-totals.ts), kept separate so it's unit-testable without a
+// database connection — this function is just its DB read/write wrapper.
+async function recalculateInvoiceTotals(
+  tx: Prisma.TransactionClient,
+  invoiceId: string,
+  vatRate: Prisma.Decimal | null,
+) {
+  const lineItems = await tx.invoiceLineItem.findMany({
+    where: { invoiceId },
+    select: { quantity: true, unitPrice: true },
+  });
+
+  const { subtotal, vatAmount, total } = computeInvoiceTotals(lineItems, vatRate);
+
+  await tx.invoice.update({
+    where: { id: invoiceId },
+    data: { subtotal, vatAmount, total },
+  });
+}
 
 // Takes orgSlug (not organizationId) and re-verifies membership itself — see
 // note in app/actions/contacts.ts listContacts.
@@ -16,14 +44,13 @@ export async function listInvoices(orgSlug: string) {
   return prisma.invoice.findMany({
     where: { organizationId: organization.id, deletedAt: null },
     include: {
-      deal: {
+      job: {
         select: {
           id: true,
           title: true,
           contact: { select: { id: true, firstName: true, lastName: true } },
         },
       },
-      lineItems: { select: { quantity: true, unitPrice: true } },
     },
     orderBy: { number: "desc" },
   });
@@ -36,7 +63,7 @@ export async function getInvoice(orgSlug: string, invoiceId: string) {
   return prisma.invoice.findFirst({
     where: { id: invoiceId, organizationId: organization.id, deletedAt: null },
     include: {
-      deal: {
+      job: {
         select: {
           id: true,
           title: true,
@@ -51,6 +78,13 @@ export async function getInvoice(orgSlug: string, invoiceId: string) {
 
 // Called directly from a <form action> on the Deal card — no useActionState,
 // since success is a redirect rather than a state update.
+//
+// Invoice anchors to Job, not Deal directly (see prisma/schema.prisma's Job
+// model comment). No dedicated Job create/edit UI exists yet, so this
+// find-or-creates a Job per Deal: the first invoice from a given Deal
+// creates its Job; every later invoice from the same Deal reuses it (so
+// repeated "Create Invoice" clicks accumulate against one Job, matching
+// real progress-billing behavior rather than spawning a new Job each time).
 export async function createInvoiceForDeal(formData: FormData) {
   const orgSlug = String(formData.get("orgSlug") ?? "");
   const dealId = String(formData.get("dealId") ?? "");
@@ -68,6 +102,21 @@ export async function createInvoiceForDeal(formData: FormData) {
   }
 
   const invoice = await prisma.$transaction(async (tx) => {
+    let job = await tx.job.findFirst({
+      where: { dealId: deal.id, organizationId: organization.id, deletedAt: null },
+    });
+    if (!job) {
+      job = await tx.job.create({
+        data: {
+          organizationId: organization.id,
+          dealId: deal.id,
+          companyId: deal.companyId,
+          contactId: deal.contactId,
+          title: deal.title,
+        },
+      });
+    }
+
     const org = await tx.organization.update({
       where: { id: organization.id },
       data: { invoiceCounter: { increment: 1 } },
@@ -75,7 +124,7 @@ export async function createInvoiceForDeal(formData: FormData) {
     return tx.invoice.create({
       data: {
         organizationId: organization.id,
-        dealId: deal.id,
+        jobId: job.id,
         number: org.invoiceCounter,
         vatRate: organization.invoiceVatRate,
       },
@@ -130,8 +179,11 @@ export async function addLineItem(
 
   const position = await prisma.invoiceLineItem.count({ where: { invoiceId } });
 
-  await prisma.invoiceLineItem.create({
-    data: { invoiceId, productId: validProductId, description, quantity, unitPrice, position },
+  await prisma.$transaction(async (tx) => {
+    await tx.invoiceLineItem.create({
+      data: { invoiceId, productId: validProductId, description, quantity, unitPrice, position },
+    });
+    await recalculateInvoiceTotals(tx, invoiceId, invoice.vatRate);
   });
 
   revalidatePath(`/app/${orgSlug}/invoices/${invoiceId}`);
@@ -151,7 +203,10 @@ export async function removeLineItem(formData: FormData) {
   });
   if (!invoice) throw new Error("Invoice not found");
 
-  await prisma.invoiceLineItem.deleteMany({ where: { id: lineItemId, invoiceId } });
+  await prisma.$transaction(async (tx) => {
+    await tx.invoiceLineItem.deleteMany({ where: { id: lineItemId, invoiceId } });
+    await recalculateInvoiceTotals(tx, invoiceId, invoice.vatRate);
+  });
 
   revalidatePath(`/app/${orgSlug}/invoices/${invoiceId}`);
 }
@@ -164,13 +219,27 @@ export async function updateInvoiceStatus(formData: FormData) {
   const organization = await getOrgForCurrentUser(orgSlug);
   if (!organization) throw new Error("Unauthorized");
 
-  if (!INVOICE_STATUSES.includes(statusRaw as (typeof INVOICE_STATUSES)[number])) {
+  if (!INVOICE_STATUSES.includes(statusRaw as InvoiceStatus)) {
     throw new Error("Invalid status");
+  }
+  const newStatus = statusRaw as InvoiceStatus;
+
+  const invoice = await prisma.invoice.findFirst({
+    where: { id: invoiceId, organizationId: organization.id, deletedAt: null },
+    select: { status: true },
+  });
+  if (!invoice) throw new Error("Invoice not found");
+
+  // Adjacent transitions only — see lib/invoice-statuses.ts. Prevents e.g.
+  // DRAFT jumping straight to PAID, or PAID being silently reverted to
+  // DRAFT with no record of what happened.
+  if (!isAllowedStatusTransition(invoice.status, newStatus)) {
+    throw new Error(`Cannot change invoice status from ${invoice.status} to ${newStatus}`);
   }
 
   await prisma.invoice.updateMany({
     where: { id: invoiceId, organizationId: organization.id, deletedAt: null },
-    data: { status: statusRaw as (typeof INVOICE_STATUSES)[number] },
+    data: { status: newStatus },
   });
 
   revalidatePath(`/app/${orgSlug}/invoices/${invoiceId}`);

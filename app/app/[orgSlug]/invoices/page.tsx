@@ -4,12 +4,6 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { listInvoices } from "@/app/actions/invoices";
 
-function invoiceTotal(lineItems: { quantity: unknown; unitPrice: unknown }[], vatRate: unknown) {
-  const subtotal = lineItems.reduce((sum, item) => sum + Number(item.quantity) * Number(item.unitPrice), 0);
-  const vat = vatRate === null ? 0 : subtotal * (Number(vatRate) / 100);
-  return subtotal + vat;
-}
-
 export default async function InvoicesPage({
   params,
 }: {
@@ -57,15 +51,15 @@ export default async function InvoicesPage({
                       </Link>
                     </td>
                     <td className="text-muted">
-                      {invoice.deal
-                        ? invoice.deal.title
+                      {invoice.job
+                        ? invoice.job.title
                         : "—"}
                     </td>
                     <td>
                       <span className="tag tag-accent">{tStatuses(invoice.status)}</span>
                     </td>
                     <td className="text-muted">
-                      {currencyFormatter.format(invoiceTotal(invoice.lineItems, invoice.vatRate))}
+                      {currencyFormatter.format(Number(invoice.total))}
                     </td>
                     <td className="text-muted">{dateFormatter.format(invoice.issueDate)}</td>
                   </tr>

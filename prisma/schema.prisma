@@ -59,6 +59,7 @@ model Organization {
   contacts       Contact[]
   companies      Company[]
   deals          Deal[]
+  jobs           Job[]
   activities     Activity[]
   tasks          Task[]
   emailMessages  EmailMessage[]
@@ -141,6 +142,14 @@ model Contact {
   preferredLanguage ContactLanguage? @map("preferred_language")
   city              String?
   canton            SwissCanton?
+  // Address/country foundation — until now nothing on Contact recorded a
+  // country at all, which blocks any cross-border logic before it can even
+  // start. Deliberately plain fields here (not a nested address object or a
+  // tax-specific shape) — VAT/tax-residence fields belong to the Swiss
+  // compliance phase, not this foundation pass.
+  addressLine       String?          @map("address_line")
+  postalCode        String?          @map("postal_code")
+  countryCode       String?          @map("country_code")
   createdAt         DateTime         @default(now()) @map("created_at")
   updatedAt         DateTime         @updatedAt @map("updated_at")
   deletedAt         DateTime?        @map("deleted_at")
@@ -148,6 +157,7 @@ model Contact {
   organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   company            Company?            @relation(fields: [companyId], references: [id], onDelete: SetNull)
   deals              Deal[]
+  jobs                Job[]
   activities         Activity[]
   tasks              Task[]
   emailMessages      EmailMessage[]
@@ -163,6 +173,14 @@ model Company {
   organizationId String   @map("organization_id") @db.Uuid
   name           String
   domain         String?
+  // Address/country foundation — mirrors the same fields added to Contact,
+  // for the same reason (see Contact). VAT/tax-residence fields belong to
+  // the Swiss compliance phase, not this foundation pass.
+  addressLine    String?     @map("address_line")
+  city           String?
+  postalCode     String?     @map("postal_code")
+  canton         SwissCanton?
+  countryCode    String?     @map("country_code")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
@@ -170,6 +188,7 @@ model Company {
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   contacts     Contact[]
   deals        Deal[]
+  jobs         Job[]
   activities   Activity[]
   tasks        Task[]
 
@@ -204,12 +223,56 @@ model Deal {
   activities    Activity[]
   tasks         Task[]
   emailMessages EmailMessage[]
-  invoices      Invoice[]
+  jobs          Job[]
 
   @@index([organizationId])
   @@index([companyId])
   @@index([contactId])
   @@map("deals")
+}
+
+enum JobStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// The operational counterpart to Deal: Deal tracks progress toward WINNING a
+// sale (terminal LEAD->...->WON/LOST pipeline); Job tracks progress
+// DELIVERING the work once there's work to deliver. Deliberately a separate
+// entity, not a Deal extension — see docs discussion: a single WON Deal can
+// spawn multiple Jobs (e.g. an annual contract -> 12 monthly service jobs),
+// and a Job can exist with no Deal at all (repeat customer, no sales cycle
+// worth tracking). dealId is therefore optional both ways.
+//
+// No dedicated create/edit UI exists yet for Job as of this foundation pass
+// — until one does, createInvoiceForDeal (app/actions/invoices.ts)
+// find-or-creates a Job per Deal so Invoice always has something real to
+// anchor to.
+model Job {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
+  dealId         String?   @map("deal_id") @db.Uuid
+  companyId      String?   @map("company_id") @db.Uuid
+  contactId      String?   @map("contact_id") @db.Uuid
+  title          String
+  status         JobStatus @default(SCHEDULED)
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  deal         Deal?        @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  company      Company?     @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  contact      Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  invoices     Invoice[]
+
+  @@index([organizationId])
+  @@index([dealId])
+  @@index([companyId])
+  @@index([contactId])
+  @@map("jobs")
 }
 
 enum ActivityType {
@@ -467,13 +530,15 @@ enum InvoiceStatus {
 }
 
 // Invoice.number is unique per org, assigned sequentially from
-// Organization.invoiceCounter. dealId is optional and SetNull on delete —
-// an invoice is a financial record that must survive its Deal being
-// purged from Trash after the 30-day retention window.
+// Organization.invoiceCounter. jobId is optional and SetNull on delete —
+// an invoice is a financial record that must survive its Job being
+// purged from Trash after the 30-day retention window. Anchored to Job,
+// not Deal directly — Job is the operational "what is this invoice for"
+// concept; Deal (if any) is reachable transitively via Job.dealId.
 model Invoice {
   id             String        @id @default(uuid()) @db.Uuid
   organizationId String        @map("organization_id") @db.Uuid
-  dealId         String?       @map("deal_id") @db.Uuid
+  jobId          String?       @map("job_id") @db.Uuid
   number         Int
   status         InvoiceStatus @default(DRAFT)
   vatRate        Decimal?      @db.Decimal(5, 2) @map("vat_rate")
@@ -483,13 +548,23 @@ model Invoice {
   updatedAt      DateTime      @updatedAt @map("updated_at")
   deletedAt      DateTime?     @map("deleted_at")
 
+  // Persisted, server-computed totals — recalculated inside the same
+  // transaction as every line-item add/remove (see recalculateInvoiceTotals
+  // in app/actions/invoices.ts). Never derive these by re-summing line items
+  // in a page/component: that was the previous approach (float conversion on
+  // every render, no stored source of truth) and is exactly what this exists
+  // to replace.
+  subtotal  Decimal @default(0) @db.Decimal(12, 2)
+  vatAmount Decimal @default(0) @db.Decimal(12, 2) @map("vat_amount")
+  total     Decimal @default(0) @db.Decimal(12, 2)
+
   organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  deal         Deal?              @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  job          Job?               @relation(fields: [jobId], references: [id], onDelete: SetNull)
   lineItems    InvoiceLineItem[]
 
   @@unique([organizationId, number])
   @@index([organizationId])
-  @@index([dealId])
+  @@index([jobId])
   @@map("invoices")
 }
 

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSmtpTransport, getSmtpFromAddress } from "@/lib/smtp";
 import { renderEmailHtml } from "@/lib/email-template";
 import type { TriggerType, ActionType } from "@/lib/automation/types";
+import { logError } from "@/lib/log";
 
 export type AutomationTriggerPayload = {
   organizationId: string;
@@ -73,7 +74,7 @@ async function executeAction(
         throw new Error("Organização não encontrada.");
       }
 
-      const subject = typeof config.subject === "string" && config.subject ? config.subject : "Nexa";
+      const subject = typeof config.subject === "string" && config.subject ? config.subject : "Continuo";
       const body = typeof config.body === "string" ? config.body : "";
 
       const transport = getSmtpTransport(organization);
@@ -97,6 +98,7 @@ async function executeAction(
         } catch (err) {
           status = "FAILED";
           error = err instanceof Error ? err.message : "Erro desconhecido ao enviar email.";
+          logError("automation.send_email", err, { organizationId: payload.organizationId });
         }
       }
 
@@ -151,6 +153,11 @@ export async function runAutomationsForTrigger(
         results.push({ actionId: action.id, actionType: action.actionType, ok: false, error: message });
         runStatus = "FAILED";
         firstError ??= message;
+        logError("automation.executeAction", err, {
+          organizationId: payload.organizationId,
+          automationId: automation.id,
+          actionType: action.actionType,
+        });
       }
     }
 

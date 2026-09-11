@@ -1,7 +1,7 @@
 {
   "App": {
-    "title": "Nexa",
-    "description": "Nexa — CRM and automation, by Vingelis."
+    "title": "Continuo",
+    "description": "Continuo — CRM and automation, by Vingelis."
   },
   "Nav": {
     "contacts": "Contacts",
@@ -382,7 +382,7 @@
     "you": "(you)",
     "remove": "Remove",
     "addMemberHeading": "Add member",
-    "addMemberHint": "The person must already have a Nexa account (sign up at /login) — there's no email invite yet.",
+    "addMemberHint": "The person must already have a Continuo account (sign up at /login) — there's no email invite yet.",
     "emailPlaceholder": "email@example.com",
     "add": "Add",
     "adding": "Adding...",
@@ -391,7 +391,7 @@
     "errorOnlyManagersAdd": "Only OWNER/ADMIN can add members.",
     "errorEmailRequired": "The email is required.",
     "errorNoUsersFound": "Error looking up users.",
-    "errorNoAccount": "There's no Nexa account with that email. The person needs to sign up first at /login.",
+    "errorNoAccount": "There's no Continuo account with that email. The person needs to sign up first at /login.",
     "errorAlreadyMember": "That person is already a member of this organization.",
     "errorOnlyManagersManage": "Only OWNER/ADMIN can manage members.",
     "errorNeedsOneOwner": "The organization needs at least one OWNER.",
@@ -476,6 +476,7 @@
     "typeContact": "Contact",
     "typeCompany": "Company",
     "typeDeal": "Deal",
+    "typeJob": "Job",
     "typeActivity": "Activity",
     "typeTask": "Task",
     "typeSegment": "Segment",
