@@ -17,12 +17,16 @@ export default async function OrgLayout({
   }
   const t = await getTranslations("Nav");
 
-  const items = [
+  // Primary: what a solo, time-poor user touches constantly. Secondary
+  // (behind "More"): real but occasional — power-user/admin territory.
+  const primaryItems = [
     { href: `/app/${orgSlug}/contacts`, label: t("contacts") },
-    { href: `/app/${orgSlug}/companies`, label: t("companies") },
     { href: `/app/${orgSlug}/deals`, label: t("deals") },
-    { href: `/app/${orgSlug}/activities`, label: t("activities") },
     { href: `/app/${orgSlug}/tasks`, label: t("tasks") },
+  ];
+  const secondaryItems = [
+    { href: `/app/${orgSlug}/companies`, label: t("companies") },
+    { href: `/app/${orgSlug}/activities`, label: t("activities") },
     { href: `/app/${orgSlug}/email`, label: t("email") },
     { href: `/app/${orgSlug}/automations`, label: t("automations") },
     { href: `/app/${orgSlug}/campaigns`, label: t("campaigns") },
@@ -33,7 +37,14 @@ export default async function OrgLayout({
 
   return (
     <div className="flex flex-1 flex-col">
-      <OrgNav orgSlug={orgSlug} orgName={organization.name} items={items} />
+      <OrgNav
+        orgSlug={orgSlug}
+        orgName={organization.name}
+        primaryItems={primaryItems}
+        secondaryItems={secondaryItems}
+        moreLabel={t("more")}
+        menuLabel={t("menu")}
+      />
       <div className="flex flex-1 flex-col">{children}</div>
     </div>
   );

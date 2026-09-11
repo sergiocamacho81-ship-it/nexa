@@ -33,7 +33,7 @@ export function CompanyRow({ orgSlug, company }: { orgSlug: string; company: Com
         <form action={action} className="flex flex-col gap-2" style={{ padding: "8px 0" }}>
           <input type="hidden" name="orgSlug" value={orgSlug} />
           <input type="hidden" name="companyId" value={company.id} />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="field">
               <label htmlFor={`name-${company.id}`}>{t("name")}</label>
               <input

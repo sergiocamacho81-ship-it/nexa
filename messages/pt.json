@@ -6,7 +6,7 @@
   "Nav": {
     "contacts": "Contactos",
     "companies": "Empresas",
-    "deals": "Negócios",
+    "deals": "Trabalhos",
     "activities": "Atividades",
     "tasks": "Tarefas",
     "email": "Email",
@@ -15,7 +15,9 @@
     "segments": "Segmentos",
     "settings": "Definições",
     "signOut": "Sair",
-    "trash": "Lixo"
+    "trash": "Lixo",
+    "more": "Mais",
+    "menu": "Menu"
   },
   "Auth": {
     "brand": "Vingelis",
@@ -68,24 +70,27 @@
   "Dashboard": {
     "contacts": "Contactos",
     "companies": "Empresas",
-    "openDeals": "Negócios abertos",
+    "openDeals": "Trabalhos em curso",
     "wonTotal": "Ganho (total)",
     "pipelineByStage": "Pipeline por estágio",
     "stage": "Estágio",
-    "deals": "Negócios",
+    "deals": "Trabalhos",
     "value": "Valor",
     "tasksPending": "Tarefas pendentes",
     "tasksOverdue": "{count} em atraso",
     "campaigns": "Campanhas",
     "recentActivity": "Atividade recente",
-    "noActivity": "Ainda não há atividades registadas."
+    "noActivity": "Ainda não há atividades registadas.",
+    "today": "Hoje",
+    "todayEmpty": "Nada pendente — estás em dia.",
+    "viewAllTasks": "Ver todas as tarefas"
   },
   "DealStages": {
-    "LEAD": "Lead",
-    "QUALIFIED": "Qualificado",
-    "PROPOSAL": "Proposta",
-    "NEGOTIATION": "Negociação",
-    "WON": "Ganho",
+    "LEAD": "Novo pedido",
+    "QUALIFIED": "A avaliar",
+    "PROPOSAL": "Orçamento enviado",
+    "NEGOTIATION": "A negociar",
+    "WON": "Concluído",
     "LOST": "Perdido"
   },
   "ActivityTypes": {
@@ -183,19 +188,19 @@
     "cancel": "Cancelar"
   },
   "Deals": {
-    "newDeal": "Novo negócio",
+    "newDeal": "Novo trabalho",
     "title": "Título",
-    "value": "Valor (EUR)",
-    "stage": "Estágio",
+    "value": "Preço (EUR)",
+    "stage": "Estado",
     "company": "Empresa",
     "noCompany": "— Nenhuma —",
     "contact": "Contacto",
     "noContact": "— Nenhum —",
     "add": "Adicionar negócio",
     "adding": "A criar...",
-    "pipelineHeading": "Pipeline ({count})",
+    "pipelineHeading": "Trabalhos ({count})",
     "remove": "Remover",
-    "errorTitleRequired": "O título do negócio é obrigatório.",
+    "errorTitleRequired": "É obrigatório o título do trabalho.",
     "errorInvalidValue": "Valor inválido.",
     "errorInvalidCompany": "Empresa inválida.",
     "errorInvalidContact": "Contacto inválido.",

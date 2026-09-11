@@ -74,6 +74,7 @@ export default async function AutomationsPage({
         {runs.length === 0 ? (
           <p className="text-muted text-sm">{t("none_runs")}</p>
         ) : (
+          <div className="table-wrap">
           <table className="table">
             <thead>
               <tr>
@@ -102,6 +103,7 @@ export default async function AutomationsPage({
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </section>
     </div>

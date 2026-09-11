@@ -6,7 +6,7 @@
   "Nav": {
     "contacts": "Contacts",
     "companies": "Companies",
-    "deals": "Deals",
+    "deals": "Jobs",
     "activities": "Activities",
     "tasks": "Tasks",
     "email": "Email",
@@ -15,7 +15,9 @@
     "segments": "Segments",
     "settings": "Settings",
     "signOut": "Sign out",
-    "trash": "Trash"
+    "trash": "Trash",
+    "more": "More",
+    "menu": "Menu"
   },
   "Auth": {
     "brand": "Vingelis",
@@ -68,24 +70,27 @@
   "Dashboard": {
     "contacts": "Contacts",
     "companies": "Companies",
-    "openDeals": "Open deals",
+    "openDeals": "Open jobs",
     "wonTotal": "Won (total)",
     "pipelineByStage": "Pipeline by stage",
     "stage": "Stage",
-    "deals": "Deals",
+    "deals": "Jobs",
     "value": "Value",
     "tasksPending": "Pending tasks",
     "tasksOverdue": "{count} overdue",
     "campaigns": "Campaigns",
     "recentActivity": "Recent activity",
-    "noActivity": "No activity recorded yet."
+    "noActivity": "No activity recorded yet.",
+    "today": "Today",
+    "todayEmpty": "Nothing pending — you're all caught up.",
+    "viewAllTasks": "View all tasks"
   },
   "DealStages": {
-    "LEAD": "Lead",
-    "QUALIFIED": "Qualified",
-    "PROPOSAL": "Proposal",
-    "NEGOTIATION": "Negotiation",
-    "WON": "Won",
+    "LEAD": "New request",
+    "QUALIFIED": "Reviewing",
+    "PROPOSAL": "Quote sent",
+    "NEGOTIATION": "Negotiating",
+    "WON": "Done",
     "LOST": "Lost"
   },
   "ActivityTypes": {
@@ -183,19 +188,19 @@
     "cancel": "Cancel"
   },
   "Deals": {
-    "newDeal": "New deal",
+    "newDeal": "New job",
     "title": "Title",
-    "value": "Value (EUR)",
-    "stage": "Stage",
+    "value": "Price (EUR)",
+    "stage": "Status",
     "company": "Company",
     "noCompany": "— None —",
     "contact": "Contact",
     "noContact": "— None —",
     "add": "Add deal",
     "adding": "Adding...",
-    "pipelineHeading": "Pipeline ({count})",
+    "pipelineHeading": "Jobs ({count})",
     "remove": "Remove",
-    "errorTitleRequired": "Deal title is required.",
+    "errorTitleRequired": "Job title is required.",
     "errorInvalidValue": "Invalid value.",
     "errorInvalidCompany": "Invalid company.",
     "errorInvalidContact": "Invalid contact.",

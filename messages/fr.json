@@ -6,7 +6,7 @@
   "Nav": {
     "contacts": "Contacts",
     "companies": "Entreprises",
-    "deals": "Affaires",
+    "deals": "Travaux",
     "activities": "Activités",
     "tasks": "Tâches",
     "email": "Email",
@@ -15,7 +15,9 @@
     "segments": "Segments",
     "settings": "Paramètres",
     "signOut": "Se déconnecter",
-    "trash": "Corbeille"
+    "trash": "Corbeille",
+    "more": "Plus",
+    "menu": "Menu"
   },
   "Auth": {
     "brand": "Vingelis",
@@ -68,24 +70,27 @@
   "Dashboard": {
     "contacts": "Contacts",
     "companies": "Entreprises",
-    "openDeals": "Affaires en cours",
+    "openDeals": "Travaux en cours",
     "wonTotal": "Gagné (total)",
     "pipelineByStage": "Pipeline par étape",
     "stage": "Étape",
-    "deals": "Affaires",
+    "deals": "Travaux",
     "value": "Valeur",
     "tasksPending": "Tâches en attente",
     "tasksOverdue": "{count} en retard",
     "campaigns": "Campagnes",
     "recentActivity": "Activité récente",
-    "noActivity": "Aucune activité enregistrée pour le moment."
+    "noActivity": "Aucune activité enregistrée pour le moment.",
+    "today": "Aujourd'hui",
+    "todayEmpty": "Rien en attente — tout est à jour.",
+    "viewAllTasks": "Voir toutes les tâches"
   },
   "DealStages": {
-    "LEAD": "Prospect",
-    "QUALIFIED": "Qualifié",
-    "PROPOSAL": "Proposition",
-    "NEGOTIATION": "Négociation",
-    "WON": "Gagné",
+    "LEAD": "Nouvelle demande",
+    "QUALIFIED": "En évaluation",
+    "PROPOSAL": "Devis envoyé",
+    "NEGOTIATION": "En négociation",
+    "WON": "Terminé",
     "LOST": "Perdu"
   },
   "ActivityTypes": {
@@ -183,19 +188,19 @@
     "cancel": "Annuler"
   },
   "Deals": {
-    "newDeal": "Nouvelle affaire",
+    "newDeal": "Nouveau travail",
     "title": "Titre",
-    "value": "Valeur (EUR)",
-    "stage": "Étape",
+    "value": "Prix (EUR)",
+    "stage": "État",
     "company": "Entreprise",
     "noCompany": "— Aucune —",
     "contact": "Contact",
     "noContact": "— Aucun —",
     "add": "Ajouter l'affaire",
     "adding": "Création...",
-    "pipelineHeading": "Pipeline ({count})",
+    "pipelineHeading": "Travaux ({count})",
     "remove": "Supprimer",
-    "errorTitleRequired": "Le titre de l'affaire est obligatoire.",
+    "errorTitleRequired": "Le titre du travail est obligatoire.",
     "errorInvalidValue": "Valeur invalide.",
     "errorInvalidCompany": "Entreprise invalide.",
     "errorInvalidContact": "Contact invalide.",

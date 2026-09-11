@@ -27,7 +27,7 @@ export function CreateActivityForm({
   return (
     <form action={action} className="flex flex-col gap-2">
       <input type="hidden" name="orgSlug" value={orgSlug} />
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <div className="field">
           <label htmlFor="type">{t("type")}</label>
           <select id="type" name="type" className="input" defaultValue="NOTE">

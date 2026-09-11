@@ -67,7 +67,7 @@ export function ContactRow({
         >
           <input type="hidden" name="orgSlug" value={orgSlug} />
           <input type="hidden" name="contactId" value={contact.id} />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="field">
               <label htmlFor={`firstName-${contact.id}`}>{t("firstName")}</label>
               <input

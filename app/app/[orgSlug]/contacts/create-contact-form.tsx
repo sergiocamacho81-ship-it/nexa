@@ -32,7 +32,7 @@ export function CreateContactForm({
         {t("stepOf", { current: step, total: TOTAL_STEPS })} — {step === 1 ? t("step1Title") : t("step2Title")}
       </p>
 
-      <div className="grid grid-cols-2 gap-2" style={{ display: step === 1 ? "grid" : "none" }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2" style={{ display: step === 1 ? "grid" : "none" }}>
         <div className="field">
           <label htmlFor="firstName">{t("firstName")}</label>
           <input
@@ -70,7 +70,7 @@ export function CreateContactForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2" style={{ display: step === 2 ? "grid" : "none" }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2" style={{ display: step === 2 ? "grid" : "none" }}>
         <div className="field">
           <label htmlFor="preferredLanguage">{t("preferredLanguage")}</label>
           <select id="preferredLanguage" name="preferredLanguage" className="input" defaultValue="">

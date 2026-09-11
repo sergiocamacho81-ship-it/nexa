@@ -46,7 +46,8 @@ export default async function SettingsPage({
 
       <section>
         <h6 className="text-muted mb-3">{t("membersHeading", { count: members.length })}</h6>
-        <table className="table">
+        <div className="table-wrap">
+          <table className="table">
           <thead>
             <tr>
               <th>{t("tableEmail")}</th>
@@ -76,6 +77,7 @@ export default async function SettingsPage({
             ))}
           </tbody>
         </table>
+          </div>
       </section>
 
       {canManage && (

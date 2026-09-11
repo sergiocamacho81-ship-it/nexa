@@ -20,7 +20,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <Image src="/logo-mark.svg" alt="Vingelis" width={28} height={28} />
           Nexa
         </Link>
-        <span className="text-muted text-sm">{user.email}</span>
+        <span className="text-muted text-sm hidden sm:inline">{user.email}</span>
         <LocaleSwitcher />
         <form action={signOut}>
           <button type="submit" className="btn btn-secondary">

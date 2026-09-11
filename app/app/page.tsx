@@ -18,6 +18,7 @@ export default async function AppHome() {
         {organizations.length === 0 ? (
           <p className="text-muted text-sm">{t("none")}</p>
         ) : (
+          <div className="table-wrap">
           <table className="table">
             <thead>
               <tr>
@@ -44,6 +45,7 @@ export default async function AppHome() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </section>
 

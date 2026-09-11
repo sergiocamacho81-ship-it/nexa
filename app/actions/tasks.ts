@@ -130,6 +130,7 @@ export async function toggleTaskStatus(formData: FormData) {
   }
 
   revalidatePath(`/app/${orgSlug}/tasks`);
+  revalidatePath(`/app/${orgSlug}`);
 }
 
 export async function deleteTask(formData: FormData) {
