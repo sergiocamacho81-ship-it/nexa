@@ -266,11 +266,16 @@
     "heading": "History ({count})",
     "none": "No activities logged yet.",
     "remove": "Remove",
+    "edit": "Edit",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
     "errorContentRequired": "A description is required.",
     "errorInvalidContact": "Invalid contact.",
     "errorInvalidCompany": "Invalid company.",
     "errorInvalidDeal": "Invalid deal.",
-    "errorOrgNotFound": "Organization not found."
+    "errorOrgNotFound": "Organization not found.",
+    "errorNotFound": "Activity not found."
   },
   "Tasks": {
     "newTask": "New task",

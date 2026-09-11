@@ -266,11 +266,16 @@
     "heading": "Cronologia ({count})",
     "none": "Ancora nessuna attività registrata.",
     "remove": "Rimuovi",
+    "edit": "Modifica",
+    "save": "Salva",
+    "saving": "Salvataggio...",
+    "cancel": "Annulla",
     "errorContentRequired": "La descrizione è obbligatoria.",
     "errorInvalidContact": "Contatto non valido.",
     "errorInvalidCompany": "Azienda non valida.",
     "errorInvalidDeal": "Trattativa non valida.",
-    "errorOrgNotFound": "Organizzazione non trovata."
+    "errorOrgNotFound": "Organizzazione non trovata.",
+    "errorNotFound": "Attività non trovata."
   },
   "Tasks": {
     "newTask": "Nuova attività",

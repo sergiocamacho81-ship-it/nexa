@@ -266,11 +266,16 @@
     "heading": "Histórico ({count})",
     "none": "Ainda não há atividades registadas.",
     "remove": "Remover",
+    "edit": "Editar",
+    "save": "Guardar",
+    "saving": "A guardar...",
+    "cancel": "Cancelar",
     "errorContentRequired": "A descrição é obrigatória.",
     "errorInvalidContact": "Contacto inválido.",
     "errorInvalidCompany": "Empresa inválida.",
     "errorInvalidDeal": "Negócio inválido.",
-    "errorOrgNotFound": "Organização não encontrada."
+    "errorOrgNotFound": "Organização não encontrada.",
+    "errorNotFound": "Atividade não encontrada."
   },
   "Tasks": {
     "newTask": "Nova tarefa",

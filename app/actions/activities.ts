@@ -84,6 +84,73 @@ export async function createActivity(
   return { error: null };
 }
 
+export async function updateActivity(
+  _prevState: CreateActivityState,
+  formData: FormData,
+): Promise<CreateActivityState> {
+  const t = await getTranslations("Activities");
+  const orgSlug = String(formData.get("orgSlug") ?? "");
+  const activityId = String(formData.get("activityId") ?? "");
+  const organization = await getOrgForCurrentUser(orgSlug);
+  if (!organization) {
+    return { error: t("errorOrgNotFound") };
+  }
+
+  const existing = await prisma.activity.findFirst({
+    where: { id: activityId, organizationId: organization.id, deletedAt: null },
+  });
+  if (!existing) {
+    return { error: t("errorNotFound") };
+  }
+
+  const typeRaw = String(formData.get("type") ?? "NOTE");
+  const content = String(formData.get("content") ?? "").trim();
+  const contactId = String(formData.get("contactId") ?? "").trim();
+  const companyId = String(formData.get("companyId") ?? "").trim();
+  const dealId = String(formData.get("dealId") ?? "").trim();
+
+  if (!content) {
+    return { error: t("errorContentRequired") };
+  }
+
+  const type = ACTIVITY_TYPES.includes(typeRaw as (typeof ACTIVITY_TYPES)[number])
+    ? (typeRaw as (typeof ACTIVITY_TYPES)[number])
+    : "NOTE";
+
+  if (contactId) {
+    const contact = await prisma.contact.findFirst({
+      where: { id: contactId, organizationId: organization.id, deletedAt: null },
+    });
+    if (!contact) return { error: t("errorInvalidContact") };
+  }
+  if (companyId) {
+    const company = await prisma.company.findFirst({
+      where: { id: companyId, organizationId: organization.id, deletedAt: null },
+    });
+    if (!company) return { error: t("errorInvalidCompany") };
+  }
+  if (dealId) {
+    const deal = await prisma.deal.findFirst({
+      where: { id: dealId, organizationId: organization.id, deletedAt: null },
+    });
+    if (!deal) return { error: t("errorInvalidDeal") };
+  }
+
+  await prisma.activity.update({
+    where: { id: activityId },
+    data: {
+      type,
+      content,
+      contactId: contactId || null,
+      companyId: companyId || null,
+      dealId: dealId || null,
+    },
+  });
+
+  revalidatePath(`/app/${orgSlug}/activities`);
+  return { error: null };
+}
+
 export async function deleteActivity(formData: FormData) {
   const orgSlug = String(formData.get("orgSlug") ?? "");
   const activityId = String(formData.get("activityId") ?? "");

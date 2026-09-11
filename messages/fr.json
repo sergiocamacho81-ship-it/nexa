@@ -266,11 +266,16 @@
     "heading": "Historique ({count})",
     "none": "Aucune activité enregistrée pour le moment.",
     "remove": "Supprimer",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "cancel": "Annuler",
     "errorContentRequired": "La description est obligatoire.",
     "errorInvalidContact": "Contact invalide.",
     "errorInvalidCompany": "Entreprise invalide.",
     "errorInvalidDeal": "Affaire invalide.",
-    "errorOrgNotFound": "Organisation introuvable."
+    "errorOrgNotFound": "Organisation introuvable.",
+    "errorNotFound": "Activité introuvable."
   },
   "Tasks": {
     "newTask": "Nouvelle tâche",

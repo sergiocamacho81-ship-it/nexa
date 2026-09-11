@@ -266,11 +266,16 @@
     "heading": "Verlauf ({count})",
     "none": "Noch keine Aktivitäten erfasst.",
     "remove": "Entfernen",
+    "edit": "Bearbeiten",
+    "save": "Speichern",
+    "saving": "Wird gespeichert...",
+    "cancel": "Abbrechen",
     "errorContentRequired": "Eine Beschreibung ist erforderlich.",
     "errorInvalidContact": "Ungültiger Kontakt.",
     "errorInvalidCompany": "Ungültiges Unternehmen.",
     "errorInvalidDeal": "Ungültiger Deal.",
-    "errorOrgNotFound": "Organisation nicht gefunden."
+    "errorOrgNotFound": "Organisation nicht gefunden.",
+    "errorNotFound": "Aktivität nicht gefunden."
   },
   "Tasks": {
     "newTask": "Neue Aufgabe",
