@@ -245,6 +245,13 @@ textarea.input { min-height: 90px; resize: vertical; }
   .nav-mobile { display: block; }
 }
 
+@media print {
+  body * { visibility: hidden; }
+  .invoice-print-area, .invoice-print-area * { visibility: visible; }
+  .invoice-print-area { position: absolute; top: 0; left: 0; width: 100%; padding: 0; }
+  .invoice-print-hide { display: none !important; }
+}
+
 .table-wrap { width: 100%; overflow-x: auto; }
 .table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .table th {

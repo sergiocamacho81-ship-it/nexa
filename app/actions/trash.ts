@@ -49,6 +49,8 @@ async function purgeExpired(organizationId: string) {
     prisma.automation.deleteMany({ where }),
     prisma.campaign.deleteMany({ where }),
     prisma.membership.deleteMany({ where }),
+    prisma.product.deleteMany({ where }),
+    prisma.invoice.deleteMany({ where }),
   ]);
 }
 
@@ -61,18 +63,31 @@ export async function listTrash(orgSlug: string): Promise<TrashItem[]> {
   await purgeExpired(organization.id);
 
   const where = { organizationId: organization.id, deletedAt: { not: null } };
-  const [contacts, companies, deals, activities, tasks, segments, automations, campaigns, memberships] =
-    await Promise.all([
-      prisma.contact.findMany({ where }),
-      prisma.company.findMany({ where }),
-      prisma.deal.findMany({ where }),
-      prisma.activity.findMany({ where }),
-      prisma.task.findMany({ where }),
-      prisma.segment.findMany({ where }),
-      prisma.automation.findMany({ where }),
-      prisma.campaign.findMany({ where }),
-      prisma.membership.findMany({ where }),
-    ]);
+  const [
+    contacts,
+    companies,
+    deals,
+    activities,
+    tasks,
+    segments,
+    automations,
+    campaigns,
+    memberships,
+    products,
+    invoices,
+  ] = await Promise.all([
+    prisma.contact.findMany({ where }),
+    prisma.company.findMany({ where }),
+    prisma.deal.findMany({ where }),
+    prisma.activity.findMany({ where }),
+    prisma.task.findMany({ where }),
+    prisma.segment.findMany({ where }),
+    prisma.automation.findMany({ where }),
+    prisma.campaign.findMany({ where }),
+    prisma.membership.findMany({ where }),
+    prisma.product.findMany({ where }),
+    prisma.invoice.findMany({ where }),
+  ]);
 
   let memberEmails = new Map<string, string>();
   if (memberships.length > 0) {
@@ -140,6 +155,18 @@ export async function listTrash(orgSlug: string): Promise<TrashItem[]> {
       label: memberEmails.get(m.userId) ?? m.userId,
       deletedAt: m.deletedAt as Date,
     })),
+    ...products.map((p) => ({
+      type: "product" as const,
+      id: p.id,
+      label: p.name,
+      deletedAt: p.deletedAt as Date,
+    })),
+    ...invoices.map((i) => ({
+      type: "invoice" as const,
+      id: i.id,
+      label: `#${i.number}`,
+      deletedAt: i.deletedAt as Date,
+    })),
   ];
 
   return items.sort((a, b) => b.deletedAt.getTime() - a.deletedAt.getTime());
@@ -204,6 +231,12 @@ export async function restoreTrashItem(formData: FormData) {
       // The role they had when removed comes back as-is — no owner-count
       // rule to apply on restore, only on removal.
       await prisma.membership.updateMany({ where, data });
+      break;
+    case "product":
+      await prisma.product.updateMany({ where, data });
+      break;
+    case "invoice":
+      await prisma.invoice.updateMany({ where, data });
       break;
   }
 

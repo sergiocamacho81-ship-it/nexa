@@ -15,6 +15,8 @@ const TYPE_LABEL_KEY = {
   automation: "typeAutomation",
   campaign: "typeCampaign",
   member: "typeMember",
+  product: "typeProduct",
+  invoice: "typeInvoice",
 } as const;
 
 export default async function TrashPage({

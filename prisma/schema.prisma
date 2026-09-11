@@ -47,6 +47,14 @@ model Organization {
   stripeCustomerId     String?  @map("stripe_customer_id")
   stripeSubscriptionId String?  @map("stripe_subscription_id")
 
+  // Default VAT rate (percent) applied to new invoices; copied onto each
+  // Invoice at creation time so it stays fixed even if this later changes.
+  // Null means no VAT line is shown. invoiceCounter is a per-org sequence
+  // for Invoice.number, incremented inside the same transaction that
+  // creates the invoice (see app/actions/invoices.ts).
+  invoiceVatRate Decimal? @db.Decimal(5, 2) @map("invoice_vat_rate")
+  invoiceCounter Int      @default(0) @map("invoice_counter")
+
   memberships    Membership[]
   contacts       Contact[]
   companies      Company[]
@@ -58,6 +66,8 @@ model Organization {
   automationRuns AutomationRun[]
   campaigns      Campaign[]
   segments       Segment[]
+  products       Product[]
+  invoices       Invoice[]
 
   @@map("organizations")
 }
@@ -194,6 +204,7 @@ model Deal {
   activities    Activity[]
   tasks         Task[]
   emailMessages EmailMessage[]
+  invoices      Invoice[]
 
   @@index([organizationId])
   @@index([companyId])
@@ -424,4 +435,82 @@ model Segment {
 
   @@index([organizationId])
   @@map("segments")
+}
+
+// A Product is a catalog entry (a service or part with a default price) a
+// solo tradesperson reuses across jobs — picking one on an invoice line
+// item just prefills description/unitPrice, it doesn't link the two
+// afterwards, so editing or deleting a Product never changes an invoice
+// that already used it.
+model Product {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
+  name           String
+  description    String?
+  unitPrice      Decimal   @db.Decimal(10, 2) @map("unit_price")
+  unit           String?
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lineItems    InvoiceLineItem[]
+
+  @@index([organizationId])
+  @@map("products")
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+}
+
+// Invoice.number is unique per org, assigned sequentially from
+// Organization.invoiceCounter. dealId is optional and SetNull on delete —
+// an invoice is a financial record that must survive its Deal being
+// purged from Trash after the 30-day retention window.
+model Invoice {
+  id             String        @id @default(uuid()) @db.Uuid
+  organizationId String        @map("organization_id") @db.Uuid
+  dealId         String?       @map("deal_id") @db.Uuid
+  number         Int
+  status         InvoiceStatus @default(DRAFT)
+  vatRate        Decimal?      @db.Decimal(5, 2) @map("vat_rate")
+  issueDate      DateTime      @default(now()) @map("issue_date")
+  notes          String?
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+  deletedAt      DateTime?     @map("deleted_at")
+
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  deal         Deal?              @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  lineItems    InvoiceLineItem[]
+
+  @@unique([organizationId, number])
+  @@index([organizationId])
+  @@index([dealId])
+  @@map("invoices")
+}
+
+// A line item is a snapshot (description/quantity/unitPrice copied in at
+// creation time), not a live reference — so it has no organizationId of
+// its own; RLS scopes it via the parent Invoice, same pattern as
+// AutomationAction under Automation.
+model InvoiceLineItem {
+  id          String   @id @default(uuid()) @db.Uuid
+  invoiceId   String   @map("invoice_id") @db.Uuid
+  productId   String?  @map("product_id") @db.Uuid
+  description String
+  quantity    Decimal  @default(1) @db.Decimal(10, 2)
+  unitPrice   Decimal  @db.Decimal(10, 2) @map("unit_price")
+  position    Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  invoice Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([invoiceId])
+  @@index([productId])
+  @@map("invoice_line_items")
 }

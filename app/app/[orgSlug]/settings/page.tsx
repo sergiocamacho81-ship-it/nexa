@@ -6,6 +6,7 @@ import { AddMemberForm } from "./add-member-form";
 import { MemberRoleSelect } from "./member-role-select";
 import { RemoveMemberButton } from "./remove-member-button";
 import { SmtpSettingsForm } from "./smtp-settings-form";
+import { InvoicingSettingsForm } from "./invoicing-settings-form";
 import { DeleteOrganizationButton } from "./delete-organization-button";
 import { UpgradeButton } from "./upgrade-button";
 import { FREE_PLAN_LIMITS } from "@/lib/plan-limits";
@@ -95,6 +96,18 @@ export default async function SettingsPage({
           {t("smtpHint")}
         </p>
         <SmtpSettingsForm orgSlug={orgSlug} organization={organization} disabled={!canManage} />
+      </section>
+
+      <section>
+        <h6 className="text-muted mb-3">{t("invoicingHeading")}</h6>
+        <p className="text-muted text-sm" style={{ marginTop: "-8px", marginBottom: "8px" }}>
+          {t("invoicingHint")}
+        </p>
+        <InvoicingSettingsForm
+          orgSlug={orgSlug}
+          invoiceVatRate={organization.invoiceVatRate}
+          disabled={!canManage}
+        />
       </section>
 
       <section>

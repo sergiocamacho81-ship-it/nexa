@@ -72,7 +72,14 @@ export async function getOrganizationSettings(orgSlug: string) {
   const { smtpPassword, ...organizationWithoutSmtpPassword } = organization;
 
   return {
-    organization: { ...organizationWithoutSmtpPassword, smtpConfigured: Boolean(smtpPassword) },
+    organization: {
+      ...organizationWithoutSmtpPassword,
+      smtpConfigured: Boolean(smtpPassword),
+      // Prisma Decimal instances aren't serializable across the Server →
+      // Client Component boundary — convert before this crosses into a
+      // client form (see app/app/[orgSlug]/settings/invoicing-settings-form.tsx).
+      invoiceVatRate: organization.invoiceVatRate === null ? null : Number(organization.invoiceVatRate),
+    },
     members,
     currentUserRole: currentMembership?.role ?? "MEMBER",
     usage,
@@ -147,6 +154,43 @@ export async function updateOrgSmtp(
     where: { id: organization.id },
     data: { smtpHost, smtpPort, smtpSecure, smtpUser, smtpPassword, smtpFrom: smtpFrom || null },
   });
+
+  revalidatePath(`/app/${orgSlug}/settings`);
+  return { error: null, success: true };
+}
+
+export type InvoicingFormState = { error: string | null; success?: boolean };
+
+export async function updateOrgInvoicing(
+  _prevState: InvoicingFormState,
+  formData: FormData,
+): Promise<InvoicingFormState> {
+  const t = await getTranslations("Settings");
+  const orgSlug = String(formData.get("orgSlug") ?? "");
+  const user = await getCurrentUser();
+  const organization = await getOrgForCurrentUser(orgSlug);
+  if (!user || !organization) return { error: t("errorOrgNotFound") };
+
+  const membership = await prisma.membership.findUnique({
+    where: {
+      userId_organizationId: { userId: user.id, organizationId: organization.id },
+      deletedAt: null,
+    },
+  });
+  if (!membership || !MANAGER_ROLES.includes(membership.role)) {
+    return { error: t("errorOnlyManagersManage") };
+  }
+
+  const vatRateRaw = String(formData.get("invoiceVatRate") ?? "").trim();
+  let invoiceVatRate: number | null = null;
+  if (vatRateRaw) {
+    invoiceVatRate = Number(vatRateRaw);
+    if (Number.isNaN(invoiceVatRate) || invoiceVatRate < 0 || invoiceVatRate > 100) {
+      return { error: t("errorInvalidVatRate") };
+    }
+  }
+
+  await prisma.organization.update({ where: { id: organization.id }, data: { invoiceVatRate } });
 
   revalidatePath(`/app/${orgSlug}/settings`);
   return { error: null, success: true };
