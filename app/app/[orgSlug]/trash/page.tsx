@@ -10,6 +10,7 @@ const TYPE_LABEL_KEY = {
   company: "typeCompany",
   deal: "typeDeal",
   job: "typeJob",
+  project: "typeProject",
   activity: "typeActivity",
   task: "typeTask",
   segment: "typeSegment",

@@ -60,6 +60,7 @@ model Organization {
   companies      Company[]
   deals          Deal[]
   jobs           Job[]
+  projects       Project[]
   activities     Activity[]
   tasks          Task[]
   emailMessages  EmailMessage[]
@@ -158,6 +159,7 @@ model Contact {
   company            Company?            @relation(fields: [companyId], references: [id], onDelete: SetNull)
   deals              Deal[]
   jobs                Job[]
+  projects           Project[]
   activities         Activity[]
   tasks              Task[]
   emailMessages      EmailMessage[]
@@ -189,6 +191,7 @@ model Company {
   contacts     Contact[]
   deals        Deal[]
   jobs         Job[]
+  projects     Project[]
   activities   Activity[]
   tasks        Task[]
 
@@ -224,6 +227,7 @@ model Deal {
   tasks         Task[]
   emailMessages EmailMessage[]
   jobs          Job[]
+  projects      Project[]
 
   @@index([organizationId])
   @@index([companyId])
@@ -246,14 +250,17 @@ enum JobStatus {
 // and a Job can exist with no Deal at all (repeat customer, no sales cycle
 // worth tracking). dealId is therefore optional both ways.
 //
-// No dedicated create/edit UI exists yet for Job as of this foundation pass
-// — until one does, createInvoiceForDeal (app/actions/invoices.ts)
-// find-or-creates a Job per Deal so Invoice always has something real to
-// anchor to.
+// UI-facing name is "Work Order" (see app/app/[orgSlug]/jobs/) — the nav
+// already has an unrelated "Jobs" link (the Deal pipeline, relabeled for
+// this product's users), so this entity is never shown to users as "Job" to
+// avoid two different "Jobs" pointing at two different pages. projectId is
+// independent of dealId — a Job can belong to a Project, originate from a
+// Deal, both, or neither.
 model Job {
   id             String    @id @default(uuid()) @db.Uuid
   organizationId String    @map("organization_id") @db.Uuid
   dealId         String?   @map("deal_id") @db.Uuid
+  projectId      String?   @map("project_id") @db.Uuid
   companyId      String?   @map("company_id") @db.Uuid
   contactId      String?   @map("contact_id") @db.Uuid
   title          String
@@ -264,15 +271,56 @@ model Job {
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   deal         Deal?        @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  project      Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
   company      Company?     @relation(fields: [companyId], references: [id], onDelete: SetNull)
   contact      Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
   invoices     Invoice[]
 
   @@index([organizationId])
   @@index([dealId])
+  @@index([projectId])
   @@index([companyId])
   @@index([contactId])
   @@map("jobs")
+}
+
+enum ProjectStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// Groups multiple Jobs under one customer engagement (e.g. "Kitchen
+// renovation" containing separate Work Orders for demolition, plumbing,
+// electrical, drywall, painting). Optional on every side, same pattern as
+// Job: a Project can originate from a Deal or not, and a Job can belong to
+// a Project or stand alone. Invoice does NOT anchor to Project directly —
+// billing across a whole project is a financial-domain concern for a later
+// phase, not this one.
+model Project {
+  id             String        @id @default(uuid()) @db.Uuid
+  organizationId String        @map("organization_id") @db.Uuid
+  dealId         String?       @map("deal_id") @db.Uuid
+  companyId      String?       @map("company_id") @db.Uuid
+  contactId      String?       @map("contact_id") @db.Uuid
+  title          String
+  status         ProjectStatus @default(PLANNED)
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+  deletedAt      DateTime?     @map("deleted_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  deal         Deal?        @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  company      Company?     @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  contact      Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  jobs         Job[]
+
+  @@index([organizationId])
+  @@index([dealId])
+  @@index([companyId])
+  @@index([contactId])
+  @@map("projects")
 }
 
 enum ActivityType {

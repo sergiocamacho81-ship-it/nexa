@@ -2,30 +2,27 @@
 
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
-import { createJob } from "@/app/actions/jobs";
-import { JOB_STATUSES } from "@/lib/job-statuses";
+import { createProject } from "@/app/actions/projects";
+import { PROJECT_STATUSES } from "@/lib/project-statuses";
 
 type Company = { id: string; name: string };
 type Contact = { id: string; firstName: string; lastName: string | null };
 type Deal = { id: string; title: string };
-type Project = { id: string; title: string };
 
-export function CreateJobForm({
+export function CreateProjectForm({
   orgSlug,
   companies,
   contacts,
   deals,
-  projects,
 }: {
   orgSlug: string;
   companies: Company[];
   contacts: Contact[];
   deals: Deal[];
-  projects: Project[];
 }) {
-  const t = useTranslations("Jobs");
-  const tStatuses = useTranslations("JobStatuses");
-  const [state, action, isPending] = useActionState(createJob, { error: null });
+  const t = useTranslations("Projects");
+  const tStatuses = useTranslations("ProjectStatuses");
+  const [state, action, isPending] = useActionState(createProject, { error: null });
 
   return (
     <form action={action} className="flex flex-col gap-2">
@@ -37,8 +34,8 @@ export function CreateJobForm({
         </div>
         <div className="field">
           <label htmlFor="status">{t("status")}</label>
-          <select id="status" name="status" className="input" defaultValue="SCHEDULED">
-            {JOB_STATUSES.map((status) => (
+          <select id="status" name="status" className="input" defaultValue="PLANNED">
+            {PROJECT_STATUSES.map((status) => (
               <option key={status} value={status}>
                 {tStatuses(status)}
               </option>
@@ -52,17 +49,6 @@ export function CreateJobForm({
             {deals.map((deal) => (
               <option key={deal.id} value={deal.id}>
                 {deal.title}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="field">
-          <label htmlFor="projectId">{t("project")}</label>
-          <select id="projectId" name="projectId" className="input" defaultValue="">
-            <option value="">{t("noProject")}</option>
-            {projects.map((project) => (
-              <option key={project.id} value={project.id}>
-                {project.title}
               </option>
             ))}
           </select>

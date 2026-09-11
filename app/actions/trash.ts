@@ -44,6 +44,7 @@ async function purgeExpired(organizationId: string) {
     prisma.company.deleteMany({ where }),
     prisma.deal.deleteMany({ where }),
     prisma.job.deleteMany({ where }),
+    prisma.project.deleteMany({ where }),
     prisma.activity.deleteMany({ where }),
     prisma.task.deleteMany({ where }),
     prisma.segment.deleteMany({ where }),
@@ -69,6 +70,7 @@ export async function listTrash(orgSlug: string): Promise<TrashItem[]> {
     companies,
     deals,
     jobs,
+    projects,
     activities,
     tasks,
     segments,
@@ -82,6 +84,7 @@ export async function listTrash(orgSlug: string): Promise<TrashItem[]> {
     prisma.company.findMany({ where }),
     prisma.deal.findMany({ where }),
     prisma.job.findMany({ where }),
+    prisma.project.findMany({ where }),
     prisma.activity.findMany({ where }),
     prisma.task.findMany({ where }),
     prisma.segment.findMany({ where }),
@@ -127,6 +130,12 @@ export async function listTrash(orgSlug: string): Promise<TrashItem[]> {
       id: j.id,
       label: j.title,
       deletedAt: j.deletedAt as Date,
+    })),
+    ...projects.map((p) => ({
+      type: "project" as const,
+      id: p.id,
+      label: p.title,
+      deletedAt: p.deletedAt as Date,
     })),
     ...activities.map((a) => ({
       type: "activity" as const,
@@ -223,6 +232,9 @@ export async function restoreTrashItem(formData: FormData) {
       break;
     case "job":
       await prisma.job.updateMany({ where, data });
+      break;
+    case "project":
+      await prisma.project.updateMany({ where, data });
       break;
     case "activity":
       await prisma.activity.updateMany({ where, data });

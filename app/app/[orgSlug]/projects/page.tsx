@@ -1,15 +1,14 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
-import { listJobs } from "@/app/actions/jobs";
+import { listProjects } from "@/app/actions/projects";
 import { listCompanies } from "@/app/actions/companies";
 import { listDeals } from "@/app/actions/deals";
-import { listProjects } from "@/app/actions/projects";
 import { prisma } from "@/lib/prisma";
-import { CreateJobForm } from "./create-job-form";
-import { JobRow } from "./job-row";
+import { CreateProjectForm } from "./create-project-form";
+import { ProjectRow } from "./project-row";
 
-export default async function JobsPage({
+export default async function ProjectsPage({
   params,
 }: {
   params: Promise<{ orgSlug: string }>;
@@ -19,10 +18,10 @@ export default async function JobsPage({
   if (!organization) {
     notFound();
   }
-  const t = await getTranslations("Jobs");
+  const t = await getTranslations("Projects");
 
-  const [jobs, companies, deals, contacts, projects] = await Promise.all([
-    listJobs(orgSlug),
+  const [projects, companies, deals, contacts] = await Promise.all([
+    listProjects(orgSlug),
     listCompanies(orgSlug),
     listDeals(orgSlug),
     prisma.contact.findMany({
@@ -30,26 +29,23 @@ export default async function JobsPage({
       select: { id: true, firstName: true, lastName: true },
       orderBy: { firstName: "asc" },
     }),
-    listProjects(orgSlug),
   ]);
-  const projectOptions = projects.map((p) => ({ id: p.id, title: p.title }));
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-6 py-12">
       <section>
-        <h6 className="text-muted mb-3">{t("newJob")}</h6>
-        <CreateJobForm
+        <h6 className="text-muted mb-3">{t("newProject")}</h6>
+        <CreateProjectForm
           orgSlug={orgSlug}
           companies={companies}
           contacts={contacts}
           deals={deals.map((d) => ({ id: d.id, title: d.title }))}
-          projects={projectOptions}
         />
       </section>
 
       <section>
-        <h6 className="text-muted mb-3">{t("heading", { count: jobs.length })}</h6>
-        {jobs.length === 0 ? (
+        <h6 className="text-muted mb-3">{t("heading", { count: projects.length })}</h6>
+        {projects.length === 0 ? (
           <p className="text-muted text-sm">{t("none")}</p>
         ) : (
           <div className="table-wrap">
@@ -59,21 +55,19 @@ export default async function JobsPage({
                   <th>{t("tableTitle")}</th>
                   <th>{t("tableStatus")}</th>
                   <th>{t("tableDeal")}</th>
-                  <th>{t("tableProject")}</th>
                   <th>{t("tableCompany")}</th>
                   <th>{t("tableContact")}</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
-                {jobs.map((job) => (
-                  <JobRow
-                    key={job.id}
+                {projects.map((project) => (
+                  <ProjectRow
+                    key={project.id}
                     orgSlug={orgSlug}
-                    job={job}
+                    project={project}
                     companies={companies}
                     contacts={contacts}
-                    projects={projectOptions}
                   />
                 ))}
               </tbody>
