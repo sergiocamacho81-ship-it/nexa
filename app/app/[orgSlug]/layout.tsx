@@ -22,6 +22,7 @@ export default async function OrgLayout({
   const primaryItems = [
     { href: `/app/${orgSlug}/contacts`, label: t("contacts") },
     { href: `/app/${orgSlug}/deals`, label: t("deals") },
+    { href: `/app/${orgSlug}/jobs`, label: t("jobs") },
     { href: `/app/${orgSlug}/tasks`, label: t("tasks") },
   ];
   const secondaryItems = [

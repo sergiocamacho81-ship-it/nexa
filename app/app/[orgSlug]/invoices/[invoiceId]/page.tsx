@@ -70,7 +70,9 @@ export default async function InvoiceDetailPage({
 
         {invoice.job && (
           <section>
-            <p className="card-meta">{t("job")}: {invoice.job.title}</p>
+            <p className="card-meta">
+              {t("job")}: <Link href={`/app/${orgSlug}/jobs`}>{invoice.job.title}</Link>
+            </p>
             {invoice.job.contact && (
               <p className="card-meta">
                 {t("contact")}: {invoice.job.contact.firstName} {invoice.job.contact.lastName ?? ""}
