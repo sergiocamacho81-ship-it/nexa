@@ -7,6 +7,8 @@ import { MemberRoleSelect } from "./member-role-select";
 import { RemoveMemberButton } from "./remove-member-button";
 import { SmtpSettingsForm } from "./smtp-settings-form";
 import { DeleteOrganizationButton } from "./delete-organization-button";
+import { UpgradeButton } from "./upgrade-button";
+import { FREE_PLAN_LIMITS } from "@/lib/plan-limits";
 
 export default async function SettingsPage({
   params,
@@ -19,12 +21,20 @@ export default async function SettingsPage({
     notFound();
   }
 
-  const [t, tRoles] = await Promise.all([
+  const [t, tRoles, tBilling] = await Promise.all([
     getTranslations("Settings"),
     getTranslations("MembershipRoles"),
+    getTranslations("Billing"),
   ]);
-  const { organization, members, currentUserRole } = settings;
+  const { organization, members, currentUserRole, usage } = settings;
   const canManage = currentUserRole === "OWNER" || currentUserRole === "ADMIN";
+  const isCapped = organization.planTier === "FREE";
+  const planLabelKey =
+    organization.planTier === "PRO"
+      ? "planPro"
+      : organization.planTier === "GRANDFATHERED"
+        ? "planGrandfathered"
+        : "planFree";
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-12">
@@ -34,6 +44,49 @@ export default async function SettingsPage({
         <p className="text-muted" style={{ fontSize: "11px", marginTop: "6px" }}>
           {t("slugNote", { slug: organization.slug })}
         </p>
+      </section>
+
+      <section>
+        <div className="flex items-center gap-2 mb-3">
+          <h6 className="text-muted" style={{ margin: 0 }}>
+            {tBilling("heading")}
+          </h6>
+          <span className="tag tag-accent">{tBilling(planLabelKey)}</span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="card elev-sm">
+            <span className="card-kicker">{tBilling("usageContacts")}</span>
+            <p className="card-title" style={{ fontSize: "22px" }}>
+              {isCapped
+                ? tBilling("usageOf", { current: usage.contacts, limit: FREE_PLAN_LIMITS.contacts })
+                : usage.contacts}
+            </p>
+          </div>
+          <div className="card elev-sm">
+            <span className="card-kicker">{tBilling("usageMembers")}</span>
+            <p className="card-title" style={{ fontSize: "22px" }}>
+              {isCapped
+                ? tBilling("usageOf", { current: usage.members, limit: FREE_PLAN_LIMITS.members })
+                : usage.members}
+            </p>
+          </div>
+          <div className="card elev-sm">
+            <span className="card-kicker">{tBilling("usageActiveDeals")}</span>
+            <p className="card-title" style={{ fontSize: "22px" }}>
+              {isCapped
+                ? tBilling("usageOf", { current: usage.activeDeals, limit: FREE_PLAN_LIMITS.activeDeals })
+                : usage.activeDeals}
+            </p>
+          </div>
+        </div>
+        {isCapped && canManage && (
+          <div style={{ marginTop: "12px" }}>
+            <p className="text-muted text-sm" style={{ marginBottom: "8px" }}>
+              {tBilling("upgradeHint")}
+            </p>
+            <UpgradeButton orgSlug={orgSlug} />
+          </div>
+        )}
       </section>
 
       <section>

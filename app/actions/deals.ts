@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { DEAL_STAGES } from "@/lib/deal-stages";
 import { runAutomationsForTrigger } from "@/lib/automation/engine";
+import { checkPlanLimit } from "@/lib/plan-limits";
 
 // Takes orgSlug (not organizationId) and re-verifies membership itself — see
 // note in app/actions/contacts.ts listContacts.
@@ -49,6 +50,16 @@ export async function createDeal(
   const stage = DEAL_STAGES.includes(stageRaw as (typeof DEAL_STAGES)[number])
     ? (stageRaw as (typeof DEAL_STAGES)[number])
     : "LEAD";
+
+  // Only a deal actually landing in an "active" stage counts toward the
+  // cap — creating one straight into Won/Lost (rare, but the form allows
+  // it) shouldn't be blocked by it.
+  if (stage !== "WON" && stage !== "LOST") {
+    const limitCheck = await checkPlanLimit(organization, "activeDeals");
+    if (limitCheck.limited) {
+      return { error: t("errorPlanLimit", { limit: String(limitCheck.limit) }) };
+    }
+  }
 
   const value = valueRaw ? Number(valueRaw) : null;
   if (valueRaw && Number.isNaN(value)) {

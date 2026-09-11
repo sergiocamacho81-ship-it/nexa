@@ -166,7 +166,9 @@
     "importSubmit": "Hochladen und importieren",
     "importing": "Wird importiert...",
     "importSummary": "{created} Kontakt(e) importiert, {failed} fehlgeschlagen.",
-    "close": "Schließen"
+    "close": "Schließen",
+    "errorPlanLimit": "Du hast das Limit des kostenlosen Plans erreicht ({limit} Kontakte). Upgrade in den Einstellungen, um mehr hinzuzufügen.",
+    "errorImportPlanLimit": "Limit des kostenlosen Plans erreicht ({limit} Kontakte) — verbleibende Zeilen übersprungen."
   },
   "Companies": {
     "newCompany": "Neues Unternehmen",
@@ -204,7 +206,8 @@
     "errorInvalidValue": "Ungültiger Wert.",
     "errorInvalidCompany": "Ungültiges Unternehmen.",
     "errorInvalidContact": "Ungültiger Kontakt.",
-    "errorOrgNotFound": "Organisation nicht gefunden."
+    "errorOrgNotFound": "Organisation nicht gefunden.",
+    "errorPlanLimit": "Du hast das Limit des kostenlosen Plans erreicht ({limit} aktive Aufträge). Upgrade in den Einstellungen, oder markiere zuerst einen als Erledigt/Verloren."
   },
   "Activities": {
     "newActivity": "Neue Aktivität",
@@ -411,7 +414,8 @@
     "deleteOrgHint": "Verschiebt die Organisation in den Papierkorb. Ein OWNER kann sie innerhalb von 30 Tagen aus der Organisationsliste wiederherstellen; danach ist sie endgültig weg.",
     "deleteOrgButton": "Organisation löschen",
     "deleteOrgConfirm": "„{name}“ löschen? Dies kann innerhalb von 30 Tagen rückgängig gemacht werden.",
-    "errorOnlyOwnerDelete": "Nur ein OWNER kann die Organisation löschen."
+    "errorOnlyOwnerDelete": "Nur ein OWNER kann die Organisation löschen.",
+    "errorPlanLimitMembers": "Der kostenlose Plan erlaubt {limit} Mitglied. Upgrade, um weitere Personen hinzuzufügen."
   },
   "LocaleSwitcher": {
     "label": "Sprache"
@@ -475,6 +479,21 @@
     "restore": "Wiederherstellen",
     "restoring": "Wird wiederhergestellt...",
     "restored": "Wiederhergestellt.",
-    "readOnlyHint": "Nur ein OWNER oder ADMIN kann Elemente wiederherstellen."
+    "readOnlyHint": "Nur ein OWNER oder ADMIN kann Elemente wiederherstellen.",
+    "errorPlanLimitRestore": "Das Wiederherstellen würde das Limit des kostenlosen Plans überschreiten ({limit}). Führe zuerst ein Upgrade in den Einstellungen durch."
+  },
+  "Billing": {
+    "heading": "Plan",
+    "planFree": "Kostenlos",
+    "planPro": "Pro",
+    "planGrandfathered": "Kostenlos (Bestand)",
+    "usageContacts": "Kontakte",
+    "usageMembers": "Mitglieder",
+    "usageActiveDeals": "Aktive Aufträge",
+    "unlimited": "Unbegrenzt",
+    "usageOf": "{current} / {limit}",
+    "upgradeButton": "Auf Pro upgraden",
+    "upgradeHint": "CHF 29/Monat, unbegrenzte Kontakte, Mitglieder und Aufträge.",
+    "upgradeNotConfigured": "Upgrades sind noch nicht verfügbar — schau bald wieder vorbei."
   }
 }

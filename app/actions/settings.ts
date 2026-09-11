@@ -7,6 +7,7 @@ import { getCurrentUser } from "@/app/actions/organizations";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { MEMBERSHIP_ROLES } from "@/lib/membership-roles";
+import { checkPlanLimit, getPlanUsage } from "@/lib/plan-limits";
 
 type Role = (typeof MEMBERSHIP_ROLES)[number];
 const MANAGER_ROLES: Role[] = ["OWNER", "ADMIN"];
@@ -64,6 +65,7 @@ export async function getOrganizationSettings(orgSlug: string) {
   }));
 
   const currentMembership = memberships.find((m) => m.userId === user.id);
+  const usage = await getPlanUsage(organization.id);
 
   // The stored SMTP password is never sent to the client — the form only
   // ever shows whether one is set, never its value.
@@ -73,6 +75,7 @@ export async function getOrganizationSettings(orgSlug: string) {
     organization: { ...organizationWithoutSmtpPassword, smtpConfigured: Boolean(smtpPassword) },
     members,
     currentUserRole: currentMembership?.role ?? "MEMBER",
+    usage,
   };
 }
 
@@ -170,6 +173,11 @@ export async function addMember(
   });
   if (!membership || !MANAGER_ROLES.includes(membership.role)) {
     return { error: t("errorOnlyManagersAdd") };
+  }
+
+  const limitCheck = await checkPlanLimit(organization, "members");
+  if (limitCheck.limited) {
+    return { error: t("errorPlanLimitMembers", { limit: String(limitCheck.limit) }) };
   }
 
   if (!email) return { error: t("errorEmailRequired") };

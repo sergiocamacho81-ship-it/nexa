@@ -7,6 +7,7 @@ import { getCurrentUser } from "@/app/actions/organizations";
 import { runAutomationsForTrigger } from "@/lib/automation/engine";
 import { CONTACT_LANGUAGES } from "@/lib/contact-languages";
 import { SWISS_CANTONS } from "@/lib/swiss-cantons";
+import { checkPlanLimit, FREE_PLAN_LIMITS } from "@/lib/plan-limits";
 
 // Resolves an organization by slug and verifies the current user is a
 // member of it. Returns null if either check fails, so callers can 404/redirect.
@@ -127,6 +128,11 @@ export async function createContact(
   const organization = await getOrgForCurrentUser(orgSlug);
   if (!organization) {
     return { error: t("errorOrgNotFound") };
+  }
+
+  const limitCheck = await checkPlanLimit(organization, "contacts");
+  if (limitCheck.limited) {
+    return { error: t("errorPlanLimit", { limit: String(limitCheck.limit) }) };
   }
 
   const parsed = await parseContactFields(formData, organization.id, t);
@@ -305,9 +311,27 @@ export async function importContacts(
   let created = 0;
   const errors: string[] = [];
 
+  // Enforced as a running count, not one checkPlanLimit() call per row —
+  // a CSV import can legitimately push a FREE org over the limit partway
+  // through, and the remaining rows should stop cleanly, not fail one by
+  // one with a confusing per-row error.
+  const isCapped = organization.planTier === "FREE";
+  let contactCount = isCapped
+    ? await prisma.contact.count({ where: { organizationId: organization.id, deletedAt: null } })
+    : 0;
+  let limitReached = false;
+
   for (let r = 1; r < rows.length; r++) {
     const cols = rows[r];
     if (cols.every((c) => c.trim() === "")) continue;
+
+    if (isCapped && contactCount >= FREE_PLAN_LIMITS.contacts) {
+      if (!limitReached) {
+        limitReached = true;
+        errors.push(t("errorImportPlanLimit", { limit: String(FREE_PLAN_LIMITS.contacts) }));
+      }
+      continue;
+    }
     const get = (name: ImportColumn) => {
       const idx = colIndex(name);
       return idx === -1 ? "" : (cols[idx] ?? "").trim();
@@ -349,6 +373,7 @@ export async function importContacts(
         },
       });
       created++;
+      contactCount++;
     } catch {
       errors.push(t("errorImportRow", { row: r + 1, reason: t("errorImportRowFailed") }));
     }

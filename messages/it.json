@@ -166,7 +166,9 @@
     "importSubmit": "Carica e importa",
     "importing": "Importazione...",
     "importSummary": "{created} contatto/i importato/i, {failed} fallito/i.",
-    "close": "Chiudi"
+    "close": "Chiudi",
+    "errorPlanLimit": "Hai raggiunto il limite del piano gratuito ({limit} contatti). Fai l'upgrade in Impostazioni per aggiungerne altri.",
+    "errorImportPlanLimit": "Limite del piano gratuito raggiunto ({limit} contatti) — le righe rimanenti sono state ignorate."
   },
   "Companies": {
     "newCompany": "Nuova azienda",
@@ -204,7 +206,8 @@
     "errorInvalidValue": "Valore non valido.",
     "errorInvalidCompany": "Azienda non valida.",
     "errorInvalidContact": "Contatto non valido.",
-    "errorOrgNotFound": "Organizzazione non trovata."
+    "errorOrgNotFound": "Organizzazione non trovata.",
+    "errorPlanLimit": "Hai raggiunto il limite del piano gratuito ({limit} lavori attivi). Fai l'upgrade in Impostazioni, oppure segna prima uno come Completato/Perso."
   },
   "Activities": {
     "newActivity": "Nuova attività",
@@ -411,7 +414,8 @@
     "deleteOrgHint": "Sposta l'organizzazione nel cestino. Un OWNER può ripristinarla entro 30 giorni dall'elenco delle organizzazioni; dopodiché sparisce definitivamente.",
     "deleteOrgButton": "Elimina organizzazione",
     "deleteOrgConfirm": "Eliminare \"{name}\"? Questa azione può essere annullata entro 30 giorni.",
-    "errorOnlyOwnerDelete": "Solo un OWNER può eliminare l'organizzazione."
+    "errorOnlyOwnerDelete": "Solo un OWNER può eliminare l'organizzazione.",
+    "errorPlanLimitMembers": "Il piano gratuito consente {limit} membro. Fai l'upgrade per aggiungere altre persone."
   },
   "LocaleSwitcher": {
     "label": "Lingua"
@@ -475,6 +479,21 @@
     "restore": "Ripristina",
     "restoring": "Ripristino...",
     "restored": "Ripristinato.",
-    "readOnlyHint": "Solo un OWNER o ADMIN può ripristinare gli elementi."
+    "readOnlyHint": "Solo un OWNER o ADMIN può ripristinare gli elementi.",
+    "errorPlanLimitRestore": "Ripristinare questo elemento supererebbe il limite del piano gratuito ({limit}). Fai prima l'upgrade in Impostazioni."
+  },
+  "Billing": {
+    "heading": "Piano",
+    "planFree": "Gratuito",
+    "planPro": "Pro",
+    "planGrandfathered": "Gratuito (storico)",
+    "usageContacts": "Contatti",
+    "usageMembers": "Membri",
+    "usageActiveDeals": "Lavori attivi",
+    "unlimited": "Illimitato",
+    "usageOf": "{current} / {limit}",
+    "upgradeButton": "Passa a Pro",
+    "upgradeHint": "CHF 29/mese, contatti, membri e lavori illimitati.",
+    "upgradeNotConfigured": "Gli upgrade non sono ancora disponibili — torna presto."
   }
 }

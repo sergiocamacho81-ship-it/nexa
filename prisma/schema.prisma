@@ -6,6 +6,12 @@ datasource db {
   provider = "postgresql"
 }
 
+enum PlanTier {
+  FREE
+  PRO
+  GRANDFATHERED
+}
+
 model Organization {
   id        String   @id @default(uuid()) @db.Uuid
   name      String
@@ -30,6 +36,16 @@ model Organization {
   // app filters `deletedAt: null`; nothing purges rows itself — that's a
   // lazy sweep run when the Trash view is opened (see app/actions/trash.ts).
   deletedAt DateTime? @map("deleted_at")
+
+  // Freemium billing. FREE is capped (see lib/plan-limits.ts); PRO and
+  // GRANDFATHERED are both unlimited — GRANDFATHERED marks an org that gets
+  // PRO-level access without a Stripe subscription (every org that existed
+  // before billing shipped, kept free for good; see the migration that
+  // introduced this column). The Stripe fields are null until a checkout
+  // actually happens — that flow isn't wired up yet.
+  planTier             PlanTier @default(FREE) @map("plan_tier")
+  stripeCustomerId     String?  @map("stripe_customer_id")
+  stripeSubscriptionId String?  @map("stripe_subscription_id")
 
   memberships    Membership[]
   contacts       Contact[]

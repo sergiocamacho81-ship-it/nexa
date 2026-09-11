@@ -8,6 +8,7 @@ import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { MEMBERSHIP_ROLES } from "@/lib/membership-roles";
 import { TRASH_TYPES, type TrashType } from "@/lib/trash-types";
+import { checkPlanLimit } from "@/lib/plan-limits";
 
 const RETENTION_DAYS = 30;
 
@@ -155,6 +156,21 @@ export async function restoreTrashItem(formData: FormData) {
   await assertCanManage(organization.id);
 
   if (!TRASH_TYPES.includes(type)) throw new Error("Invalid type");
+
+  // Restoring something soft-deleted grows the active count the same way
+  // creating a new one would, so it's gated by the same plan limits.
+  const limitKindByType: Partial<Record<TrashType, "contacts" | "members" | "activeDeals">> = {
+    contact: "contacts",
+    member: "members",
+    deal: "activeDeals",
+  };
+  const limitKind = limitKindByType[type];
+  if (limitKind) {
+    const limitCheck = await checkPlanLimit(organization, limitKind);
+    if (limitCheck.limited) {
+      throw new Error(t("errorPlanLimitRestore", { limit: limitCheck.limit }));
+    }
+  }
 
   const where = { id, organizationId: organization.id, deletedAt: { not: null } };
   const data = { deletedAt: null };

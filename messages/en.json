@@ -166,7 +166,9 @@
     "importSubmit": "Upload and import",
     "importing": "Importing...",
     "importSummary": "{created} contact(s) imported, {failed} failed.",
-    "close": "Close"
+    "close": "Close",
+    "errorPlanLimit": "You've reached the free plan limit ({limit} contacts). Upgrade in Settings to add more.",
+    "errorImportPlanLimit": "Free plan limit reached ({limit} contacts) — remaining rows skipped."
   },
   "Companies": {
     "newCompany": "New company",
@@ -204,7 +206,8 @@
     "errorInvalidValue": "Invalid value.",
     "errorInvalidCompany": "Invalid company.",
     "errorInvalidContact": "Invalid contact.",
-    "errorOrgNotFound": "Organization not found."
+    "errorOrgNotFound": "Organization not found.",
+    "errorPlanLimit": "You've reached the free plan limit ({limit} active jobs). Upgrade in Settings, or mark one Done/Lost first."
   },
   "Activities": {
     "newActivity": "New activity",
@@ -411,7 +414,8 @@
     "deleteOrgHint": "Moves the organization to the trash. An OWNER can restore it within 30 days from the organization list; after that it's gone for good.",
     "deleteOrgButton": "Delete organization",
     "deleteOrgConfirm": "Delete \"{name}\"? This can be undone within 30 days.",
-    "errorOnlyOwnerDelete": "Only an OWNER can delete the organization."
+    "errorOnlyOwnerDelete": "Only an OWNER can delete the organization.",
+    "errorPlanLimitMembers": "The free plan allows {limit} member. Upgrade to add more people."
   },
   "LocaleSwitcher": {
     "label": "Language"
@@ -475,6 +479,21 @@
     "restore": "Restore",
     "restoring": "Restoring...",
     "restored": "Restored.",
-    "readOnlyHint": "Only an OWNER or ADMIN can restore items."
+    "readOnlyHint": "Only an OWNER or ADMIN can restore items.",
+    "errorPlanLimitRestore": "Restoring this would go over the free plan limit ({limit}). Upgrade in Settings first."
+  },
+  "Billing": {
+    "heading": "Plan",
+    "planFree": "Free",
+    "planPro": "Pro",
+    "planGrandfathered": "Free (legacy)",
+    "usageContacts": "Contacts",
+    "usageMembers": "Members",
+    "usageActiveDeals": "Active jobs",
+    "unlimited": "Unlimited",
+    "usageOf": "{current} / {limit}",
+    "upgradeButton": "Upgrade to Pro",
+    "upgradeHint": "CHF 29/month, unlimited contacts, members and jobs.",
+    "upgradeNotConfigured": "Upgrades aren't open yet — check back soon."
   }
 }

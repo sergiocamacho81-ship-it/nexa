@@ -166,7 +166,9 @@
     "importSubmit": "Carregar e importar",
     "importing": "A importar...",
     "importSummary": "{created} contacto(s) importado(s), {failed} falhado(s).",
-    "close": "Fechar"
+    "close": "Fechar",
+    "errorPlanLimit": "Atingiste o limite do plano grátis ({limit} contactos). Faz upgrade em Definições para adicionar mais.",
+    "errorImportPlanLimit": "Limite do plano grátis atingido ({limit} contactos) — as restantes linhas foram ignoradas."
   },
   "Companies": {
     "newCompany": "Nova empresa",
@@ -204,7 +206,8 @@
     "errorInvalidValue": "Valor inválido.",
     "errorInvalidCompany": "Empresa inválida.",
     "errorInvalidContact": "Contacto inválido.",
-    "errorOrgNotFound": "Organização não encontrada."
+    "errorOrgNotFound": "Organização não encontrada.",
+    "errorPlanLimit": "Atingiste o limite do plano grátis ({limit} trabalhos ativos). Faz upgrade em Definições, ou marca um como Concluído/Perdido primeiro."
   },
   "Activities": {
     "newActivity": "Nova atividade",
@@ -411,7 +414,8 @@
     "deleteOrgHint": "Move a organização para o lixo. Um OWNER pode restaurá-la dentro de 30 dias a partir da lista de organizações; depois disso desaparece definitivamente.",
     "deleteOrgButton": "Eliminar organização",
     "deleteOrgConfirm": "Eliminar \"{name}\"? Isto pode ser revertido dentro de 30 dias.",
-    "errorOnlyOwnerDelete": "Só um OWNER pode eliminar a organização."
+    "errorOnlyOwnerDelete": "Só um OWNER pode eliminar a organização.",
+    "errorPlanLimitMembers": "O plano grátis permite {limit} membro. Faz upgrade para adicionar mais pessoas."
   },
   "LocaleSwitcher": {
     "label": "Idioma"
@@ -475,6 +479,21 @@
     "restore": "Restaurar",
     "restoring": "A restaurar...",
     "restored": "Restaurado.",
-    "readOnlyHint": "Só um OWNER ou ADMIN pode restaurar itens."
+    "readOnlyHint": "Só um OWNER ou ADMIN pode restaurar itens.",
+    "errorPlanLimitRestore": "Restaurar isto ultrapassaria o limite do plano grátis ({limit}). Faz upgrade em Definições primeiro."
+  },
+  "Billing": {
+    "heading": "Plano",
+    "planFree": "Grátis",
+    "planPro": "Pro",
+    "planGrandfathered": "Grátis (histórico)",
+    "usageContacts": "Contactos",
+    "usageMembers": "Membros",
+    "usageActiveDeals": "Trabalhos ativos",
+    "unlimited": "Ilimitado",
+    "usageOf": "{current} / {limit}",
+    "upgradeButton": "Passar a Pro",
+    "upgradeHint": "CHF 29/mês, contactos, membros e trabalhos ilimitados.",
+    "upgradeNotConfigured": "Os upgrades ainda não estão disponíveis — volta em breve."
   }
 }

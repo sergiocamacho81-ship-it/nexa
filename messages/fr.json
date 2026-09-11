@@ -166,7 +166,9 @@
     "importSubmit": "Charger et importer",
     "importing": "Importation...",
     "importSummary": "{created} contact(s) importé(s), {failed} échoué(s).",
-    "close": "Fermer"
+    "close": "Fermer",
+    "errorPlanLimit": "Vous avez atteint la limite du plan gratuit ({limit} contacts). Passez à un forfait supérieur dans Paramètres pour en ajouter.",
+    "errorImportPlanLimit": "Limite du plan gratuit atteinte ({limit} contacts) — les lignes restantes ont été ignorées."
   },
   "Companies": {
     "newCompany": "Nouvelle entreprise",
@@ -204,7 +206,8 @@
     "errorInvalidValue": "Valeur invalide.",
     "errorInvalidCompany": "Entreprise invalide.",
     "errorInvalidContact": "Contact invalide.",
-    "errorOrgNotFound": "Organisation introuvable."
+    "errorOrgNotFound": "Organisation introuvable.",
+    "errorPlanLimit": "Vous avez atteint la limite du plan gratuit ({limit} travaux actifs). Passez à un forfait supérieur dans Paramètres, ou marquez-en un comme Terminé/Perdu."
   },
   "Activities": {
     "newActivity": "Nouvelle activité",
@@ -411,7 +414,8 @@
     "deleteOrgHint": "Déplace l'organisation vers la corbeille. Un OWNER peut la restaurer dans les 30 jours depuis la liste des organisations ; après cela, elle disparaît définitivement.",
     "deleteOrgButton": "Supprimer l'organisation",
     "deleteOrgConfirm": "Supprimer « {name} » ? Cela peut être annulé dans les 30 jours.",
-    "errorOnlyOwnerDelete": "Seul un OWNER peut supprimer l'organisation."
+    "errorOnlyOwnerDelete": "Seul un OWNER peut supprimer l'organisation.",
+    "errorPlanLimitMembers": "Le plan gratuit permet {limit} membre. Passez à un forfait supérieur pour ajouter plus de personnes."
   },
   "LocaleSwitcher": {
     "label": "Langue"
@@ -475,6 +479,21 @@
     "restore": "Restaurer",
     "restoring": "Restauration...",
     "restored": "Restauré.",
-    "readOnlyHint": "Seul un OWNER ou un ADMIN peut restaurer des éléments."
+    "readOnlyHint": "Seul un OWNER ou un ADMIN peut restaurer des éléments.",
+    "errorPlanLimitRestore": "Restaurer ceci dépasserait la limite du plan gratuit ({limit}). Passez à un forfait supérieur dans Paramètres d'abord."
+  },
+  "Billing": {
+    "heading": "Forfait",
+    "planFree": "Gratuit",
+    "planPro": "Pro",
+    "planGrandfathered": "Gratuit (historique)",
+    "usageContacts": "Contacts",
+    "usageMembers": "Membres",
+    "usageActiveDeals": "Travaux actifs",
+    "unlimited": "Illimité",
+    "usageOf": "{current} / {limit}",
+    "upgradeButton": "Passer à Pro",
+    "upgradeHint": "CHF 29/mois, contacts, membres et travaux illimités.",
+    "upgradeNotConfigured": "Les mises à niveau ne sont pas encore disponibles — reviens bientôt."
   }
 }
