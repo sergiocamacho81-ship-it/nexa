@@ -1,6 +1,6 @@
-# Guida utente — Nexa
+# Guida utente — Continuo
 
-Nexa è il CRM del tuo team: contatti, aziende, trattative, attività, attività da
+Continuo è il CRM del tuo team: contatti, aziende, trattative, attività, attività da
 svolgere, email e automazioni, tutto in un unico posto. Questa guida copre l'uso
 quotidiano. Per gestire l'organizzazione stessa (membri, ruoli), consulta la
 [Guida amministratore](../admin-guide/it.md).

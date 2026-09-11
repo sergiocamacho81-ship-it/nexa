@@ -1,13 +1,13 @@
-# Nexa — Business Overview
+# Continuo — Business Overview
 
-**Product:** Nexa CRM
+**Product:** Continuo CRM
 **Owner:** Vingelis
 **Status:** Live in production
 **URL:** https://nexa-sigma-woad.vercel.app
 
-## 1. What Nexa is
+## 1. What Continuo is
 
-Nexa is a multi-tenant CRM and lightweight marketing-automation platform built for
+Continuo is a multi-tenant CRM and lightweight marketing-automation platform built for
 small-to-mid-size teams (agencies, consultancies, small sales teams) that need contact
 and deal management, activity tracking, task follow-up, transactional email, rule-based
 automation, and segmented email campaigns — without the overhead or cost of an

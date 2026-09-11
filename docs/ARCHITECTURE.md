@@ -1,4 +1,4 @@
-# Nexa — Technical Architecture
+# Continuo — Technical Architecture
 
 Audience: engineers working on or evaluating this codebase. For what the product does
 and who it's for, see [BUSINESS.md](./BUSINESS.md). For running/operating the live

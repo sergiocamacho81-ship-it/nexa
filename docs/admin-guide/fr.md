@@ -1,8 +1,8 @@
-# Guide administrateur d'organisation — Nexa
+# Guide administrateur d'organisation — Continuo
 
-Ce guide s'adresse aux personnes qui gèrent une **organisation Nexa** elle-même — son
+Ce guide s'adresse aux personnes qui gèrent une **organisation Continuo** elle-même — son
 nom et ses membres — depuis la page **Paramètres** de l'application. Il ne concerne
-pas le déploiement ou l'exploitation de la plateforme Nexa elle-même ; pour cela,
+pas le déploiement ou l'exploitation de la plateforme Continuo elle-même ; pour cela,
 consultez [PLATFORM_ADMIN.md](../PLATFORM_ADMIN.md) (technique, en anglais
 uniquement).
 
@@ -42,7 +42,7 @@ réellement.
 Paramètres → **Ajouter un membre** → indiquez son email et choisissez un rôle
 (par défaut **Membre**) → **Ajouter**.
 
-**La personne doit déjà avoir un compte Nexa.** Il n'y a actuellement pas
+**La personne doit déjà avoir un compte Continuo.** Il n'y a actuellement pas
 d'invitation par email — si elle ne s'est pas encore inscrite, demandez-lui de créer
 un compte d'abord (voir la section « Se connecter » du Guide utilisateur), puis
 ajoutez-la avec cet email. Si vous essayez d'ajouter quelqu'un sans compte, vous
@@ -57,7 +57,7 @@ confirmation, aucun bouton d'enregistrement.
 ## Retirer un membre
 
 Paramètres → trouvez la ligne du membre → **Supprimer**. Cela retire uniquement son
-accès à cette organisation ; cela ne supprime pas son compte Nexa et n'affecte
+accès à cette organisation ; cela ne supprime pas son compte Continuo et n'affecte
 aucune autre organisation à laquelle il appartient. Ce n'est pas immédiatement
 définitif — voir [Corbeille](#corbeille-récupérer-des-éléments-supprimés) ci-dessous
 — et le réajouter avec le même email (Paramètres → Ajouter un membre) restaure
@@ -72,7 +72,7 @@ Propriétaire, puis changez votre propre rôle ou retirez-vous.
 
 ## Corbeille (récupérer des éléments supprimés)
 
-Toute suppression dans Nexa — un contact, une entreprise, une affaire, une activité,
+Toute suppression dans Continuo — un contact, une entreprise, une affaire, une activité,
 une tâche, un segment, une automatisation, une campagne ou un membre — va d'abord
 dans la **Corbeille** (dans le menu), pas directement vers une suppression
 définitive. Elle y reste **30 jours** ; un OWNER ou un ADMIN peut la restaurer depuis

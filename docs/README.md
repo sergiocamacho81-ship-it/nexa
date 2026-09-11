@@ -1,4 +1,4 @@
-# Nexa Documentation
+# Continuo Documentation
 
 | Document | Audience | Language(s) |
 |---|---|---|

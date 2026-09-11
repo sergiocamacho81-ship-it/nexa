@@ -38,7 +38,7 @@ export function LoginForm() {
           </span>
         </div>
         <h1 className="mb-0" style={{ fontSize: "52px" }}>
-          Nexa
+          Continuo
         </h1>
         <p className="text-muted text-sm">
           {mode === "signin" ? t("signInTitle") : t("signUpTitle")}

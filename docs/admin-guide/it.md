@@ -1,8 +1,8 @@
-# Guida amministratore dell'organizzazione — Nexa
+# Guida amministratore dell'organizzazione — Continuo
 
-Questa guida è per chi gestisce un'**organizzazione Nexa** stessa — il suo nome e i
+Questa guida è per chi gestisce un'**organizzazione Continuo** stessa — il suo nome e i
 suoi membri — dalla pagina **Impostazioni** dell'app. Non riguarda la distribuzione
-o la gestione della piattaforma Nexa stessa; per questo, consulta
+o la gestione della piattaforma Continuo stessa; per questo, consulta
 [PLATFORM_ADMIN.md](../PLATFORM_ADMIN.md) (tecnico, solo in inglese).
 
 ## Ruoli
@@ -39,7 +39,7 @@ quella attuale; scrivine una nuova solo quando la stai effettivamente cambiando.
 Impostazioni → **Aggiungi membro** → inserisci la sua email e scegli un ruolo
 (predefinito **Membro**) → **Aggiungi**.
 
-**La persona deve già avere un account Nexa.** Al momento non esiste un invito via
+**La persona deve già avere un account Continuo.** Al momento non esiste un invito via
 email — se non si è ancora registrata, chiedile di creare prima un account (vedi la
 sezione "Accedere" della Guida utente), poi aggiungila con quella email. Se provi ad
 aggiungere qualcuno senza account, riceverai un errore che lo indica.
@@ -53,7 +53,7 @@ conferma, nessun pulsante di salvataggio.
 ## Rimuovere un membro
 
 Impostazioni → trova la riga del membro → **Rimuovi**. Questo rimuove solo
-l'accesso a questa organizzazione; non elimina l'account Nexa della persona né
+l'accesso a questa organizzazione; non elimina l'account Continuo della persona né
 influisce su altre organizzazioni a cui appartiene. Non è subito definitivo — vedi
 [Cestino](#cestino-recuperare-elementi-eliminati) sotto — e riaggiungerla con la
 stessa email (Impostazioni → Aggiungi membro) ripristina esattamente il ruolo che
@@ -67,7 +67,7 @@ promuovi prima qualcun altro a Owner, poi cambia il tuo ruolo o rimuoviti.
 
 ## Cestino (recuperare elementi eliminati)
 
-Ogni eliminazione in Nexa — un contatto, azienda, trattativa, attività, attività da
+Ogni eliminazione in Continuo — un contatto, azienda, trattativa, attività, attività da
 svolgere, segmento, automazione, campagna o membro — finisce prima nel **Cestino**
 (nel menu), non direttamente in un'eliminazione definitiva. Resta lì **30 giorni**;
 un OWNER o ADMIN può ripristinarlo da quella pagina con un clic. Un Membro può

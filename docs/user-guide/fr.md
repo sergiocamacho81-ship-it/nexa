@@ -1,6 +1,6 @@
-# Guide utilisateur — Nexa
+# Guide utilisateur — Continuo
 
-Nexa est le CRM de votre équipe : contacts, entreprises, affaires, activités, tâches,
+Continuo est le CRM de votre équipe : contacts, entreprises, affaires, activités, tâches,
 email et automatisations, le tout au même endroit. Ce guide couvre l'usage
 quotidien. Pour gérer l'organisation elle-même (membres, rôles), consultez le
 [Guide administrateur](../admin-guide/fr.md).

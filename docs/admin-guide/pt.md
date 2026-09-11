@@ -1,8 +1,8 @@
-# Manual do Administrador de Organização — Nexa
+# Manual do Administrador de Organização — Continuo
 
-Este manual é para quem gere uma **organização no Nexa** — o seu nome e os seus
+Este manual é para quem gere uma **organização no Continuo** — o seu nome e os seus
 membros — a partir da página **Definições** dentro da aplicação. Não é sobre
-implementar ou operar a plataforma Nexa em si; para isso, consulta
+implementar ou operar a plataforma Continuo em si; para isso, consulta
 [PLATFORM_ADMIN.md](../PLATFORM_ADMIN.md) (técnico, apenas em inglês).
 
 ## Papéis
@@ -38,7 +38,7 @@ password atual; só escreve uma nova quando realmente a queres mudar.
 Definições → **Adicionar membro** → indica o email e escolhe um papel (por defeito
 **Member**) → **Adicionar**.
 
-**A pessoa já precisa de ter conta no Nexa.** Atualmente não há convite por email —
+**A pessoa já precisa de ter conta no Continuo.** Atualmente não há convite por email —
 se ainda não se registou, pede-lhe para criar conta primeiro (vê a secção "Iniciar
 sessão" do Manual do Utilizador), e depois adiciona-a por esse email. Se tentares
 adicionar alguém sem conta, vais receber um erro a indicar isso.
@@ -51,7 +51,7 @@ o novo papel. Tem efeito imediato — sem passo de confirmação, sem botão de 
 ## Remover um membro
 
 Definições → encontra a linha do membro → **Remover**. Isto remove apenas o acesso a
-esta organização; não elimina a conta Nexa da pessoa nem afeta qualquer outra
+esta organização; não elimina a conta Continuo da pessoa nem afeta qualquer outra
 organização a que pertença. Não é logo definitivo — vê
 [Lixo](#lixo-recuperar-coisas-eliminadas) abaixo — e voltar a adicionar a pessoa pelo
 mesmo email (Definições → Adicionar membro) restaura exatamente o papel que tinha
@@ -66,7 +66,7 @@ próprio papel ou remove-te.
 
 ## Lixo (recuperar coisas eliminadas)
 
-Toda a eliminação no Nexa — um contacto, empresa, negócio, atividade, tarefa,
+Toda a eliminação no Continuo — um contacto, empresa, negócio, atividade, tarefa,
 segmento, automação, campanha ou membro — vai primeiro para o **Lixo** (no menu), e
 não diretamente para eliminação definitiva. Fica lá **30 dias**; um OWNER ou ADMIN
 pode restaurar a partir dessa página com um clique. Um Member consegue ver o que

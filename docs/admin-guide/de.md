@@ -1,8 +1,8 @@
-# Nexa Organisations-Administratorhandbuch
+# Continuo Organisations-Administratorhandbuch
 
-Dieses Handbuch richtet sich an Personen, die eine **Nexa-Organisation** selbst
+Dieses Handbuch richtet sich an Personen, die eine **Continuo-Organisation** selbst
 verwalten — ihren Namen und ihre Mitglieder — über die App-Seite **Einstellungen**.
-Es geht nicht um die Bereitstellung oder den Betrieb der Nexa-Plattform selbst; dafür
+Es geht nicht um die Bereitstellung oder den Betrieb der Continuo-Plattform selbst; dafür
 siehe [PLATFORM_ADMIN.md](../PLATFORM_ADMIN.md) (technisch, nur auf Englisch).
 
 ## Rollen
@@ -39,7 +39,7 @@ Passwort zu behalten; gib nur dann ein neues ein, wenn du es tatsächlich änder
 Einstellungen → **Mitglied hinzufügen** → E-Mail-Adresse eingeben und eine Rolle
 wählen (Standard **Mitglied**) → **Hinzufügen**.
 
-**Die Person muss bereits ein Nexa-Konto haben.** Derzeit gibt es keine
+**Die Person muss bereits ein Continuo-Konto haben.** Derzeit gibt es keine
 E-Mail-Einladung — falls sie sich noch nicht registriert hat, bitte sie, zuerst ein
 Konto zu erstellen (siehe Abschnitt "Anmelden" im Benutzerhandbuch), und füge sie
 dann mit dieser E-Mail-Adresse hinzu. Versuchst du, jemanden ohne Konto
@@ -54,7 +54,7 @@ Bestätigungsschritt, keine Speichern-Schaltfläche.
 ## Mitglied entfernen
 
 Einstellungen → die Zeile des Mitglieds finden → **Entfernen**. Dies entfernt nur
-den Zugriff auf diese Organisation; das Nexa-Konto der Person wird nicht gelöscht,
+den Zugriff auf diese Organisation; das Continuo-Konto der Person wird nicht gelöscht,
 und keine andere Organisation, der sie angehört, ist betroffen. Es ist nicht sofort
 endgültig — siehe [Papierkorb](#papierkorb-gelöschtes-wiederherstellen) unten — und
 sie über dieselbe E-Mail-Adresse erneut hinzuzufügen (Einstellungen → Mitglied
@@ -69,7 +69,7 @@ eigene Rolle oder entferne dich selbst.
 
 ## Papierkorb (Gelöschtes wiederherstellen)
 
-Jedes Löschen in Nexa — ein Kontakt, Unternehmen, Deal, eine Aktivität, Aufgabe, ein
+Jedes Löschen in Continuo — ein Kontakt, Unternehmen, Deal, eine Aktivität, Aufgabe, ein
 Segment, eine Automatisierung, Kampagne oder ein Mitglied — landet zuerst im
 **Papierkorb** (im Menü), nicht direkt in der endgültigen Löschung. Es bleibt dort
 **30 Tage**; ein OWNER oder ADMIN kann es von dieser Seite aus mit einem Klick

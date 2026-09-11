@@ -1,6 +1,6 @@
-# Nexa — Platform Administration Guide
+# Continuo — Platform Administration Guide
 
-Audience: whoever operates the Nexa deployment itself (hosting, database, email
+Audience: whoever operates the Continuo deployment itself (hosting, database, email
 delivery, secrets) — not the same thing as an in-app **organization admin** (see
 [admin-guide/](./admin-guide/) for that). This document assumes familiarity with
 [ARCHITECTURE.md](./ARCHITECTURE.md).

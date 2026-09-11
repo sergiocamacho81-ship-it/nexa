@@ -18,7 +18,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <nav className="nav">
         <Link href="/app" className="nav-brand">
           <Image src="/logo-mark.svg" alt="Vingelis" width={28} height={28} />
-          Nexa
+          Continuo
         </Link>
         <span className="text-muted text-sm hidden sm:inline">{user.email}</span>
         <LocaleSwitcher />

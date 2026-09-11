@@ -1,6 +1,6 @@
-# Manual do Utilizador — Nexa
+# Manual do Utilizador — Continuo
 
-O Nexa é o CRM da tua equipa: contactos, empresas, negócios, atividades, tarefas,
+O Continuo é o CRM da tua equipa: contactos, empresas, negócios, atividades, tarefas,
 email e automações, tudo num só lugar. Este manual cobre o uso do dia a dia. Para
 gerir a organização em si (membros, papéis), consulta o
 [Manual do Administrador](../admin-guide/pt.md).

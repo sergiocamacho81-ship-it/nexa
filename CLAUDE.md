@@ -1,6 +1,6 @@
 @AGENTS.md
 
-# Nexa — Project Status
+# Continuo — Project Status
 
 > **Status: PARKED as of 2026-09-10, at Version 0.5.**
 > Development is paused. This file is the entry point for resuming work — read

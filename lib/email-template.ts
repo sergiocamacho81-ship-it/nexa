@@ -33,7 +33,7 @@ export function renderEmailHtml({ subject, body }: { subject: string; body: stri
             </tr>
             <tr>
               <td style="padding:16px 24px;border-top:2px solid rgba(32,30,29,0.15);">
-                <span style="font-size:11px;color:rgba(32,30,29,0.55);">Enviado via Nexa &middot; Vingelis</span>
+                <span style="font-size:11px;color:rgba(32,30,29,0.55);">Enviado via Continuo &middot; Vingelis</span>
               </td>
             </tr>
           </table>

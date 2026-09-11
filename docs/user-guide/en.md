@@ -1,6 +1,6 @@
-# Nexa User Guide
+# Continuo User Guide
 
-Nexa is your team's CRM: contacts, companies, deals, activities, tasks, email, and
+Continuo is your team's CRM: contacts, companies, deals, activities, tasks, email, and
 automation, all in one place. This guide covers everyday use. For managing the
 organization itself (members, roles), see the [Admin Guide](../admin-guide/en.md).
 

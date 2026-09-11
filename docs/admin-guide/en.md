@@ -1,8 +1,8 @@
-# Nexa Organization Admin Guide
+# Continuo Organization Admin Guide
 
-This guide is for people managing a **Nexa organization** itself — its name and its
+This guide is for people managing a **Continuo organization** itself — its name and its
 members — from the in-app **Settings** page. It is not about deploying or operating
-the Nexa platform; for that, see
+the Continuo platform; for that, see
 [PLATFORM_ADMIN.md](../PLATFORM_ADMIN.md) (technical, English only).
 
 ## Roles
@@ -38,7 +38,7 @@ type a new one only when you're actually changing it.
 Settings → **Add member** → enter their email and pick a role (defaults to
 **Member**) → **Add**.
 
-**The person must already have a Nexa account.** There is currently no email
+**The person must already have a Continuo account.** There is currently no email
 invitation — if they haven't signed up yet, ask them to create an account first (see
 the User Guide's "Signing in" section), then add them by that email. If you try to add
 someone who has no account yet, you'll get an error saying so.
@@ -51,7 +51,7 @@ new role. Takes effect immediately — no confirmation step, no save button.
 ## Removing a member
 
 Settings → find the member's row → **Remove**. This removes their access to this
-organization only; it does not delete their Nexa account or affect any other
+organization only; it does not delete their Continuo account or affect any other
 organization they belong to. It's not instantly permanent — see
 [Trash](#trash-recovering-deleted-things) below — and re-adding them by the same email
 (Settings → Add member) restores their exact previous role instead of starting fresh.
@@ -65,7 +65,7 @@ yourself.
 
 ## Trash (recovering deleted things)
 
-Every delete in Nexa — a contact, company, deal, activity, task, segment, automation,
+Every delete in Continuo — a contact, company, deal, activity, task, segment, automation,
 campaign, or member — goes to **Trash** (in the nav) first, not straight to
 permanent deletion. It stays there for **30 days**; an OWNER or ADMIN can restore it
 from that page with one click. A Member can see what's in the Trash but not restore
