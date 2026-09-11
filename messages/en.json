@@ -290,13 +290,18 @@
     "none": "No tasks in this organization yet.",
     "assigneeLabel": "Assignee: {email}",
     "remove": "Remove",
+    "edit": "Edit",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
     "errorTitleRequired": "Task title is required.",
     "errorInvalidContact": "Invalid contact.",
     "errorInvalidCompany": "Invalid company.",
     "errorInvalidDeal": "Invalid deal.",
     "errorInvalidAssignee": "Invalid assignee.",
     "errorOrgNotFound": "Organization not found.",
-    "errorUnauthorized": "Unauthorized"
+    "errorUnauthorized": "Unauthorized",
+    "errorNotFound": "Task not found."
   },
   "Email": {
     "newEmail": "New email",

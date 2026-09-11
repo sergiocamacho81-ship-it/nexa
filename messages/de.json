@@ -290,13 +290,18 @@
     "none": "Noch keine Aufgaben in dieser Organisation.",
     "assigneeLabel": "Verantwortlich: {email}",
     "remove": "Entfernen",
+    "edit": "Bearbeiten",
+    "save": "Speichern",
+    "saving": "Wird gespeichert...",
+    "cancel": "Abbrechen",
     "errorTitleRequired": "Der Titel der Aufgabe ist erforderlich.",
     "errorInvalidContact": "Ungültiger Kontakt.",
     "errorInvalidCompany": "Ungültiges Unternehmen.",
     "errorInvalidDeal": "Ungültiger Deal.",
     "errorInvalidAssignee": "Ungültige verantwortliche Person.",
     "errorOrgNotFound": "Organisation nicht gefunden.",
-    "errorUnauthorized": "Nicht autorisiert"
+    "errorUnauthorized": "Nicht autorisiert",
+    "errorNotFound": "Aufgabe nicht gefunden."
   },
   "Email": {
     "newEmail": "Neue E-Mail",

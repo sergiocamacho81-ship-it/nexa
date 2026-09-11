@@ -290,13 +290,18 @@
     "none": "Aucune tâche dans cette organisation pour le moment.",
     "assigneeLabel": "Responsable : {email}",
     "remove": "Supprimer",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "cancel": "Annuler",
     "errorTitleRequired": "Le titre de la tâche est obligatoire.",
     "errorInvalidContact": "Contact invalide.",
     "errorInvalidCompany": "Entreprise invalide.",
     "errorInvalidDeal": "Affaire invalide.",
     "errorInvalidAssignee": "Responsable invalide.",
     "errorOrgNotFound": "Organisation introuvable.",
-    "errorUnauthorized": "Non autorisé"
+    "errorUnauthorized": "Non autorisé",
+    "errorNotFound": "Tâche introuvable."
   },
   "Email": {
     "newEmail": "Nouvel email",

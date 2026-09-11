@@ -290,13 +290,18 @@
     "none": "Ancora nessuna attività in questa organizzazione.",
     "assigneeLabel": "Responsabile: {email}",
     "remove": "Rimuovi",
+    "edit": "Modifica",
+    "save": "Salva",
+    "saving": "Salvataggio...",
+    "cancel": "Annulla",
     "errorTitleRequired": "Il titolo dell'attività è obbligatorio.",
     "errorInvalidContact": "Contatto non valido.",
     "errorInvalidCompany": "Azienda non valida.",
     "errorInvalidDeal": "Trattativa non valida.",
     "errorInvalidAssignee": "Responsabile non valido.",
     "errorOrgNotFound": "Organizzazione non trovata.",
-    "errorUnauthorized": "Non autorizzato"
+    "errorUnauthorized": "Non autorizzato",
+    "errorNotFound": "Attività non trovata."
   },
   "Email": {
     "newEmail": "Nuova email",

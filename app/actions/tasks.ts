@@ -100,6 +100,83 @@ export async function createTask(
   return { error: null };
 }
 
+export async function updateTask(
+  _prevState: CreateTaskState,
+  formData: FormData,
+): Promise<CreateTaskState> {
+  const t = await getTranslations("Tasks");
+  const orgSlug = String(formData.get("orgSlug") ?? "");
+  const taskId = String(formData.get("taskId") ?? "");
+  const organization = await getOrgForCurrentUser(orgSlug);
+  if (!organization) {
+    return { error: t("errorOrgNotFound") };
+  }
+
+  const existing = await prisma.task.findFirst({
+    where: { id: taskId, organizationId: organization.id, deletedAt: null },
+  });
+  if (!existing) {
+    return { error: t("errorNotFound") };
+  }
+
+  const title = String(formData.get("title") ?? "").trim();
+  const dueDateRaw = String(formData.get("dueDate") ?? "").trim();
+  const contactId = String(formData.get("contactId") ?? "").trim();
+  const companyId = String(formData.get("companyId") ?? "").trim();
+  const dealId = String(formData.get("dealId") ?? "").trim();
+  const assigneeIdRaw = String(formData.get("assigneeId") ?? "").trim();
+
+  if (!title) {
+    return { error: t("errorTitleRequired") };
+  }
+
+  if (contactId) {
+    const contact = await prisma.contact.findFirst({
+      where: { id: contactId, organizationId: organization.id, deletedAt: null },
+    });
+    if (!contact) return { error: t("errorInvalidContact") };
+  }
+  if (companyId) {
+    const company = await prisma.company.findFirst({
+      where: { id: companyId, organizationId: organization.id, deletedAt: null },
+    });
+    if (!company) return { error: t("errorInvalidCompany") };
+  }
+  if (dealId) {
+    const deal = await prisma.deal.findFirst({
+      where: { id: dealId, organizationId: organization.id, deletedAt: null },
+    });
+    if (!deal) return { error: t("errorInvalidDeal") };
+  }
+
+  let assigneeId = existing.assigneeId;
+  if (assigneeIdRaw) {
+    const assigneeMembership = await prisma.membership.findUnique({
+      where: {
+        userId_organizationId: { userId: assigneeIdRaw, organizationId: organization.id },
+        deletedAt: null,
+      },
+    });
+    if (!assigneeMembership) return { error: t("errorInvalidAssignee") };
+    assigneeId = assigneeIdRaw;
+  }
+
+  await prisma.task.update({
+    where: { id: taskId },
+    data: {
+      title,
+      dueDate: dueDateRaw ? new Date(dueDateRaw) : null,
+      contactId: contactId || null,
+      companyId: companyId || null,
+      dealId: dealId || null,
+      assigneeId,
+    },
+  });
+
+  revalidatePath(`/app/${orgSlug}/tasks`);
+  return { error: null };
+}
+
 export async function toggleTaskStatus(formData: FormData) {
   const orgSlug = String(formData.get("orgSlug") ?? "");
   const taskId = String(formData.get("taskId") ?? "");

@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
+import { listCompanies } from "@/app/actions/companies";
+import { listOrganizationMembersWithEmail } from "@/app/actions/settings";
 import { prisma } from "@/lib/prisma";
 import { DEAL_STAGES } from "@/lib/deal-stages";
 import { TaskRow } from "./tasks/task-row";
@@ -35,6 +37,10 @@ export default async function DashboardPage({
     tasksOverdue,
     recentActivities,
     campaignsCount,
+    companies,
+    contacts,
+    deals,
+    members,
   ] = await Promise.all([
     // The reason-for-being of this page: what to actually do next, not a
     // report. Overdue first (nulls-last ordering can't express "overdue
@@ -77,6 +83,18 @@ export default async function DashboardPage({
       },
     }),
     prisma.campaign.count({ where: { organizationId: organization.id, deletedAt: null } }),
+    listCompanies(orgSlug),
+    prisma.contact.findMany({
+      where: { organizationId: organization.id, deletedAt: null },
+      select: { id: true, firstName: true, lastName: true },
+      orderBy: { firstName: "asc" },
+    }),
+    prisma.deal.findMany({
+      where: { organizationId: organization.id, deletedAt: null },
+      select: { id: true, title: true },
+      orderBy: { title: "asc" },
+    }),
+    listOrganizationMembersWithEmail(orgSlug),
   ]);
 
   const stageMap = new Map(dealsByStage.map((row) => [row.stage, row]));
@@ -104,7 +122,15 @@ export default async function DashboardPage({
         ) : (
           <div className="flex flex-col gap-2">
             {upcomingTasks.map((task) => (
-              <TaskRow key={task.id} task={task} orgSlug={orgSlug} />
+              <TaskRow
+                key={task.id}
+                task={task}
+                orgSlug={orgSlug}
+                companies={companies}
+                contacts={contacts}
+                deals={deals}
+                members={members}
+              />
             ))}
           </div>
         )}

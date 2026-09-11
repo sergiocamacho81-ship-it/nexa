@@ -62,6 +62,10 @@ export default async function TasksPage({
                 task={task}
                 orgSlug={orgSlug}
                 assigneeEmail={task.assigneeId ? memberEmailById.get(task.assigneeId) : undefined}
+                companies={companies}
+                contacts={contacts}
+                deals={deals}
+                members={members}
               />
             ))}
           </div>

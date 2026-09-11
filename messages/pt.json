@@ -290,13 +290,18 @@
     "none": "Ainda não há tarefas nesta organização.",
     "assigneeLabel": "Responsável: {email}",
     "remove": "Remover",
+    "edit": "Editar",
+    "save": "Guardar",
+    "saving": "A guardar...",
+    "cancel": "Cancelar",
     "errorTitleRequired": "O título da tarefa é obrigatório.",
     "errorInvalidContact": "Contacto inválido.",
     "errorInvalidCompany": "Empresa inválida.",
     "errorInvalidDeal": "Negócio inválido.",
     "errorInvalidAssignee": "Responsável inválido.",
     "errorOrgNotFound": "Organização não encontrada.",
-    "errorUnauthorized": "Não autorizado"
+    "errorUnauthorized": "Não autorizado",
+    "errorNotFound": "Tarefa não encontrada."
   },
   "Email": {
     "newEmail": "Novo email",
