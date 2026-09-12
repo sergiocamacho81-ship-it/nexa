@@ -63,6 +63,17 @@ export default async function QuoteDetailPage({
           </div>
           <div className="flex items-center gap-2">
             <StatusSelect orgSlug={orgSlug} quoteId={quote.id} currentStatus={quote.status} />
+            <a
+              href={`/app/${orgSlug}/quotes/${quote.id}/pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-ghost"
+            >
+              {t("previewPdf")}
+            </a>
+            <a href={`/app/${orgSlug}/quotes/${quote.id}/pdf?download=1`} className="btn btn-ghost">
+              {t("downloadPdf")}
+            </a>
           </div>
         </section>
 

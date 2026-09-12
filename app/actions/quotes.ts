@@ -62,6 +62,43 @@ export async function getQuote(orgSlug: string, quoteId: string) {
   });
 }
 
+// Same record as getQuote but with the extra fields (org name, full
+// company/contact address) the PDF template needs and the on-screen detail
+// page doesn't.
+export async function getQuoteForPdf(orgSlug: string, quoteId: string) {
+  const organization = await getOrgForCurrentUser(orgSlug);
+  if (!organization) return null;
+
+  return prisma.quote.findFirst({
+    where: { id: quoteId, organizationId: organization.id, deletedAt: null },
+    include: {
+      organization: { select: { name: true } },
+      company: {
+        select: {
+          name: true,
+          addressLine: true,
+          city: true,
+          postalCode: true,
+          canton: true,
+          countryCode: true,
+        },
+      },
+      contact: {
+        select: {
+          firstName: true,
+          lastName: true,
+          addressLine: true,
+          city: true,
+          postalCode: true,
+          canton: true,
+          countryCode: true,
+        },
+      },
+      lineItems: { orderBy: { position: "asc" } },
+    },
+  });
+}
+
 // Called directly from a <form action> on the Deal card — no useActionState,
 // since success is a redirect rather than a state update. Copies
 // company/contact from the Deal at creation time, same as Job/Project.
