@@ -797,12 +797,18 @@
     "convertedTo": "Converted to",
     "convertToInvoice": "Convert to invoice",
     "invoiceNumber": "Invoice #{number}",
+    "send": "Send by email",
+    "sending": "Sending...",
+    "emailSubject": "Quote #{number} from {orgName}",
+    "emailBody": "Please find attached quote #{number}.",
     "delete": "Delete quote",
     "deleteConfirm": "Delete this quote? This can be undone within 30 days.",
     "errorOrgNotFound": "Organization not found.",
     "errorNotFound": "Quote not found.",
     "errorDescriptionRequired": "A description is required.",
     "errorInvalidQuantity": "Invalid quantity.",
-    "errorInvalidPrice": "Invalid price."
+    "errorInvalidPrice": "Invalid price.",
+    "errorNoRecipientEmail": "This quote's contact has no email address on file.",
+    "errorSmtpNotConfigured": "This organization hasn't set up outgoing email yet. Configure it in Settings first."
   }
 }

@@ -797,12 +797,18 @@
     "convertedTo": "Convertido em",
     "convertToInvoice": "Converter em fatura",
     "invoiceNumber": "Fatura #{number}",
+    "send": "Enviar por email",
+    "sending": "A enviar...",
+    "emailSubject": "Orçamento #{number} de {orgName}",
+    "emailBody": "Segue em anexo o orçamento #{number}.",
     "delete": "Eliminar orçamento",
     "deleteConfirm": "Eliminar este orçamento? Isto pode ser revertido dentro de 30 dias.",
     "errorOrgNotFound": "Organização não encontrada.",
     "errorNotFound": "Orçamento não encontrado.",
     "errorDescriptionRequired": "A descrição é obrigatória.",
     "errorInvalidQuantity": "Quantidade inválida.",
-    "errorInvalidPrice": "Preço inválido."
+    "errorInvalidPrice": "Preço inválido.",
+    "errorNoRecipientEmail": "O contacto deste orçamento não tem um endereço de email registado.",
+    "errorSmtpNotConfigured": "Esta organização ainda não configurou o envio de email. Configure-o primeiro em Definições."
   }
 }

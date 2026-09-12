@@ -797,12 +797,18 @@
     "convertedTo": "Convertito in",
     "convertToInvoice": "Converti in fattura",
     "invoiceNumber": "Fattura #{number}",
+    "send": "Invia per email",
+    "sending": "Invio in corso...",
+    "emailSubject": "Preventivo #{number} da {orgName}",
+    "emailBody": "In allegato il preventivo #{number}.",
     "delete": "Elimina preventivo",
     "deleteConfirm": "Eliminare questo preventivo? L'operazione può essere annullata entro 30 giorni.",
     "errorOrgNotFound": "Organizzazione non trovata.",
     "errorNotFound": "Preventivo non trovato.",
     "errorDescriptionRequired": "La descrizione è obbligatoria.",
     "errorInvalidQuantity": "Quantità non valida.",
-    "errorInvalidPrice": "Prezzo non valido."
+    "errorInvalidPrice": "Prezzo non valido.",
+    "errorNoRecipientEmail": "Il contatto di questo preventivo non ha un indirizzo email registrato.",
+    "errorSmtpNotConfigured": "Questa organizzazione non ha ancora configurato l'invio di email. Configuralo prima in Impostazioni."
   }
 }

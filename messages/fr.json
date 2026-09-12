@@ -797,12 +797,18 @@
     "convertedTo": "Converti en",
     "convertToInvoice": "Convertir en facture",
     "invoiceNumber": "Facture n° {number}",
+    "send": "Envoyer par email",
+    "sending": "Envoi en cours...",
+    "emailSubject": "Devis n° {number} de {orgName}",
+    "emailBody": "Veuillez trouver ci-joint le devis n° {number}.",
     "delete": "Supprimer le devis",
     "deleteConfirm": "Supprimer ce devis ? Cela peut être annulé dans les 30 jours.",
     "errorOrgNotFound": "Organisation introuvable.",
     "errorNotFound": "Devis introuvable.",
     "errorDescriptionRequired": "La description est obligatoire.",
     "errorInvalidQuantity": "Quantité invalide.",
-    "errorInvalidPrice": "Prix invalide."
+    "errorInvalidPrice": "Prix invalide.",
+    "errorNoRecipientEmail": "Le contact de ce devis n'a pas d'adresse email enregistrée.",
+    "errorSmtpNotConfigured": "Cette organisation n'a pas encore configuré l'envoi d'emails. Configurez-le d'abord dans Paramètres."
   }
 }

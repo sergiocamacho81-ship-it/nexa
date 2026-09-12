@@ -9,6 +9,7 @@ import { LineItemForm } from "./line-item-form";
 import { RemoveLineItemButton } from "./remove-line-item-button";
 import { DetailsForm } from "./details-form";
 import { DeleteQuoteButton } from "./delete-quote-button";
+import { SendEmailButton } from "./send-email-button";
 
 export default async function QuoteDetailPage({
   params,
@@ -63,6 +64,7 @@ export default async function QuoteDetailPage({
           </div>
           <div className="flex items-center gap-2">
             <StatusSelect orgSlug={orgSlug} quoteId={quote.id} currentStatus={quote.status} />
+            {quote.status === "DRAFT" && <SendEmailButton orgSlug={orgSlug} quoteId={quote.id} />}
             <a
               href={`/app/${orgSlug}/quotes/${quote.id}/pdf`}
               target="_blank"

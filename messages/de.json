@@ -797,12 +797,18 @@
     "convertedTo": "Umgewandelt in",
     "convertToInvoice": "In Rechnung umwandeln",
     "invoiceNumber": "Rechnung #{number}",
+    "send": "Per E-Mail senden",
+    "sending": "Wird gesendet...",
+    "emailSubject": "Angebot #{number} von {orgName}",
+    "emailBody": "Im Anhang finden Sie das Angebot #{number}.",
     "delete": "Angebot löschen",
     "deleteConfirm": "Dieses Angebot löschen? Dies kann innerhalb von 30 Tagen rückgängig gemacht werden.",
     "errorOrgNotFound": "Organisation nicht gefunden.",
     "errorNotFound": "Angebot nicht gefunden.",
     "errorDescriptionRequired": "Eine Beschreibung ist erforderlich.",
     "errorInvalidQuantity": "Ungültige Menge.",
-    "errorInvalidPrice": "Ungültiger Preis."
+    "errorInvalidPrice": "Ungültiger Preis.",
+    "errorNoRecipientEmail": "Der Kontakt dieses Angebots hat keine hinterlegte E-Mail-Adresse.",
+    "errorSmtpNotConfigured": "Diese Organisation hat den E-Mail-Versand noch nicht eingerichtet. Bitte zuerst in den Einstellungen konfigurieren."
   }
 }

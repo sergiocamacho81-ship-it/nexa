@@ -2,12 +2,16 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { QUOTE_STATUSES, isAllowedQuoteStatusTransition, type QuoteStatus } from "@/lib/quote-statuses";
 import { computeInvoiceTotals } from "@/lib/invoice-totals";
+import { getSmtpTransport, getSmtpFromAddress } from "@/lib/smtp";
+import { renderEmailHtml } from "@/lib/email-template";
+import { renderQuotePdfBuffer, type TranslateFn } from "@/lib/pdf/render-quote-pdf";
+import { logError } from "@/lib/log";
 
 // Recomputes and persists subtotal/vatAmount/total from the quote's current
 // line items — same reasoning and same arithmetic as
@@ -87,6 +91,7 @@ export async function getQuoteForPdf(orgSlug: string, quoteId: string) {
         select: {
           firstName: true,
           lastName: true,
+          email: true,
           addressLine: true,
           city: true,
           postalCode: true,
@@ -377,4 +382,94 @@ export async function convertQuoteToInvoice(formData: FormData) {
 
   revalidatePath(`/app/${orgSlug}/quotes/${quoteId}`);
   redirect(`/app/${orgSlug}/invoices/${invoice.id}`);
+}
+
+// Actually delivers the quote by email (org's own SMTP, same as
+// app/actions/emails.ts's sendEmail) with the PDF attached — unlike
+// Invoice's "Sent" status, which is just a manual flip. On success, flips
+// the quote to SENT (only from DRAFT, guarded against a stale client
+// re-submitting after the quote already moved on elsewhere) and logs an
+// EmailMessage the same way sendEmail does, so it shows up in the org's
+// email history either way.
+export async function sendQuoteEmail(
+  _prevState: QuoteFormState,
+  formData: FormData,
+): Promise<QuoteFormState> {
+  const t = await getTranslations("Quotes");
+  const tStatuses = await getTranslations("QuoteStatuses");
+  const locale = await getLocale();
+  const orgSlug = String(formData.get("orgSlug") ?? "");
+  const quoteId = String(formData.get("quoteId") ?? "");
+
+  const organization = await getOrgForCurrentUser(orgSlug);
+  if (!organization) return { error: t("errorOrgNotFound") };
+
+  const quote = await getQuoteForPdf(orgSlug, quoteId);
+  if (!quote) return { error: t("errorNotFound") };
+
+  const toAddress = quote.contact?.email?.trim();
+  if (!toAddress) {
+    return { error: t("errorNoRecipientEmail") };
+  }
+
+  const transport = getSmtpTransport(organization);
+  const fromAddress = getSmtpFromAddress(organization);
+  if (!transport || !fromAddress) {
+    return { error: t("errorSmtpNotConfigured") };
+  }
+
+  const buffer = await renderQuotePdfBuffer(quote, {
+    locale,
+    t: t as unknown as TranslateFn,
+    tStatuses: tStatuses as unknown as TranslateFn,
+  });
+  const subject = t("emailSubject", { number: quote.number, orgName: quote.organization.name });
+  const body = t("emailBody", { number: quote.number });
+
+  let status: "SENT" | "FAILED" = "SENT";
+  let error: string | null = null;
+
+  try {
+    await transport.sendMail({
+      from: fromAddress,
+      to: toAddress,
+      subject,
+      text: body,
+      html: renderEmailHtml({ subject, body }),
+      attachments: [
+        { filename: `quote-${quote.number}.pdf`, content: buffer, contentType: "application/pdf" },
+      ],
+    });
+  } catch (err) {
+    status = "FAILED";
+    error = err instanceof Error ? err.message : "Unknown error while sending the email.";
+    logError("quotes.sendQuoteEmail", err, { organizationId: organization.id, quoteId });
+  }
+
+  await prisma.emailMessage.create({
+    data: {
+      organizationId: organization.id,
+      contactId: quote.contactId,
+      dealId: quote.dealId,
+      fromAddress,
+      toAddress,
+      subject,
+      body,
+      status,
+      error,
+    },
+  });
+
+  if (status === "FAILED") {
+    return { error };
+  }
+
+  await prisma.quote.updateMany({
+    where: { id: quoteId, organizationId: organization.id, status: "DRAFT" },
+    data: { status: "SENT" },
+  });
+
+  revalidatePath(`/app/${orgSlug}/quotes/${quoteId}`);
+  revalidatePath(`/app/${orgSlug}/quotes`);
+  return { error: null };
 }
