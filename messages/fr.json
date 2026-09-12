@@ -750,7 +750,13 @@
     "errorNotFound": "Facture introuvable.",
     "errorDescriptionRequired": "La description est obligatoire.",
     "errorInvalidQuantity": "Quantité invalide.",
-    "errorInvalidPrice": "Prix invalide."
+    "errorInvalidPrice": "Prix invalide.",
+    "errorInvoiceLocked": "Cette facture n'est plus un brouillon, ses articles sont donc verrouillés.",
+    "lineItemsLocked": "Les articles sont verrouillés dès que la facture quitte l'état Brouillon.",
+    "historyHeading": "Historique",
+    "historyDate": "Date",
+    "historyChange": "Changement",
+    "historyBy": "Par"
   },
   "QuoteStatuses": {
     "DRAFT": "Brouillon",

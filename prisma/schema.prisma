@@ -673,6 +673,8 @@ model Quote {
   status          QuoteStatus @default(DRAFT)
   validUntil      DateTime?   @map("valid_until")
   notes           String?
+  // Explicit, never assumed — see the same field on Invoice for the reasoning.
+  currency        String      @default("CHF")
   vatRate         Decimal?    @map("vat_rate") @db.Decimal(5, 2)
   // Set the first time the quote is emailed (see sendQuoteEmail in
   // app/actions/quotes.ts) — the unauthenticated link at /quote/[token] is
@@ -748,6 +750,11 @@ model Invoice {
   quoteId        String?       @map("quote_id") @db.Uuid
   number         Int
   status         InvoiceStatus @default(DRAFT)
+  // Explicit, never assumed — every current invoice is CHF (this is a
+  // Swiss-focused product) but the column exists so money is never rendered
+  // against a currency inferred from context. No multi-currency conversion
+  // or picker UI; that's out of scope until real demand for it exists.
+  currency       String        @default("CHF")
   vatRate        Decimal?      @map("vat_rate") @db.Decimal(5, 2)
   issueDate      DateTime      @default(now()) @map("issue_date")
   notes          String?
@@ -765,16 +772,38 @@ model Invoice {
   vatAmount Decimal @default(0) @map("vat_amount") @db.Decimal(12, 2)
   total     Decimal @default(0) @db.Decimal(12, 2)
 
-  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  job          Job?              @relation(fields: [jobId], references: [id], onDelete: SetNull)
-  quote        Quote?            @relation(fields: [quoteId], references: [id], onDelete: SetNull)
+  organization Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  job          Job?                 @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  quote        Quote?               @relation(fields: [quoteId], references: [id], onDelete: SetNull)
   lineItems    InvoiceLineItem[]
+  statusEvents InvoiceStatusEvent[]
 
   @@unique([organizationId, number])
   @@index([organizationId])
   @@index([jobId])
   @@index([quoteId])
   @@map("invoices")
+}
+
+// Append-only audit trail of Invoice.status changes — never updated or
+// deleted, one row per transition (see updateInvoiceStatus in
+// app/actions/invoices.ts). changedByUserId has no FK to auth.users, same
+// deviation as Task.assigneeId/TimeEntry.userId (see docs/ARCHITECTURE.md
+// §7) — RLS scopes it via the parent Invoice, not this column. Null means
+// the transition happened with no authenticated actor (not currently
+// possible, but kept nullable rather than assuming one always exists).
+model InvoiceStatusEvent {
+  id              String        @id @default(uuid()) @db.Uuid
+  invoiceId       String        @map("invoice_id") @db.Uuid
+  fromStatus      InvoiceStatus @map("from_status")
+  toStatus        InvoiceStatus @map("to_status")
+  changedByUserId String?       @map("changed_by_user_id") @db.Uuid
+  changedAt       DateTime      @default(now()) @map("changed_at")
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@map("invoice_status_events")
 }
 
 // A line item is a snapshot (description/quantity/unitPrice copied in at

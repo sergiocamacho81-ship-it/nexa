@@ -95,7 +95,7 @@ export default async function InvoiceDetailPage({
                     <th>{t("quantity")}</th>
                     <th>{t("unitPrice")}</th>
                     <th>{t("lineTotal")}</th>
-                    <th className="invoice-print-hide"></th>
+                    {invoice.status === "DRAFT" && <th className="invoice-print-hide"></th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -107,9 +107,11 @@ export default async function InvoiceDetailPage({
                       <td className="text-muted">
                         {currencyFormatter.format(Number(item.quantity) * Number(item.unitPrice))}
                       </td>
-                      <td className="invoice-print-hide">
-                        <RemoveLineItemButton orgSlug={orgSlug} invoiceId={invoice.id} lineItemId={item.id} />
-                      </td>
+                      {invoice.status === "DRAFT" && (
+                        <td className="invoice-print-hide">
+                          <RemoveLineItemButton orgSlug={orgSlug} invoiceId={invoice.id} lineItemId={item.id} />
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -135,17 +137,53 @@ export default async function InvoiceDetailPage({
 
       <section className="invoice-print-hide">
         <h6 className="text-muted mb-3">{t("addLineItem")}</h6>
-        <LineItemForm
-          orgSlug={orgSlug}
-          invoiceId={invoice.id}
-          products={products.map((p) => ({ ...p, unitPrice: Number(p.unitPrice) }))}
-        />
+        {invoice.status === "DRAFT" ? (
+          <LineItemForm
+            orgSlug={orgSlug}
+            invoiceId={invoice.id}
+            products={products.map((p) => ({ ...p, unitPrice: Number(p.unitPrice) }))}
+          />
+        ) : (
+          <p className="text-muted text-sm">{t("lineItemsLocked")}</p>
+        )}
       </section>
 
       <section className="invoice-print-hide">
         <h6 className="text-muted mb-3">{t("notes")}</h6>
         <NotesForm orgSlug={orgSlug} invoiceId={invoice.id} notes={invoice.notes} />
       </section>
+
+      {invoice.statusEvents.length > 0 && (
+        <section className="invoice-print-hide">
+          <h6 className="text-muted mb-3">{t("historyHeading")}</h6>
+          <div className="table-wrap">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>{t("historyDate")}</th>
+                  <th>{t("historyChange")}</th>
+                  <th>{t("historyBy")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoice.statusEvents.map((event) => (
+                  <tr key={event.id}>
+                    <td className="text-muted">
+                      {new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(
+                        event.changedAt,
+                      )}
+                    </td>
+                    <td>
+                      {tStatuses(event.fromStatus)} → {tStatuses(event.toStatus)}
+                    </td>
+                    <td className="text-muted">{event.changedByEmail ?? "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
 
       <section className="invoice-print-hide">
         <DeleteInvoiceButton orgSlug={orgSlug} invoiceId={invoice.id} />

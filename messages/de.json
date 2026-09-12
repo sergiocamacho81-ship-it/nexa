@@ -750,7 +750,13 @@
     "errorNotFound": "Rechnung nicht gefunden.",
     "errorDescriptionRequired": "Eine Beschreibung ist erforderlich.",
     "errorInvalidQuantity": "Ungültige Menge.",
-    "errorInvalidPrice": "Ungültiger Preis."
+    "errorInvalidPrice": "Ungültiger Preis.",
+    "errorInvoiceLocked": "Diese Rechnung ist kein Entwurf mehr, ihre Positionen sind daher gesperrt.",
+    "lineItemsLocked": "Positionen werden gesperrt, sobald die Rechnung den Entwurfsstatus verlässt.",
+    "historyHeading": "Verlauf",
+    "historyDate": "Datum",
+    "historyChange": "Änderung",
+    "historyBy": "Von"
   },
   "QuoteStatuses": {
     "DRAFT": "Entwurf",

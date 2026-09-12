@@ -750,7 +750,13 @@
     "errorNotFound": "Invoice not found.",
     "errorDescriptionRequired": "A description is required.",
     "errorInvalidQuantity": "Invalid quantity.",
-    "errorInvalidPrice": "Invalid price."
+    "errorInvalidPrice": "Invalid price.",
+    "errorInvoiceLocked": "This invoice is no longer a draft, so its items are locked.",
+    "lineItemsLocked": "Items are locked once an invoice leaves Draft.",
+    "historyHeading": "History",
+    "historyDate": "Date",
+    "historyChange": "Change",
+    "historyBy": "By"
   },
   "QuoteStatuses": {
     "DRAFT": "Draft",

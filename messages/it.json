@@ -750,7 +750,13 @@
     "errorNotFound": "Fattura non trovata.",
     "errorDescriptionRequired": "La descrizione è obbligatoria.",
     "errorInvalidQuantity": "Quantità non valida.",
-    "errorInvalidPrice": "Prezzo non valido."
+    "errorInvalidPrice": "Prezzo non valido.",
+    "errorInvoiceLocked": "Questa fattura non è più una bozza, quindi le sue voci sono bloccate.",
+    "lineItemsLocked": "Le voci vengono bloccate non appena la fattura esce dallo stato Bozza.",
+    "historyHeading": "Cronologia",
+    "historyDate": "Data",
+    "historyChange": "Modifica",
+    "historyBy": "Da"
   },
   "QuoteStatuses": {
     "DRAFT": "Bozza",

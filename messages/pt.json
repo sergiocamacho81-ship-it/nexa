@@ -750,7 +750,13 @@
     "errorNotFound": "Fatura não encontrada.",
     "errorDescriptionRequired": "A descrição é obrigatória.",
     "errorInvalidQuantity": "Quantidade inválida.",
-    "errorInvalidPrice": "Preço inválido."
+    "errorInvalidPrice": "Preço inválido.",
+    "errorInvoiceLocked": "Esta fatura já não é um rascunho, pelo que os seus itens estão bloqueados.",
+    "lineItemsLocked": "Os itens ficam bloqueados assim que a fatura deixa de ser Rascunho.",
+    "historyHeading": "Histórico",
+    "historyDate": "Data",
+    "historyChange": "Alteração",
+    "historyBy": "Por"
   },
   "QuoteStatuses": {
     "DRAFT": "Rascunho",

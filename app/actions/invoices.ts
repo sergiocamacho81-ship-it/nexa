@@ -6,6 +6,8 @@ import { getTranslations } from "next-intl/server";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
+import { getCurrentUser } from "@/app/actions/organizations";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { INVOICE_STATUSES, isAllowedStatusTransition, type InvoiceStatus } from "@/lib/invoice-statuses";
 import { computeInvoiceTotals } from "@/lib/invoice-totals";
 
@@ -60,7 +62,7 @@ export async function getInvoice(orgSlug: string, invoiceId: string) {
   const organization = await getOrgForCurrentUser(orgSlug);
   if (!organization) return null;
 
-  return prisma.invoice.findFirst({
+  const invoice = await prisma.invoice.findFirst({
     where: { id: invoiceId, organizationId: organization.id, deletedAt: null },
     include: {
       job: {
@@ -72,8 +74,29 @@ export async function getInvoice(orgSlug: string, invoiceId: string) {
         },
       },
       lineItems: { orderBy: { position: "asc" } },
+      statusEvents: { orderBy: { changedAt: "desc" } },
     },
   });
+  if (!invoice) return null;
+
+  // Resolve changedByUserId -> email for display, same pattern as
+  // listTrash's member-email lookup in app/actions/trash.ts (Prisma has no
+  // FK to auth.users to join against, so this goes through the admin API).
+  let statusEventsWithEmail = invoice.statusEvents.map((event) => ({ ...event, changedByEmail: null as string | null }));
+  const userIds = [...new Set(invoice.statusEvents.map((e) => e.changedByUserId).filter((id): id is string => !!id))];
+  if (userIds.length > 0) {
+    const admin = createAdminClient();
+    const { data } = await admin.auth.admin.listUsers({ perPage: 200 });
+    if (data) {
+      const emailById = new Map(data.users.filter((u) => u.email).map((u) => [u.id, u.email as string]));
+      statusEventsWithEmail = invoice.statusEvents.map((event) => ({
+        ...event,
+        changedByEmail: event.changedByUserId ? (emailById.get(event.changedByUserId) ?? null) : null,
+      }));
+    }
+  }
+
+  return { ...invoice, statusEvents: statusEventsWithEmail };
 }
 
 // Called directly from a <form action> on the Deal card — no useActionState,
@@ -157,6 +180,14 @@ export async function addLineItem(
   });
   if (!invoice) return { error: t("errorNotFound") };
 
+  // Issued financial documents must not be silently mutated — once an
+  // invoice leaves DRAFT (sent, paid, ...) its line items are locked.
+  // Corrections after that point need a credit/adjustment record, not an
+  // edit to the original (not built yet — see the Payment domain phase).
+  if (invoice.status !== "DRAFT") {
+    return { error: t("errorInvoiceLocked") };
+  }
+
   if (!description) return { error: t("errorDescriptionRequired") };
 
   const quantity = Number(quantityRaw);
@@ -202,6 +233,7 @@ export async function removeLineItem(formData: FormData) {
     where: { id: invoiceId, organizationId: organization.id, deletedAt: null },
   });
   if (!invoice) throw new Error("Invoice not found");
+  if (invoice.status !== "DRAFT") throw new Error("Cannot modify line items on a non-draft invoice");
 
   await prisma.$transaction(async (tx) => {
     await tx.invoiceLineItem.deleteMany({ where: { id: lineItemId, invoiceId } });
@@ -237,10 +269,23 @@ export async function updateInvoiceStatus(formData: FormData) {
     throw new Error(`Cannot change invoice status from ${invoice.status} to ${newStatus}`);
   }
 
-  await prisma.invoice.updateMany({
-    where: { id: invoiceId, organizationId: organization.id, deletedAt: null },
-    data: { status: newStatus },
-  });
+  if (newStatus !== invoice.status) {
+    const user = await getCurrentUser();
+    await prisma.$transaction([
+      prisma.invoice.updateMany({
+        where: { id: invoiceId, organizationId: organization.id, deletedAt: null },
+        data: { status: newStatus },
+      }),
+      prisma.invoiceStatusEvent.create({
+        data: {
+          invoiceId,
+          fromStatus: invoice.status,
+          toStatus: newStatus,
+          changedByUserId: user?.id ?? null,
+        },
+      }),
+    ]);
+  }
 
   revalidatePath(`/app/${orgSlug}/invoices/${invoiceId}`);
   revalidatePath(`/app/${orgSlug}/invoices`);
