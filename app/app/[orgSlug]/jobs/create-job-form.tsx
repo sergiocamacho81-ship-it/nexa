@@ -46,6 +46,10 @@ export function CreateJobForm({
           </select>
         </div>
         <div className="field">
+          <label htmlFor="scheduledAt">{t("scheduledAt")}</label>
+          <input id="scheduledAt" name="scheduledAt" type="date" className="input" />
+        </div>
+        <div className="field">
           <label htmlFor="dealId">{t("deal")}</label>
           <select id="dealId" name="dealId" className="input" defaultValue="">
             <option value="">{t("noDeal")}</option>

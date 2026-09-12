@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { updateJob } from "@/app/actions/jobs";
 import { DeleteJobButton } from "./delete-job-button";
 import { JOB_STATUSES } from "@/lib/job-statuses";
@@ -10,6 +10,7 @@ type Job = {
   id: string;
   title: string;
   status: (typeof JOB_STATUSES)[number];
+  scheduledAt: Date | null;
   companyId: string | null;
   contactId: string | null;
   projectId: string | null;
@@ -21,6 +22,11 @@ type Job = {
 type Company = { id: string; name: string };
 type Contact = { id: string; firstName: string; lastName: string | null };
 type Project = { id: string; title: string };
+
+function toDateInputValue(date: Date | null) {
+  if (!date) return "";
+  return date.toISOString().slice(0, 10);
+}
 
 export function JobRow({
   orgSlug,
@@ -37,6 +43,7 @@ export function JobRow({
 }) {
   const t = useTranslations("Jobs");
   const tStatuses = useTranslations("JobStatuses");
+  const locale = useLocale();
   const [editing, setEditing] = useState(false);
   const [state, action, isPending] = useActionState(updateJob, { error: null });
 
@@ -46,6 +53,9 @@ export function JobRow({
         <td>{job.title}</td>
         <td>
           <span className="tag tag-accent">{tStatuses(job.status)}</span>
+        </td>
+        <td className="text-muted">
+          {job.scheduledAt ? new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(job.scheduledAt) : "—"}
         </td>
         <td className="text-muted">{job.deal ? job.deal.title : "—"}</td>
         <td className="text-muted">{job.project ? job.project.title : "—"}</td>
@@ -65,7 +75,7 @@ export function JobRow({
 
   return (
     <tr>
-      <td colSpan={7}>
+      <td colSpan={8}>
         <form action={action} className="flex flex-col gap-2" style={{ padding: "8px 0" }}>
           <input type="hidden" name="orgSlug" value={orgSlug} />
           <input type="hidden" name="jobId" value={job.id} />
@@ -90,6 +100,16 @@ export function JobRow({
                   </option>
                 ))}
               </select>
+            </div>
+            <div className="field">
+              <label htmlFor={`scheduledAt-${job.id}`}>{t("scheduledAt")}</label>
+              <input
+                id={`scheduledAt-${job.id}`}
+                name="scheduledAt"
+                type="date"
+                defaultValue={toDateInputValue(job.scheduledAt)}
+                className="input"
+              />
             </div>
             <div className="field">
               <label htmlFor={`projectId-${job.id}`}>{t("project")}</label>

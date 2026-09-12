@@ -265,6 +265,10 @@ model Job {
   contactId      String?   @map("contact_id") @db.Uuid
   title          String
   status         JobStatus @default(SCHEDULED)
+  // Single date, no separate end/duration — a multi-day job just shows on
+  // its start date for this first pass (see Calendar scoping). Nullable:
+  // plenty of jobs are logged without ever being calendar-scheduled.
+  scheduledAt    DateTime? @map("scheduled_at")
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")

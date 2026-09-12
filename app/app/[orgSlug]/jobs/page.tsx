@@ -58,6 +58,7 @@ export default async function JobsPage({
                 <tr>
                   <th>{t("tableTitle")}</th>
                   <th>{t("tableStatus")}</th>
+                  <th>{t("tableScheduledAt")}</th>
                   <th>{t("tableDeal")}</th>
                   <th>{t("tableProject")}</th>
                   <th>{t("tableCompany")}</th>

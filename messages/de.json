@@ -9,6 +9,7 @@
     "deals": "Aufträge",
     "jobs": "Arbeitsaufträge",
     "projects": "Projekte",
+    "calendar": "Kalender",
     "activities": "Aktivitäten",
     "tasks": "Aufgaben",
     "email": "E-Mail",
@@ -230,6 +231,7 @@
     "newJob": "Neuer Arbeitsauftrag",
     "title": "Titel",
     "status": "Status",
+    "scheduledAt": "Geplantes Datum",
     "deal": "Auftrag",
     "noDeal": "— Keiner —",
     "project": "Projekt",
@@ -244,6 +246,7 @@
     "none": "Noch keine Arbeitsaufträge.",
     "tableTitle": "Titel",
     "tableStatus": "Status",
+    "tableScheduledAt": "Geplant",
     "tableDeal": "Auftrag",
     "tableProject": "Projekt",
     "tableCompany": "Unternehmen",
@@ -261,6 +264,13 @@
     "errorInvalidProject": "Ungültiges Projekt.",
     "errorNotFound": "Arbeitsauftrag nicht gefunden.",
     "errorInvalidStatus": "Ungültiger Status."
+  },
+  "Calendar": {
+    "heading": "Anstehend ({count})",
+    "none": "Nichts geplant.",
+    "task": "Aufgabe",
+    "workOrder": "Arbeitsauftrag",
+    "taskPending": "Ausstehend"
   },
   "Projects": {
     "newProject": "Neues Projekt",

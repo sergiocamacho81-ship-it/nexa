@@ -9,6 +9,7 @@
     "deals": "Trabalhos",
     "jobs": "Ordens de Trabalho",
     "projects": "Projetos",
+    "calendar": "Calendário",
     "activities": "Atividades",
     "tasks": "Tarefas",
     "email": "Email",
@@ -230,6 +231,7 @@
     "newJob": "Nova ordem de trabalho",
     "title": "Título",
     "status": "Estado",
+    "scheduledAt": "Data agendada",
     "deal": "Trabalho",
     "noDeal": "— Nenhum —",
     "project": "Projeto",
@@ -244,6 +246,7 @@
     "none": "Ainda não há ordens de trabalho.",
     "tableTitle": "Título",
     "tableStatus": "Estado",
+    "tableScheduledAt": "Agendado",
     "tableDeal": "Trabalho",
     "tableProject": "Projeto",
     "tableCompany": "Empresa",
@@ -261,6 +264,13 @@
     "errorInvalidProject": "Projeto inválido.",
     "errorNotFound": "Ordem de trabalho não encontrada.",
     "errorInvalidStatus": "Estado inválido."
+  },
+  "Calendar": {
+    "heading": "Próximos ({count})",
+    "none": "Nada agendado.",
+    "task": "Tarefa",
+    "workOrder": "Ordem de Trabalho",
+    "taskPending": "Pendente"
   },
   "Projects": {
     "newProject": "Novo projeto",

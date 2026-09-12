@@ -51,6 +51,8 @@ export async function createJob(
   const contactId = String(formData.get("contactId") ?? "").trim() || null;
   const dealId = String(formData.get("dealId") ?? "").trim() || null;
   const projectId = String(formData.get("projectId") ?? "").trim() || null;
+  const scheduledAtRaw = String(formData.get("scheduledAt") ?? "").trim();
+  const scheduledAt = scheduledAtRaw ? new Date(scheduledAtRaw) : null;
 
   // Client-supplied ids are only ever used after confirming they belong to
   // this org — never trusted directly (same pattern as createDeal).
@@ -80,7 +82,16 @@ export async function createJob(
   }
 
   await prisma.job.create({
-    data: { organizationId: organization.id, title, status, companyId, contactId, dealId, projectId },
+    data: {
+      organizationId: organization.id,
+      title,
+      status,
+      companyId,
+      contactId,
+      dealId,
+      projectId,
+      scheduledAt,
+    },
   });
 
   revalidatePath(`/app/${orgSlug}/jobs`);
@@ -120,6 +131,8 @@ export async function updateJob(
   const companyId = String(formData.get("companyId") ?? "").trim() || null;
   const contactId = String(formData.get("contactId") ?? "").trim() || null;
   const projectId = String(formData.get("projectId") ?? "").trim() || null;
+  const scheduledAtRaw = String(formData.get("scheduledAt") ?? "").trim();
+  const scheduledAt = scheduledAtRaw ? new Date(scheduledAtRaw) : null;
 
   if (companyId) {
     const company = await prisma.company.findFirst({
@@ -142,7 +155,7 @@ export async function updateJob(
 
   await prisma.job.update({
     where: { id: jobId },
-    data: { title, status, companyId, contactId, projectId },
+    data: { title, status, companyId, contactId, projectId, scheduledAt },
   });
 
   revalidatePath(`/app/${orgSlug}/jobs`);

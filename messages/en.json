@@ -9,6 +9,7 @@
     "deals": "Jobs",
     "jobs": "Work Orders",
     "projects": "Projects",
+    "calendar": "Calendar",
     "activities": "Activities",
     "tasks": "Tasks",
     "email": "Email",
@@ -230,6 +231,7 @@
     "newJob": "New work order",
     "title": "Title",
     "status": "Status",
+    "scheduledAt": "Scheduled date",
     "deal": "Job",
     "noDeal": "— None —",
     "project": "Project",
@@ -244,6 +246,7 @@
     "none": "No work orders yet.",
     "tableTitle": "Title",
     "tableStatus": "Status",
+    "tableScheduledAt": "Scheduled",
     "tableDeal": "Job",
     "tableProject": "Project",
     "tableCompany": "Company",
@@ -261,6 +264,13 @@
     "errorInvalidProject": "Invalid project.",
     "errorNotFound": "Work order not found.",
     "errorInvalidStatus": "Invalid status."
+  },
+  "Calendar": {
+    "heading": "Upcoming ({count})",
+    "none": "Nothing scheduled.",
+    "task": "Task",
+    "workOrder": "Work Order",
+    "taskPending": "Pending"
   },
   "Projects": {
     "newProject": "New project",
