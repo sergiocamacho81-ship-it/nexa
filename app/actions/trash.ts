@@ -57,6 +57,7 @@ async function purgeExpired(organizationId: string) {
     prisma.quote.deleteMany({ where }),
     prisma.invoice.deleteMany({ where }),
     prisma.payment.deleteMany({ where }),
+    prisma.invoiceAdjustment.deleteMany({ where }),
   ]);
 }
 
@@ -87,6 +88,7 @@ export async function listTrash(orgSlug: string): Promise<TrashItem[]> {
     quotes,
     invoices,
     payments,
+    invoiceAdjustments,
   ] = await Promise.all([
     prisma.contact.findMany({ where }),
     prisma.company.findMany({ where }),
@@ -105,6 +107,7 @@ export async function listTrash(orgSlug: string): Promise<TrashItem[]> {
     prisma.quote.findMany({ where }),
     prisma.invoice.findMany({ where }),
     prisma.payment.findMany({ where, include: { invoice: { select: { number: true } } } }),
+    prisma.invoiceAdjustment.findMany({ where, include: { invoice: { select: { number: true } } } }),
   ]);
 
   let memberEmails = new Map<string, string>();
@@ -221,6 +224,12 @@ export async function listTrash(orgSlug: string): Promise<TrashItem[]> {
       label: `CHF ${Number(p.amount).toFixed(2)} · #${p.invoice.number}`,
       deletedAt: p.deletedAt as Date,
     })),
+    ...invoiceAdjustments.map((a) => ({
+      type: "invoiceAdjustment" as const,
+      id: a.id,
+      label: `CHF ${Number(a.amount).toFixed(2)} · #${a.invoice.number}`,
+      deletedAt: a.deletedAt as Date,
+    })),
   ];
 
   return items.sort((a, b) => b.deletedAt.getTime() - a.deletedAt.getTime());
@@ -309,6 +318,9 @@ export async function restoreTrashItem(formData: FormData) {
       break;
     case "payment":
       await prisma.payment.updateMany({ where, data });
+      break;
+    case "invoiceAdjustment":
+      await prisma.invoiceAdjustment.updateMany({ where, data });
       break;
   }
 

@@ -9,7 +9,7 @@ import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { getCurrentUser } from "@/app/actions/organizations";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { INVOICE_STATUSES, isAllowedStatusTransition, type InvoiceStatus } from "@/lib/invoice-statuses";
-import { computeInvoiceTotals } from "@/lib/invoice-totals";
+import { computeInvoiceTotals, computeEffectiveTotal } from "@/lib/invoice-totals";
 
 // Recomputes and persists subtotal/vatAmount/total from the invoice's current
 // line items. Called inside the same transaction as every line-item
@@ -38,9 +38,10 @@ async function recalculateInvoiceTotals(
 }
 
 // Writes the status change and its audit event together — shared by
-// updateInvoiceStatus (manual) and recordPayment (automatic, once a payment
-// brings the invoice to fully paid) so the two paths can never diverge.
-async function recordInvoiceStatusChange(
+// updateInvoiceStatus (manual), recordPayment and recordAdjustment
+// (automatic, once the invoice reaches fully paid) so none of these paths
+// can ever diverge.
+export async function recordInvoiceStatusChange(
   tx: Prisma.TransactionClient,
   invoiceId: string,
   fromStatus: InvoiceStatus,
@@ -51,6 +52,24 @@ async function recordInvoiceStatusChange(
   await tx.invoiceStatusEvent.create({
     data: { invoiceId, fromStatus, toStatus, changedByUserId },
   });
+}
+
+// Called after recording a payment or an adjustment — either can bring an
+// invoice to fully (or over-)paid. Only advances SENT->PAID, one-way, same
+// as every other auto-transition in this module: never auto-reverts PAID
+// back to SENT if a later payment/adjustment/deletion drops amountPaid
+// below the effective total again (see the Payment model comment).
+export async function maybeAdvanceInvoiceToPaid(
+  tx: Prisma.TransactionClient,
+  invoiceId: string,
+  currentStatus: InvoiceStatus,
+  effectiveTotal: Prisma.Decimal,
+  amountPaid: Prisma.Decimal,
+  userId: string | null,
+) {
+  if (currentStatus === "SENT" && amountPaid.greaterThanOrEqualTo(effectiveTotal)) {
+    await recordInvoiceStatusChange(tx, invoiceId, "SENT", "PAID", userId);
+  }
 }
 
 // Takes orgSlug (not organizationId) and re-verifies membership itself — see
@@ -92,19 +111,21 @@ export async function getInvoice(orgSlug: string, invoiceId: string) {
       lineItems: { orderBy: { position: "asc" } },
       statusEvents: { orderBy: { changedAt: "desc" } },
       payments: { where: { deletedAt: null }, orderBy: { paidAt: "desc" } },
+      adjustments: { where: { deletedAt: null }, orderBy: { createdAt: "desc" } },
     },
   });
   if (!invoice) return null;
 
-  // Resolve changedByUserId/recordedByUserId -> email for display, same
-  // pattern as listTrash's member-email lookup in app/actions/trash.ts
-  // (Prisma has no FK to auth.users to join against, so this goes through
-  // the admin API) — one lookup covers both status events and payments.
+  // Resolve changedByUserId/recordedByUserId/createdByUserId -> email for
+  // display, same pattern as listTrash's member-email lookup in
+  // app/actions/trash.ts (Prisma has no FK to auth.users to join against,
+  // so this goes through the admin API) — one lookup covers all three.
   const userIds = [
     ...new Set(
       [
         ...invoice.statusEvents.map((e) => e.changedByUserId),
         ...invoice.payments.map((p) => p.recordedByUserId),
+        ...invoice.adjustments.map((a) => a.createdByUserId),
       ].filter((id): id is string => !!id),
     ),
   ];
@@ -125,14 +146,20 @@ export async function getInvoice(orgSlug: string, invoiceId: string) {
     ...payment,
     recordedByEmail: payment.recordedByUserId ? (emailById.get(payment.recordedByUserId) ?? null) : null,
   }));
+  const adjustments = invoice.adjustments.map((adjustment) => ({
+    ...adjustment,
+    createdByEmail: adjustment.createdByUserId ? (emailById.get(adjustment.createdByUserId) ?? null) : null,
+  }));
 
-  // amountPaid/amountDue are always computed live from current non-deleted
-  // payments, never stored — see the Payment model comment in schema.prisma
-  // for why this must stay a live computation rather than a cached field.
+  // amountPaid/effectiveTotal/amountDue are always computed live from
+  // current non-deleted payments/adjustments, never stored — see the
+  // Payment and InvoiceAdjustment model comments in schema.prisma for why
+  // this must stay a live computation rather than a cached field.
   const amountPaid = payments.reduce((sum, p) => sum.plus(p.amount), new Prisma.Decimal(0));
-  const amountDue = invoice.total.minus(amountPaid);
+  const effectiveTotal = computeEffectiveTotal(invoice.total, adjustments);
+  const amountDue = effectiveTotal.minus(amountPaid);
 
-  return { ...invoice, statusEvents, payments, amountPaid, amountDue };
+  return { ...invoice, statusEvents, payments, adjustments, amountPaid, effectiveTotal, amountDue };
 }
 
 // Called directly from a <form action> on the Deal card — no useActionState,

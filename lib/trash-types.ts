@@ -16,5 +16,6 @@ export const TRASH_TYPES = [
   "quote",
   "invoice",
   "payment",
+  "invoiceAdjustment",
 ] as const;
 export type TrashType = (typeof TRASH_TYPES)[number];

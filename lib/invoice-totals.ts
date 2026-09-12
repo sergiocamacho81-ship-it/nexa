@@ -19,3 +19,18 @@ export function computeInvoiceTotals(
 
   return { subtotal, vatAmount, total };
 }
+
+// Layers non-deleted InvoiceAdjustment amounts on top of the persisted
+// total — never mutates Invoice.total itself (see the InvoiceAdjustment
+// schema comment for why: the original issued figure must stay intact).
+// Negative adjustment amounts are credits/reductions, positive are added
+// charges; both are just summed.
+export function computeEffectiveTotal(
+  total: Prisma.Decimal | number | string,
+  adjustments: { amount: Prisma.Decimal | number | string }[],
+): Prisma.Decimal {
+  return adjustments.reduce(
+    (sum, adjustment) => sum.plus(new Prisma.Decimal(adjustment.amount)),
+    new Prisma.Decimal(total),
+  );
+}

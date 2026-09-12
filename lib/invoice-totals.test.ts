@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Prisma } from "@prisma/client";
-import { computeInvoiceTotals } from "./invoice-totals";
+import { computeInvoiceTotals, computeEffectiveTotal } from "./invoice-totals";
 
 function d(value: string) {
   return new Prisma.Decimal(value);
@@ -78,5 +78,32 @@ describe("computeInvoiceTotals", () => {
     // docs/compliance/swiss-vat.md. This test documents today's behavior,
     // not an endorsement of treating them as equivalent long-term.
     expect(noVat.total.toString()).toBe(zeroVat.total.toString());
+  });
+});
+
+describe("computeEffectiveTotal", () => {
+  it("returns the original total unchanged when there are no adjustments", () => {
+    expect(computeEffectiveTotal(d("100.00"), []).toString()).toBe("100");
+  });
+
+  it("reduces the total for a negative (credit) adjustment", () => {
+    expect(computeEffectiveTotal(d("100.00"), [{ amount: "-20.00" }]).toString()).toBe("80");
+  });
+
+  it("increases the total for a positive (added charge) adjustment", () => {
+    expect(computeEffectiveTotal(d("100.00"), [{ amount: "15.00" }]).toString()).toBe("115");
+  });
+
+  it("sums multiple adjustments exactly, without floating-point error", () => {
+    const result = computeEffectiveTotal(d("100.00"), [
+      { amount: "-0.10" },
+      { amount: "-0.20" },
+    ]);
+    expect(result.toString()).toBe("99.7");
+  });
+
+  it("can bring the effective total to exactly zero or negative", () => {
+    expect(computeEffectiveTotal(d("50.00"), [{ amount: "-50.00" }]).toString()).toBe("0");
+    expect(computeEffectiveTotal(d("50.00"), [{ amount: "-75.00" }]).toString()).toBe("-25");
   });
 });

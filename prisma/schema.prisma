@@ -59,25 +59,26 @@ model Organization {
   // transaction that creates the quote — same pattern as invoiceCounter.
   quoteCounter Int @default(0) @map("quote_counter")
 
-  memberships    Membership[]
-  contacts       Contact[]
-  companies      Company[]
-  deals          Deal[]
-  jobs           Job[]
-  projects       Project[]
-  timeEntries    TimeEntry[]
-  materialUsages MaterialUsage[]
-  activities     Activity[]
-  tasks          Task[]
-  emailMessages  EmailMessage[]
-  automations    Automation[]
-  automationRuns AutomationRun[]
-  campaigns      Campaign[]
-  segments       Segment[]
-  products       Product[]
-  quotes         Quote[]
-  invoices       Invoice[]
-  payments       Payment[]
+  memberships        Membership[]
+  contacts           Contact[]
+  companies          Company[]
+  deals              Deal[]
+  jobs               Job[]
+  projects           Project[]
+  timeEntries        TimeEntry[]
+  materialUsages     MaterialUsage[]
+  activities         Activity[]
+  tasks              Task[]
+  emailMessages      EmailMessage[]
+  automations        Automation[]
+  automationRuns     AutomationRun[]
+  campaigns          Campaign[]
+  segments           Segment[]
+  products           Product[]
+  quotes             Quote[]
+  invoices           Invoice[]
+  payments           Payment[]
+  invoiceAdjustments InvoiceAdjustment[]
 
   @@map("organizations")
 }
@@ -779,6 +780,7 @@ model Invoice {
   lineItems    InvoiceLineItem[]
   statusEvents InvoiceStatusEvent[]
   payments     Payment[]
+  adjustments  InvoiceAdjustment[]
 
   @@unique([organizationId, number])
   @@index([organizationId])
@@ -832,6 +834,12 @@ enum PaymentMethod {
 // from current non-deleted payments (see getInvoice in
 // app/actions/invoices.ts), so the displayed due amount is always correct
 // regardless of what the status field says.
+//
+// amount can be negative: that's a refund (see recordRefund in
+// app/actions/payments.ts), not a separate concept — a refund is just money
+// moving the other way, and the live-computed amountPaid sum already
+// handles it correctly by construction. The UI labels a negative row
+// "Refund" rather than inventing a second table.
 model Payment {
   id               String        @id @default(uuid()) @db.Uuid
   organizationId   String        @map("organization_id") @db.Uuid
@@ -850,6 +858,36 @@ model Payment {
   @@index([organizationId])
   @@index([invoiceId])
   @@map("payments")
+}
+
+// Corrects the amount owed on an already-issued (locked, non-DRAFT)
+// invoice without ever touching its original line items — "issued
+// financial documents must not be silently mutated" means a mistake found
+// after sending gets a visible, reasoned adjustment layered on top, not a
+// silent edit to the original. amount is signed: negative reduces the
+// effective total (a credit — the common case), positive adds a charge.
+// effectiveTotal = Invoice.total + sum(non-deleted adjustments); see
+// computeEffectiveTotal in lib/invoice-totals.ts. Deliberately NOT a full
+// Credit Note document (no own numbering/line items/PDF) — that's a much
+// bigger, standalone-document concept with no evidence of need yet; this
+// stays attached to the original invoice. organizationId denormalized and
+// createdByUserId un-FK'd, same reasoning as Payment above.
+model InvoiceAdjustment {
+  id              String    @id @default(uuid()) @db.Uuid
+  organizationId  String    @map("organization_id") @db.Uuid
+  invoiceId       String    @map("invoice_id") @db.Uuid
+  amount          Decimal   @db.Decimal(12, 2)
+  reason          String
+  createdByUserId String?   @map("created_by_user_id") @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at")
+  deletedAt       DateTime? @map("deleted_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invoice      Invoice      @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([invoiceId])
+  @@map("invoice_adjustments")
 }
 
 // A line item is a snapshot (description/quantity/unitPrice copied in at

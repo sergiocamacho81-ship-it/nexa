@@ -7,22 +7,19 @@ import { prisma } from "@/lib/prisma";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { getCurrentUser } from "@/app/actions/organizations";
 import { PAYMENT_METHODS, type PaymentMethod } from "@/lib/payment-methods";
+import { computeEffectiveTotal } from "@/lib/invoice-totals";
+import { maybeAdvanceInvoiceToPaid } from "@/app/actions/invoices";
 
 export type PaymentFormState = { error: string | null };
 
-// Records a manual payment against an invoice (typed in by staff — no
-// online collection or bank feed; see the Payment model comment in
-// schema.prisma for why that's deliberately out of scope here). Only valid
-// once an invoice has actually been issued: a still-DRAFT invoice can't
-// have received money against it. If this payment brings the invoice to
-// fully paid (or beyond — overpayment is allowed, not blocked), it's
-// auto-advanced to PAID through the same audited path as a manual status
-// change; it is never auto-reverted if a payment is later removed (see
-// deletePayment) — amountPaid/amountDue always reflect live payment totals
-// regardless of what the status field says.
-export async function recordPayment(
-  _prevState: PaymentFormState,
+// Shared by recordPayment and recordRefund — a refund is the same record
+// with the amount negated (see the Payment model comment in schema.prisma),
+// not a separate table, so the validation and write path stay identical
+// bar the sign. Only valid once an invoice has actually been issued: a
+// still-DRAFT invoice can't have received money against it.
+async function saveInvoicePayment(
   formData: FormData,
+  sign: 1 | -1,
 ): Promise<PaymentFormState> {
   const t = await getTranslations("Payments");
   const orgSlug = String(formData.get("orgSlug") ?? "");
@@ -37,7 +34,10 @@ export async function recordPayment(
 
   const invoice = await prisma.invoice.findFirst({
     where: { id: invoiceId, organizationId: organization.id, deletedAt: null },
-    include: { payments: { where: { deletedAt: null } } },
+    include: {
+      payments: { where: { deletedAt: null } },
+      adjustments: { where: { deletedAt: null } },
+    },
   });
   if (!invoice) return { error: t("errorNotFound") };
 
@@ -45,10 +45,11 @@ export async function recordPayment(
     return { error: t("errorInvoiceNotIssued") };
   }
 
-  const amount = Number(amountRaw);
-  if (!amountRaw || Number.isNaN(amount) || amount <= 0) {
+  const enteredAmount = Number(amountRaw);
+  if (!amountRaw || Number.isNaN(enteredAmount) || enteredAmount <= 0) {
     return { error: t("errorInvalidAmount") };
   }
+  const amount = enteredAmount * sign;
 
   if (!PAYMENT_METHODS.includes(methodRaw as PaymentMethod)) {
     return { error: t("errorInvalidMethod") };
@@ -74,25 +75,35 @@ export async function recordPayment(
       },
     });
 
+    // A refund only ever reduces amountPaid, so it can never newly satisfy
+    // "fully paid" — this check runs for both anyway since it's a no-op in
+    // that case, and keeping one path avoids two subtly different ones.
     const amountPaid = invoice.payments
       .reduce((sum, p) => sum.plus(p.amount), new Prisma.Decimal(0))
       .plus(amount);
+    const effectiveTotal = computeEffectiveTotal(invoice.total, invoice.adjustments);
 
-    if (invoice.status === "SENT" && amountPaid.greaterThanOrEqualTo(invoice.total)) {
-      await tx.invoice.update({ where: { id: invoiceId }, data: { status: "PAID" } });
-      await tx.invoiceStatusEvent.create({
-        data: {
-          invoiceId,
-          fromStatus: "SENT",
-          toStatus: "PAID",
-          changedByUserId: user?.id ?? null,
-        },
-      });
-    }
+    await maybeAdvanceInvoiceToPaid(tx, invoiceId, invoice.status, effectiveTotal, amountPaid, user?.id ?? null);
   });
 
   revalidatePath(`/app/${orgSlug}/invoices/${invoiceId}`);
   return { error: null };
+}
+
+export async function recordPayment(
+  _prevState: PaymentFormState,
+  formData: FormData,
+): Promise<PaymentFormState> {
+  return saveInvoicePayment(formData, 1);
+}
+
+// Money paid back to the customer — e.g. correcting an overpayment. Staff
+// enter a positive amount ("how much did we refund"); it's stored negative.
+export async function recordRefund(
+  _prevState: PaymentFormState,
+  formData: FormData,
+): Promise<PaymentFormState> {
+  return saveInvoicePayment(formData, -1);
 }
 
 // Soft-delete, same 30-day Trash pattern as everything else in this app —
