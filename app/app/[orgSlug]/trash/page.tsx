@@ -22,6 +22,7 @@ const TYPE_LABEL_KEY = {
   product: "typeProduct",
   quote: "typeQuote",
   invoice: "typeInvoice",
+  payment: "typePayment",
 } as const;
 
 export default async function TrashPage({

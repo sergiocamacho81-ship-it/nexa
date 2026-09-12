@@ -77,6 +77,7 @@ model Organization {
   products       Product[]
   quotes         Quote[]
   invoices       Invoice[]
+  payments       Payment[]
 
   @@map("organizations")
 }
@@ -777,6 +778,7 @@ model Invoice {
   quote        Quote?               @relation(fields: [quoteId], references: [id], onDelete: SetNull)
   lineItems    InvoiceLineItem[]
   statusEvents InvoiceStatusEvent[]
+  payments     Payment[]
 
   @@unique([organizationId, number])
   @@index([organizationId])
@@ -804,6 +806,50 @@ model InvoiceStatusEvent {
 
   @@index([invoiceId])
   @@map("invoice_status_events")
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  CARD
+  TWINT
+  OTHER
+}
+
+// Manual payment recording (phase 4's scope) — staff types in what a
+// customer paid; no online collection or bank feed here, that's Phase 6's
+// job, built on this same table. Direct invoiceId FK, not a separate
+// PaymentAllocation table: every payment here covers exactly one invoice
+// (many payments per invoice models partial payments naturally); splitting
+// one payment across multiple invoices has no evidence of need yet and
+// would be a bigger reconciliation concept anyway — Phase 6 territory.
+// organizationId is denormalized (same as TimeEntry/MaterialUsage, unlike
+// InvoiceLineItem) so Trash and listing queries can scope directly without
+// joining through Invoice. recordedByUserId has no FK to auth.users, same
+// deviation as InvoiceStatusEvent.changedByUserId. Soft-deletable like
+// every other entity in this app; deleting a payment does NOT retroactively
+// revert Invoice.status — amountPaid/amountDue are always computed live
+// from current non-deleted payments (see getInvoice in
+// app/actions/invoices.ts), so the displayed due amount is always correct
+// regardless of what the status field says.
+model Payment {
+  id               String        @id @default(uuid()) @db.Uuid
+  organizationId   String        @map("organization_id") @db.Uuid
+  invoiceId        String        @map("invoice_id") @db.Uuid
+  amount           Decimal       @db.Decimal(12, 2)
+  method           PaymentMethod @default(BANK_TRANSFER)
+  paidAt           DateTime      @default(now()) @map("paid_at")
+  notes            String?
+  recordedByUserId String?       @map("recorded_by_user_id") @db.Uuid
+  createdAt        DateTime      @default(now()) @map("created_at")
+  deletedAt        DateTime?     @map("deleted_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invoice      Invoice      @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([invoiceId])
+  @@map("payments")
 }
 
 // A line item is a snapshot (description/quantity/unitPrice copied in at

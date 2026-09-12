@@ -10,6 +10,8 @@ import { RemoveLineItemButton } from "./remove-line-item-button";
 import { NotesForm } from "./notes-form";
 import { PrintButton } from "./print-button";
 import { DeleteInvoiceButton } from "./delete-invoice-button";
+import { PaymentRecordForm } from "./payment-record-form";
+import { DeletePaymentButton } from "./delete-payment-button";
 
 export default async function InvoiceDetailPage({
   params,
@@ -22,9 +24,11 @@ export default async function InvoiceDetailPage({
     notFound();
   }
 
-  const [t, tStatuses, locale, invoice, products] = await Promise.all([
+  const [t, tStatuses, tPayments, tMethods, locale, invoice, products] = await Promise.all([
     getTranslations("Invoices"),
     getTranslations("InvoiceStatuses"),
+    getTranslations("Payments"),
+    getTranslations("PaymentMethods"),
     getLocale(),
     getInvoice(orgSlug, invoiceId),
     listProducts(orgSlug),
@@ -44,6 +48,8 @@ export default async function InvoiceDetailPage({
   const vat = Number(invoice.vatAmount);
   const total = Number(invoice.total);
   const vatRate = invoice.vatRate === null ? null : Number(invoice.vatRate);
+  const amountPaid = Number(invoice.amountPaid);
+  const amountDue = Number(invoice.amountDue);
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-12">
@@ -125,6 +131,18 @@ export default async function InvoiceDetailPage({
               {vatRate === null ? t("noVat") : t("vat", { rate: vatRate })}: {currencyFormatter.format(vat)}
             </p>
             <p className="card-title">{t("total")}: {currencyFormatter.format(total)}</p>
+            {invoice.status !== "DRAFT" && (
+              <>
+                <p className="card-meta">{t("amountPaid")}: {currencyFormatter.format(amountPaid)}</p>
+                <p className="card-meta">
+                  {amountDue > 0
+                    ? `${t("amountDue")}: ${currencyFormatter.format(amountDue)}`
+                    : amountDue < 0
+                      ? `${t("overpaid")}: ${currencyFormatter.format(-amountDue)}`
+                      : t("fullyPaid")}
+                </p>
+              </>
+            )}
           </div>
         </section>
 
@@ -152,6 +170,41 @@ export default async function InvoiceDetailPage({
         <h6 className="text-muted mb-3">{t("notes")}</h6>
         <NotesForm orgSlug={orgSlug} invoiceId={invoice.id} notes={invoice.notes} />
       </section>
+
+      {invoice.status !== "DRAFT" && (
+        <section className="invoice-print-hide">
+          <h6 className="text-muted mb-3">{tPayments("heading", { count: invoice.payments.length })}</h6>
+          {invoice.payments.length > 0 && (
+            <div className="table-wrap" style={{ marginBottom: "12px" }}>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>{tPayments("tableDate")}</th>
+                    <th>{tPayments("tableAmount")}</th>
+                    <th>{tPayments("tableMethod")}</th>
+                    <th>{tPayments("tableRecordedBy")}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {invoice.payments.map((payment) => (
+                    <tr key={payment.id}>
+                      <td className="text-muted">{dateFormatter.format(payment.paidAt)}</td>
+                      <td>{currencyFormatter.format(Number(payment.amount))}</td>
+                      <td className="text-muted">{tMethods(payment.method)}</td>
+                      <td className="text-muted">{payment.recordedByEmail ?? "—"}</td>
+                      <td>
+                        <DeletePaymentButton orgSlug={orgSlug} invoiceId={invoice.id} paymentId={payment.id} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <PaymentRecordForm orgSlug={orgSlug} invoiceId={invoice.id} />
+        </section>
+      )}
 
       {invoice.statusEvents.length > 0 && (
         <section className="invoice-print-hide">

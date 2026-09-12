@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getOrgForCurrentUser } from "@/app/actions/contacts";
 import { getCurrentUser } from "@/app/actions/organizations";
@@ -34,6 +34,22 @@ async function recalculateInvoiceTotals(
   await tx.invoice.update({
     where: { id: invoiceId },
     data: { subtotal, vatAmount, total },
+  });
+}
+
+// Writes the status change and its audit event together — shared by
+// updateInvoiceStatus (manual) and recordPayment (automatic, once a payment
+// brings the invoice to fully paid) so the two paths can never diverge.
+async function recordInvoiceStatusChange(
+  tx: Prisma.TransactionClient,
+  invoiceId: string,
+  fromStatus: InvoiceStatus,
+  toStatus: InvoiceStatus,
+  changedByUserId: string | null,
+) {
+  await tx.invoice.update({ where: { id: invoiceId }, data: { status: toStatus } });
+  await tx.invoiceStatusEvent.create({
+    data: { invoiceId, fromStatus, toStatus, changedByUserId },
   });
 }
 
@@ -75,28 +91,48 @@ export async function getInvoice(orgSlug: string, invoiceId: string) {
       },
       lineItems: { orderBy: { position: "asc" } },
       statusEvents: { orderBy: { changedAt: "desc" } },
+      payments: { where: { deletedAt: null }, orderBy: { paidAt: "desc" } },
     },
   });
   if (!invoice) return null;
 
-  // Resolve changedByUserId -> email for display, same pattern as
-  // listTrash's member-email lookup in app/actions/trash.ts (Prisma has no
-  // FK to auth.users to join against, so this goes through the admin API).
-  let statusEventsWithEmail = invoice.statusEvents.map((event) => ({ ...event, changedByEmail: null as string | null }));
-  const userIds = [...new Set(invoice.statusEvents.map((e) => e.changedByUserId).filter((id): id is string => !!id))];
+  // Resolve changedByUserId/recordedByUserId -> email for display, same
+  // pattern as listTrash's member-email lookup in app/actions/trash.ts
+  // (Prisma has no FK to auth.users to join against, so this goes through
+  // the admin API) — one lookup covers both status events and payments.
+  const userIds = [
+    ...new Set(
+      [
+        ...invoice.statusEvents.map((e) => e.changedByUserId),
+        ...invoice.payments.map((p) => p.recordedByUserId),
+      ].filter((id): id is string => !!id),
+    ),
+  ];
+  let emailById = new Map<string, string>();
   if (userIds.length > 0) {
     const admin = createAdminClient();
     const { data } = await admin.auth.admin.listUsers({ perPage: 200 });
     if (data) {
-      const emailById = new Map(data.users.filter((u) => u.email).map((u) => [u.id, u.email as string]));
-      statusEventsWithEmail = invoice.statusEvents.map((event) => ({
-        ...event,
-        changedByEmail: event.changedByUserId ? (emailById.get(event.changedByUserId) ?? null) : null,
-      }));
+      emailById = new Map(data.users.filter((u) => u.email).map((u) => [u.id, u.email as string]));
     }
   }
 
-  return { ...invoice, statusEvents: statusEventsWithEmail };
+  const statusEvents = invoice.statusEvents.map((event) => ({
+    ...event,
+    changedByEmail: event.changedByUserId ? (emailById.get(event.changedByUserId) ?? null) : null,
+  }));
+  const payments = invoice.payments.map((payment) => ({
+    ...payment,
+    recordedByEmail: payment.recordedByUserId ? (emailById.get(payment.recordedByUserId) ?? null) : null,
+  }));
+
+  // amountPaid/amountDue are always computed live from current non-deleted
+  // payments, never stored — see the Payment model comment in schema.prisma
+  // for why this must stay a live computation rather than a cached field.
+  const amountPaid = payments.reduce((sum, p) => sum.plus(p.amount), new Prisma.Decimal(0));
+  const amountDue = invoice.total.minus(amountPaid);
+
+  return { ...invoice, statusEvents, payments, amountPaid, amountDue };
 }
 
 // Called directly from a <form action> on the Deal card — no useActionState,
@@ -271,20 +307,9 @@ export async function updateInvoiceStatus(formData: FormData) {
 
   if (newStatus !== invoice.status) {
     const user = await getCurrentUser();
-    await prisma.$transaction([
-      prisma.invoice.updateMany({
-        where: { id: invoiceId, organizationId: organization.id, deletedAt: null },
-        data: { status: newStatus },
-      }),
-      prisma.invoiceStatusEvent.create({
-        data: {
-          invoiceId,
-          fromStatus: invoice.status,
-          toStatus: newStatus,
-          changedByUserId: user?.id ?? null,
-        },
-      }),
-    ]);
+    await prisma.$transaction((tx) =>
+      recordInvoiceStatusChange(tx, invoiceId, invoice.status, newStatus, user?.id ?? null),
+    );
   }
 
   revalidatePath(`/app/${orgSlug}/invoices/${invoiceId}`);
