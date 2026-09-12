@@ -20,6 +20,7 @@ const TYPE_LABEL_KEY = {
   campaign: "typeCampaign",
   member: "typeMember",
   product: "typeProduct",
+  quote: "typeQuote",
   invoice: "typeInvoice",
 } as const;
 

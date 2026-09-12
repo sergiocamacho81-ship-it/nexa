@@ -13,6 +13,7 @@ export const TRASH_TYPES = [
   "campaign",
   "member",
   "product",
+  "quote",
   "invoice",
 ] as const;
 export type TrashType = (typeof TRASH_TYPES)[number];

@@ -54,6 +54,7 @@ async function purgeExpired(organizationId: string) {
     prisma.campaign.deleteMany({ where }),
     prisma.membership.deleteMany({ where }),
     prisma.product.deleteMany({ where }),
+    prisma.quote.deleteMany({ where }),
     prisma.invoice.deleteMany({ where }),
   ]);
 }
@@ -82,6 +83,7 @@ export async function listTrash(orgSlug: string): Promise<TrashItem[]> {
     campaigns,
     memberships,
     products,
+    quotes,
     invoices,
   ] = await Promise.all([
     prisma.contact.findMany({ where }),
@@ -98,6 +100,7 @@ export async function listTrash(orgSlug: string): Promise<TrashItem[]> {
     prisma.campaign.findMany({ where }),
     prisma.membership.findMany({ where }),
     prisma.product.findMany({ where }),
+    prisma.quote.findMany({ where }),
     prisma.invoice.findMany({ where }),
   ]);
 
@@ -197,6 +200,12 @@ export async function listTrash(orgSlug: string): Promise<TrashItem[]> {
       label: p.name,
       deletedAt: p.deletedAt as Date,
     })),
+    ...quotes.map((q) => ({
+      type: "quote" as const,
+      id: q.id,
+      label: `#${q.number}`,
+      deletedAt: q.deletedAt as Date,
+    })),
     ...invoices.map((i) => ({
       type: "invoice" as const,
       id: i.id,
@@ -282,6 +291,9 @@ export async function restoreTrashItem(formData: FormData) {
       break;
     case "product":
       await prisma.product.updateMany({ where, data });
+      break;
+    case "quote":
+      await prisma.quote.updateMany({ where, data });
       break;
     case "invoice":
       await prisma.invoice.updateMany({ where, data });

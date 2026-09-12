@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { StageSelect } from "./stage-select";
 import { DeleteDealButton } from "./delete-deal-button";
 import { createInvoiceForDeal } from "@/app/actions/invoices";
+import { createQuoteForDeal } from "@/app/actions/quotes";
 
 type DealWithRelations = Prisma.DealGetPayload<{
   include: {
@@ -29,6 +30,13 @@ export async function DealCard({ deal, orgSlug }: { deal: DealWithRelations; org
       <div className="flex items-center justify-between gap-2">
         <StageSelect orgSlug={orgSlug} dealId={deal.id} currentStage={deal.stage} />
         <div className="flex gap-2">
+          <form action={createQuoteForDeal}>
+            <input type="hidden" name="orgSlug" value={orgSlug} />
+            <input type="hidden" name="dealId" value={deal.id} />
+            <button type="submit" className="btn btn-ghost" style={{ fontSize: "12px", padding: "2px 6px" }}>
+              {t("createQuote")}
+            </button>
+          </form>
           <form action={createInvoiceForDeal}>
             <input type="hidden" name="orgSlug" value={orgSlug} />
             <input type="hidden" name="dealId" value={deal.id} />

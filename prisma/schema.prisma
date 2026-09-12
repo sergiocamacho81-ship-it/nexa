@@ -24,12 +24,12 @@ model Organization {
   // Stored as plain text (no field-level encryption yet); access is gated
   // the same way every other org field is (RLS + app-layer membership
   // checks), not by any additional secrecy on this column.
-  smtpHost     String?  @map("smtp_host")
-  smtpPort     Int?     @map("smtp_port")
-  smtpSecure   Boolean  @default(false) @map("smtp_secure")
-  smtpUser     String?  @map("smtp_user")
-  smtpPassword String?  @map("smtp_password")
-  smtpFrom     String?  @map("smtp_from")
+  smtpHost     String? @map("smtp_host")
+  smtpPort     Int?    @map("smtp_port")
+  smtpSecure   Boolean @default(false) @map("smtp_secure")
+  smtpUser     String? @map("smtp_user")
+  smtpPassword String? @map("smtp_password")
+  smtpFrom     String? @map("smtp_from")
 
   // Soft delete: set instead of a hard DELETE so an Owner can restore within
   // the retention window (see lib/soft-delete.ts). Every list query in the
@@ -52,8 +52,12 @@ model Organization {
   // Null means no VAT line is shown. invoiceCounter is a per-org sequence
   // for Invoice.number, incremented inside the same transaction that
   // creates the invoice (see app/actions/invoices.ts).
-  invoiceVatRate Decimal? @db.Decimal(5, 2) @map("invoice_vat_rate")
+  invoiceVatRate Decimal? @map("invoice_vat_rate") @db.Decimal(5, 2)
   invoiceCounter Int      @default(0) @map("invoice_counter")
+
+  // Per-org sequence for Quote.number, incremented inside the same
+  // transaction that creates the quote — same pattern as invoiceCounter.
+  quoteCounter Int @default(0) @map("quote_counter")
 
   memberships    Membership[]
   contacts       Contact[]
@@ -71,6 +75,7 @@ model Organization {
   campaigns      Campaign[]
   segments       Segment[]
   products       Product[]
+  quotes         Quote[]
   invoices       Invoice[]
 
   @@map("organizations")
@@ -160,8 +165,9 @@ model Contact {
   organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   company            Company?            @relation(fields: [companyId], references: [id], onDelete: SetNull)
   deals              Deal[]
-  jobs                Job[]
+  jobs               Job[]
   projects           Project[]
+  quotes             Quote[]
   activities         Activity[]
   tasks              Task[]
   emailMessages      EmailMessage[]
@@ -173,27 +179,28 @@ model Contact {
 }
 
 model Company {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @map("organization_id") @db.Uuid
+  id             String       @id @default(uuid()) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
   name           String
   domain         String?
   // Address/country foundation — mirrors the same fields added to Contact,
   // for the same reason (see Contact). VAT/tax-residence fields belong to
   // the Swiss compliance phase, not this foundation pass.
-  addressLine    String?     @map("address_line")
+  addressLine    String?      @map("address_line")
   city           String?
-  postalCode     String?     @map("postal_code")
+  postalCode     String?      @map("postal_code")
   canton         SwissCanton?
-  countryCode    String?     @map("country_code")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-  deletedAt      DateTime? @map("deleted_at")
+  countryCode    String?      @map("country_code")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  deletedAt      DateTime?    @map("deleted_at")
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   contacts     Contact[]
   deals        Deal[]
   jobs         Job[]
   projects     Project[]
+  quotes       Quote[]
   activities   Activity[]
   tasks        Task[]
 
@@ -230,6 +237,7 @@ model Deal {
   emailMessages EmailMessage[]
   jobs          Job[]
   projects      Project[]
+  quotes        Quote[]
 
   @@index([organizationId])
   @@index([companyId])
@@ -275,11 +283,11 @@ model Job {
   updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  deal         Deal?        @relation(fields: [dealId], references: [id], onDelete: SetNull)
-  project      Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
-  company      Company?     @relation(fields: [companyId], references: [id], onDelete: SetNull)
-  contact      Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  deal           Deal?           @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  project        Project?        @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  company        Company?        @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  contact        Contact?        @relation(fields: [contactId], references: [id], onDelete: SetNull)
   invoices       Invoice[]
   timeEntries    TimeEntry[]
   materialUsages MaterialUsage[]
@@ -375,7 +383,7 @@ model MaterialUsage {
   description    String
   quantity       Decimal   @db.Decimal(10, 2)
   unit           String?
-  unitCost       Decimal?  @db.Decimal(10, 2) @map("unit_cost")
+  unitCost       Decimal?  @map("unit_cost") @db.Decimal(10, 2)
   date           DateTime  @default(now())
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
@@ -490,13 +498,13 @@ model EmailMessage {
 // there without any schema change, since both are just typed strings + a
 // JSON config blob.
 model Automation {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @map("organization_id") @db.Uuid
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
   name           String
-  triggerType    String   @map("trigger_type")
-  enabled        Boolean  @default(true)
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  triggerType    String    @map("trigger_type")
+  enabled        Boolean   @default(true)
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
 
   organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -600,13 +608,13 @@ model CampaignRecipient {
 // `filters` is a small structured shape (see lib/segments/filters.ts), not a
 // free-form query language: companyId, hasEmail, createdAfter/Before.
 model Segment {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @map("organization_id") @db.Uuid
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
   name           String
   description    String?
-  filters        Json     @default("{}")
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  filters        Json      @default("{}")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -626,18 +634,90 @@ model Product {
   organizationId String    @map("organization_id") @db.Uuid
   name           String
   description    String?
-  unitPrice      Decimal   @db.Decimal(10, 2) @map("unit_price")
+  unitPrice      Decimal   @map("unit_price") @db.Decimal(10, 2)
   unit           String?
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
 
-  organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   lineItems      InvoiceLineItem[]
+  quoteLineItems QuoteLineItem[]
   materialUsages MaterialUsage[]
 
   @@index([organizationId])
   @@map("products")
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  DECLINED
+}
+
+// Quote.number is unique per org, assigned sequentially from
+// Organization.quoteCounter (same pattern as Invoice.number). Created from a
+// Deal (see createQuoteForDeal in app/actions/quotes.ts), copying its
+// company/contact at creation time — same "operational record outlives its
+// origin" reasoning as Job/Project. validUntil is display-only in this pass:
+// nothing purges or auto-expires a quote past that date (no cron infra yet,
+// same limitation as Trash's lazy purge).
+model Quote {
+  id             String      @id @default(uuid()) @db.Uuid
+  organizationId String      @map("organization_id") @db.Uuid
+  dealId         String?     @map("deal_id") @db.Uuid
+  companyId      String?     @map("company_id") @db.Uuid
+  contactId      String?     @map("contact_id") @db.Uuid
+  number         Int
+  status         QuoteStatus @default(DRAFT)
+  validUntil     DateTime?   @map("valid_until")
+  notes          String?
+  vatRate        Decimal?    @map("vat_rate") @db.Decimal(5, 2)
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+  deletedAt      DateTime?   @map("deleted_at")
+
+  // Persisted, server-computed totals — same recalculation-on-every-line-item
+  // -change pattern as Invoice (see recalculateQuoteTotals in
+  // app/actions/quotes.ts), reusing the same computeInvoiceTotals arithmetic.
+  subtotal  Decimal @default(0) @db.Decimal(12, 2)
+  vatAmount Decimal @default(0) @map("vat_amount") @db.Decimal(12, 2)
+  total     Decimal @default(0) @db.Decimal(12, 2)
+
+  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  deal         Deal?           @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  company      Company?        @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  contact      Contact?        @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  lineItems    QuoteLineItem[]
+  invoices     Invoice[]
+
+  @@unique([organizationId, number])
+  @@index([organizationId])
+  @@index([dealId])
+  @@index([companyId])
+  @@index([contactId])
+  @@map("quotes")
+}
+
+// Snapshot line item, same pattern as InvoiceLineItem — no organizationId of
+// its own; RLS scopes it via the parent Quote.
+model QuoteLineItem {
+  id          String   @id @default(uuid()) @db.Uuid
+  quoteId     String   @map("quote_id") @db.Uuid
+  productId   String?  @map("product_id") @db.Uuid
+  description String
+  quantity    Decimal  @default(1) @db.Decimal(10, 2)
+  unitPrice   Decimal  @map("unit_price") @db.Decimal(10, 2)
+  position    Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  quote   Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([quoteId])
+  @@index([productId])
+  @@map("quote_line_items")
 }
 
 enum InvoiceStatus {
@@ -651,14 +731,18 @@ enum InvoiceStatus {
 // an invoice is a financial record that must survive its Job being
 // purged from Trash after the 30-day retention window. Anchored to Job,
 // not Deal directly — Job is the operational "what is this invoice for"
-// concept; Deal (if any) is reachable transitively via Job.dealId.
+// concept; Deal (if any) is reachable transitively via Job.dealId. quoteId
+// is optional and SetNull on delete, set only when the invoice was created
+// via "Convert to Invoice" from an accepted Quote (see convertQuoteToInvoice
+// in app/actions/quotes.ts) — traceability only, not every invoice has one.
 model Invoice {
   id             String        @id @default(uuid()) @db.Uuid
   organizationId String        @map("organization_id") @db.Uuid
   jobId          String?       @map("job_id") @db.Uuid
+  quoteId        String?       @map("quote_id") @db.Uuid
   number         Int
   status         InvoiceStatus @default(DRAFT)
-  vatRate        Decimal?      @db.Decimal(5, 2) @map("vat_rate")
+  vatRate        Decimal?      @map("vat_rate") @db.Decimal(5, 2)
   issueDate      DateTime      @default(now()) @map("issue_date")
   notes          String?
   createdAt      DateTime      @default(now()) @map("created_at")
@@ -672,16 +756,18 @@ model Invoice {
   // every render, no stored source of truth) and is exactly what this exists
   // to replace.
   subtotal  Decimal @default(0) @db.Decimal(12, 2)
-  vatAmount Decimal @default(0) @db.Decimal(12, 2) @map("vat_amount")
+  vatAmount Decimal @default(0) @map("vat_amount") @db.Decimal(12, 2)
   total     Decimal @default(0) @db.Decimal(12, 2)
 
-  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  job          Job?               @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  job          Job?              @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  quote        Quote?            @relation(fields: [quoteId], references: [id], onDelete: SetNull)
   lineItems    InvoiceLineItem[]
 
   @@unique([organizationId, number])
   @@index([organizationId])
   @@index([jobId])
+  @@index([quoteId])
   @@map("invoices")
 }
 
@@ -695,7 +781,7 @@ model InvoiceLineItem {
   productId   String?  @map("product_id") @db.Uuid
   description String
   quantity    Decimal  @default(1) @db.Decimal(10, 2)
-  unitPrice   Decimal  @db.Decimal(10, 2) @map("unit_price")
+  unitPrice   Decimal  @map("unit_price") @db.Decimal(10, 2)
   position    Int      @default(0)
   createdAt   DateTime @default(now()) @map("created_at")
 
