@@ -4,6 +4,7 @@ export const TRASH_TYPES = [
   "deal",
   "job",
   "project",
+  "timeEntry",
   "activity",
   "task",
   "segment",

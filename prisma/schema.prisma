@@ -61,6 +61,7 @@ model Organization {
   deals          Deal[]
   jobs           Job[]
   projects       Project[]
+  timeEntries    TimeEntry[]
   activities     Activity[]
   tasks          Task[]
   emailMessages  EmailMessage[]
@@ -278,7 +279,8 @@ model Job {
   project      Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
   company      Company?     @relation(fields: [companyId], references: [id], onDelete: SetNull)
   contact      Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
-  invoices     Invoice[]
+  invoices       Invoice[]
+  timeEntries    TimeEntry[]
 
   @@index([organizationId])
   @@index([dealId])
@@ -325,6 +327,35 @@ model Project {
   @@index([companyId])
   @@index([contactId])
   @@map("projects")
+}
+
+// Standalone time tracking — logged hours against a Job (not a Task; for a
+// trade business "3 hours on the sink install" maps to the unit of work,
+// not a checklist item). jobId optional: general/admin time can be logged
+// with no job attached. userId has no FK to auth.users, same deviation as
+// Task.assigneeId (see docs/ARCHITECTURE.md §7) — RLS scopes by
+// organization_id, not by this column.
+//
+// Deliberately not wired to Invoice in this pass — turning logged hours
+// into invoice line items is a financial-domain concern for a later phase.
+model TimeEntry {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
+  jobId          String?   @map("job_id") @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  date           DateTime  @default(now())
+  hours          Decimal   @db.Decimal(6, 2)
+  description    String?
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  job          Job?         @relation(fields: [jobId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([jobId])
+  @@map("time_entries")
 }
 
 enum ActivityType {
