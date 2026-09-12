@@ -800,7 +800,7 @@
     "send": "Send by email",
     "sending": "Sending...",
     "emailSubject": "Quote #{number} from {orgName}",
-    "emailBody": "Please find attached quote #{number}.",
+    "emailBody": "Please find attached quote #{number}. To accept or decline it, open this link: {link}",
     "delete": "Delete quote",
     "deleteConfirm": "Delete this quote? This can be undone within 30 days.",
     "errorOrgNotFound": "Organization not found.",
@@ -810,5 +810,13 @@
     "errorInvalidPrice": "Invalid price.",
     "errorNoRecipientEmail": "This quote's contact has no email address on file.",
     "errorSmtpNotConfigured": "This organization hasn't set up outgoing email yet. Configure it in Settings first."
+  },
+  "PublicQuote": {
+    "greeting": "Hello, {name}",
+    "notAvailable": "This quote isn't available for review right now.",
+    "accept": "Accept quote",
+    "decline": "Decline quote",
+    "acceptedMessage": "You've accepted this quote.",
+    "declinedMessage": "You've declined this quote."
   }
 }

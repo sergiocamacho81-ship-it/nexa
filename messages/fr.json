@@ -800,7 +800,7 @@
     "send": "Envoyer par email",
     "sending": "Envoi en cours...",
     "emailSubject": "Devis n° {number} de {orgName}",
-    "emailBody": "Veuillez trouver ci-joint le devis n° {number}.",
+    "emailBody": "Veuillez trouver ci-joint le devis n° {number}. Pour l'accepter ou le refuser, ouvrez ce lien : {link}",
     "delete": "Supprimer le devis",
     "deleteConfirm": "Supprimer ce devis ? Cela peut être annulé dans les 30 jours.",
     "errorOrgNotFound": "Organisation introuvable.",
@@ -810,5 +810,13 @@
     "errorInvalidPrice": "Prix invalide.",
     "errorNoRecipientEmail": "Le contact de ce devis n'a pas d'adresse email enregistrée.",
     "errorSmtpNotConfigured": "Cette organisation n'a pas encore configuré l'envoi d'emails. Configurez-le d'abord dans Paramètres."
+  },
+  "PublicQuote": {
+    "greeting": "Bonjour {name}",
+    "notAvailable": "Ce devis n'est pas disponible pour consultation pour le moment.",
+    "accept": "Accepter le devis",
+    "decline": "Refuser le devis",
+    "acceptedMessage": "Vous avez accepté ce devis.",
+    "declinedMessage": "Vous avez refusé ce devis."
   }
 }

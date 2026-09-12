@@ -800,7 +800,7 @@
     "send": "Enviar por email",
     "sending": "A enviar...",
     "emailSubject": "Orçamento #{number} de {orgName}",
-    "emailBody": "Segue em anexo o orçamento #{number}.",
+    "emailBody": "Segue em anexo o orçamento #{number}. Para aceitar ou recusar, abra este link: {link}",
     "delete": "Eliminar orçamento",
     "deleteConfirm": "Eliminar este orçamento? Isto pode ser revertido dentro de 30 dias.",
     "errorOrgNotFound": "Organização não encontrada.",
@@ -810,5 +810,13 @@
     "errorInvalidPrice": "Preço inválido.",
     "errorNoRecipientEmail": "O contacto deste orçamento não tem um endereço de email registado.",
     "errorSmtpNotConfigured": "Esta organização ainda não configurou o envio de email. Configure-o primeiro em Definições."
+  },
+  "PublicQuote": {
+    "greeting": "Olá, {name}",
+    "notAvailable": "Este orçamento não está disponível para consulta neste momento.",
+    "accept": "Aceitar orçamento",
+    "decline": "Recusar orçamento",
+    "acceptedMessage": "Aceitou este orçamento.",
+    "declinedMessage": "Recusou este orçamento."
   }
 }

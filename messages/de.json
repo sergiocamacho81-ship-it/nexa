@@ -800,7 +800,7 @@
     "send": "Per E-Mail senden",
     "sending": "Wird gesendet...",
     "emailSubject": "Angebot #{number} von {orgName}",
-    "emailBody": "Im Anhang finden Sie das Angebot #{number}.",
+    "emailBody": "Im Anhang finden Sie das Angebot #{number}. Um es anzunehmen oder abzulehnen, öffnen Sie diesen Link: {link}",
     "delete": "Angebot löschen",
     "deleteConfirm": "Dieses Angebot löschen? Dies kann innerhalb von 30 Tagen rückgängig gemacht werden.",
     "errorOrgNotFound": "Organisation nicht gefunden.",
@@ -810,5 +810,13 @@
     "errorInvalidPrice": "Ungültiger Preis.",
     "errorNoRecipientEmail": "Der Kontakt dieses Angebots hat keine hinterlegte E-Mail-Adresse.",
     "errorSmtpNotConfigured": "Diese Organisation hat den E-Mail-Versand noch nicht eingerichtet. Bitte zuerst in den Einstellungen konfigurieren."
+  },
+  "PublicQuote": {
+    "greeting": "Hallo {name}",
+    "notAvailable": "Dieses Angebot ist derzeit nicht zur Ansicht verfügbar.",
+    "accept": "Angebot annehmen",
+    "decline": "Angebot ablehnen",
+    "acceptedMessage": "Sie haben dieses Angebot angenommen.",
+    "declinedMessage": "Sie haben dieses Angebot abgelehnt."
   }
 }

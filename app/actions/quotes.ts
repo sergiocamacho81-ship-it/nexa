@@ -2,6 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+import { randomUUID } from "node:crypto";
 import { getTranslations, getLocale } from "next-intl/server";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
@@ -418,13 +420,28 @@ export async function sendQuoteEmail(
     return { error: t("errorSmtpNotConfigured") };
   }
 
+  // Generated once, on first send, then reused for every re-send — the same
+  // link a customer bookmarked or scrolled back to keeps working.
+  let acceptanceToken = await prisma.quote
+    .findUnique({ where: { id: quoteId }, select: { acceptanceToken: true } })
+    .then((q) => q?.acceptanceToken ?? null);
+  if (!acceptanceToken) {
+    acceptanceToken = randomUUID();
+    await prisma.quote.update({ where: { id: quoteId }, data: { acceptanceToken } });
+  }
+
+  const headersList = await headers();
+  const host = headersList.get("x-forwarded-host") ?? headersList.get("host");
+  const protocol = headersList.get("x-forwarded-proto") ?? "https";
+  const acceptanceLink = `${protocol}://${host}/quote/${acceptanceToken}`;
+
   const buffer = await renderQuotePdfBuffer(quote, {
     locale,
     t: t as unknown as TranslateFn,
     tStatuses: tStatuses as unknown as TranslateFn,
   });
   const subject = t("emailSubject", { number: quote.number, orgName: quote.organization.name });
-  const body = t("emailBody", { number: quote.number });
+  const body = t("emailBody", { number: quote.number, link: acceptanceLink });
 
   let status: "SENT" | "FAILED" = "SENT";
   let error: string | null = null;

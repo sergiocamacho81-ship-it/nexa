@@ -664,19 +664,25 @@ enum QuoteStatus {
 // nothing purges or auto-expires a quote past that date (no cron infra yet,
 // same limitation as Trash's lazy purge).
 model Quote {
-  id             String      @id @default(uuid()) @db.Uuid
-  organizationId String      @map("organization_id") @db.Uuid
-  dealId         String?     @map("deal_id") @db.Uuid
-  companyId      String?     @map("company_id") @db.Uuid
-  contactId      String?     @map("contact_id") @db.Uuid
-  number         Int
-  status         QuoteStatus @default(DRAFT)
-  validUntil     DateTime?   @map("valid_until")
-  notes          String?
-  vatRate        Decimal?    @map("vat_rate") @db.Decimal(5, 2)
-  createdAt      DateTime    @default(now()) @map("created_at")
-  updatedAt      DateTime    @updatedAt @map("updated_at")
-  deletedAt      DateTime?   @map("deleted_at")
+  id              String      @id @default(uuid()) @db.Uuid
+  organizationId  String      @map("organization_id") @db.Uuid
+  dealId          String?     @map("deal_id") @db.Uuid
+  companyId       String?     @map("company_id") @db.Uuid
+  contactId       String?     @map("contact_id") @db.Uuid
+  number          Int
+  status          QuoteStatus @default(DRAFT)
+  validUntil      DateTime?   @map("valid_until")
+  notes           String?
+  vatRate         Decimal?    @map("vat_rate") @db.Decimal(5, 2)
+  // Set the first time the quote is emailed (see sendQuoteEmail in
+  // app/actions/quotes.ts) — the unauthenticated link at /quote/[token] is
+  // the customer's own accept/decline page, gated by token possession alone,
+  // never by organization membership. Never regenerated once set, so the
+  // same link keeps working across re-sends.
+  acceptanceToken String?     @unique @map("acceptance_token")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+  deletedAt       DateTime?   @map("deleted_at")
 
   // Persisted, server-computed totals — same recalculation-on-every-line-item
   // -change pattern as Invoice (see recalculateQuoteTotals in

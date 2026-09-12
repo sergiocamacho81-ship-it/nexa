@@ -800,7 +800,7 @@
     "send": "Invia per email",
     "sending": "Invio in corso...",
     "emailSubject": "Preventivo #{number} da {orgName}",
-    "emailBody": "In allegato il preventivo #{number}.",
+    "emailBody": "In allegato il preventivo #{number}. Per accettarlo o rifiutarlo, apri questo link: {link}",
     "delete": "Elimina preventivo",
     "deleteConfirm": "Eliminare questo preventivo? L'operazione può essere annullata entro 30 giorni.",
     "errorOrgNotFound": "Organizzazione non trovata.",
@@ -810,5 +810,13 @@
     "errorInvalidPrice": "Prezzo non valido.",
     "errorNoRecipientEmail": "Il contatto di questo preventivo non ha un indirizzo email registrato.",
     "errorSmtpNotConfigured": "Questa organizzazione non ha ancora configurato l'invio di email. Configuralo prima in Impostazioni."
+  },
+  "PublicQuote": {
+    "greeting": "Ciao {name}",
+    "notAvailable": "Questo preventivo non è al momento disponibile per la consultazione.",
+    "accept": "Accetta preventivo",
+    "decline": "Rifiuta preventivo",
+    "acceptedMessage": "Hai accettato questo preventivo.",
+    "declinedMessage": "Hai rifiutato questo preventivo."
   }
 }
