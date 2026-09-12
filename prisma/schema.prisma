@@ -62,6 +62,7 @@ model Organization {
   jobs           Job[]
   projects       Project[]
   timeEntries    TimeEntry[]
+  materialUsages MaterialUsage[]
   activities     Activity[]
   tasks          Task[]
   emailMessages  EmailMessage[]
@@ -281,6 +282,7 @@ model Job {
   contact      Contact?     @relation(fields: [contactId], references: [id], onDelete: SetNull)
   invoices       Invoice[]
   timeEntries    TimeEntry[]
+  materialUsages MaterialUsage[]
 
   @@index([organizationId])
   @@index([dealId])
@@ -356,6 +358,37 @@ model TimeEntry {
   @@index([organizationId])
   @@index([jobId])
   @@map("time_entries")
+}
+
+// Standalone material/parts usage tracking — logged consumption against a Job,
+// same pattern as TimeEntry (jobId optional). productId is optional: picking a
+// catalog Product prefills description/unit/unitCost, but a free-text/custom
+// entry is also allowed (same "product or custom item" pattern as
+// InvoiceLineItem). unitCost tracks what the material cost the org, not what
+// it's billed at — deliberately not wired to Invoice in this pass, same
+// reasoning as TimeEntry.
+model MaterialUsage {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
+  jobId          String?   @map("job_id") @db.Uuid
+  productId      String?   @map("product_id") @db.Uuid
+  description    String
+  quantity       Decimal   @db.Decimal(10, 2)
+  unit           String?
+  unitCost       Decimal?  @db.Decimal(10, 2) @map("unit_cost")
+  date           DateTime  @default(now())
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  job          Job?         @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  product      Product?     @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([jobId])
+  @@index([productId])
+  @@map("material_usages")
 }
 
 enum ActivityType {
@@ -599,8 +632,9 @@ model Product {
   updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
 
-  organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  lineItems    InvoiceLineItem[]
+  organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lineItems      InvoiceLineItem[]
+  materialUsages MaterialUsage[]
 
   @@index([organizationId])
   @@map("products")

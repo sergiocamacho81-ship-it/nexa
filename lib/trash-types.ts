@@ -5,6 +5,7 @@ export const TRASH_TYPES = [
   "job",
   "project",
   "timeEntry",
+  "materialUsage",
   "activity",
   "task",
   "segment",

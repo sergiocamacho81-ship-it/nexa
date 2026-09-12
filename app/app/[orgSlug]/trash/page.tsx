@@ -12,6 +12,7 @@ const TYPE_LABEL_KEY = {
   job: "typeJob",
   project: "typeProject",
   timeEntry: "typeTimeEntry",
+  materialUsage: "typeMaterialUsage",
   activity: "typeActivity",
   task: "typeTask",
   segment: "typeSegment",

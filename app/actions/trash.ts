@@ -46,6 +46,7 @@ async function purgeExpired(organizationId: string) {
     prisma.job.deleteMany({ where }),
     prisma.project.deleteMany({ where }),
     prisma.timeEntry.deleteMany({ where }),
+    prisma.materialUsage.deleteMany({ where }),
     prisma.activity.deleteMany({ where }),
     prisma.task.deleteMany({ where }),
     prisma.segment.deleteMany({ where }),
@@ -73,6 +74,7 @@ export async function listTrash(orgSlug: string): Promise<TrashItem[]> {
     jobs,
     projects,
     timeEntries,
+    materialUsages,
     activities,
     tasks,
     segments,
@@ -88,6 +90,7 @@ export async function listTrash(orgSlug: string): Promise<TrashItem[]> {
     prisma.job.findMany({ where }),
     prisma.project.findMany({ where }),
     prisma.timeEntry.findMany({ where }),
+    prisma.materialUsage.findMany({ where }),
     prisma.activity.findMany({ where }),
     prisma.task.findMany({ where }),
     prisma.segment.findMany({ where }),
@@ -145,6 +148,12 @@ export async function listTrash(orgSlug: string): Promise<TrashItem[]> {
       id: te.id,
       label: te.description?.trim() || `${Number(te.hours)}h`,
       deletedAt: te.deletedAt as Date,
+    })),
+    ...materialUsages.map((mu) => ({
+      type: "materialUsage" as const,
+      id: mu.id,
+      label: mu.description,
+      deletedAt: mu.deletedAt as Date,
     })),
     ...activities.map((a) => ({
       type: "activity" as const,
@@ -247,6 +256,9 @@ export async function restoreTrashItem(formData: FormData) {
       break;
     case "timeEntry":
       await prisma.timeEntry.updateMany({ where, data });
+      break;
+    case "materialUsage":
+      await prisma.materialUsage.updateMany({ where, data });
       break;
     case "activity":
       await prisma.activity.updateMany({ where, data });
